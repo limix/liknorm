@@ -1,15 +1,10 @@
 cmake_minimum_required (VERSION 3.4)
 project (liknorm)
-
 set(CMAKE_BUILD_TYPE Release)
-
-file(GLOB SOURCES "src/*.c")
-
-add_library (liknorm SHARED ${SOURCES})
-
 set_property(TARGET liknorm PROPERTY C_STANDARD 11)
 
-# enable_testing()
-# add_test( binomial exec_name )
+add_subdirectory (src)
+add_subdirectory (test)
 
-# install(TARGETS testStudent DESTINATION /usr/lib)
+enable_testing()
+add_test( NAME BinomialNormal COMMAND test_binomial_normal )
