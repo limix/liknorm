@@ -3,7 +3,7 @@ project (liknorm)
 
 set(CMAKE_BUILD_TYPE Release)
 
-file(GLOB SOURCES "src/*.cpp")
+file(GLOB SOURCES "src/*.c")
 
 add_library (liknorm SHARED ${SOURCES})
 
