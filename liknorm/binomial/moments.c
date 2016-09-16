@@ -79,37 +79,6 @@ double shrink_intervals(double* left,
     return r;
 }
 
-void meaningful_interval(double N, double K, double mu, double var,
-                         double* left, double* right, double* heights,
-                         double* w, int w_len)
-{
-    get_extrema(N, K, mu, var, left, right);
-
-    int nint = w_len;
-    double step = (right[0] - left[0]) / nint;
-
-    right[0] = shrink_intervals(left, step, nint, N, K, mu, var, heights, w);
-
-    step = (right[0] - left[0]) / nint;
-    right[0] = shrink_intervals(left, step, nint, N, K, mu, var, heights, w);
-}
-
-// # import numpy as np
-// # cimport numpy as np
-// from cpython cimport array
-// import array
-//
-// cdef int _nintervals
-// cdef double[:] _height
-// cdef double[:] _weight
-//
-// cpdef init(int nintervals):
-//     global _nintervals, _height, _weight
-//     _nintervals = nintervals
-//
-//     _height = array.clone(array.array('d', []), nintervals+1, zero=False)
-//     _weight = array.clone(array.array('d', []), nintervals, zero=False)
-
 void moments_array(double* N, double* K,
              double* eta, double* tau,
              double* lmom0, double* mu_res, double* var_res, int N_len,
@@ -131,4 +100,67 @@ void moments_array(double* N, double* K,
         moments(left, step, _nintervals, N[i], K[i], mu, var,
                 &lmom0[i], &mu_res[i], &var_res[i]);
     }
+}
+
+void f_fl_fll(double x, double N, double K,
+              double* f_, double* fl_, double* fll_)
+{
+  double lpdf = lmath_normal_logpdf(x);
+  double lcdf = lmath_normal_logcdf(x);
+  double lsf = lmath_normal_logsf(x);
+  double a = 0, b = 0;
+  double lK = 0, lNK = 0;
+  double sign, lr;
+
+  *f_ = K * lcdf + (N-K) * lsf;
+
+  double l1 = lpdf - lcdf;
+  double l2 = lpdf - lsf;
+
+  if (K > 0)
+  {
+      lK = log(K);
+      a = lK + l1;
+  }
+
+  if (K < N)
+  {
+    lNK = log(N-K);
+    b = lNK + l2;
+  }
+
+  if (K > 0 && K < N)
+  {
+    if (a == b)
+      *fl_ = 0.0;
+    else
+    {
+      lr = lmath_logaddexpss(a, b, 1.0, -1.0, &sign);
+      *fl_ = sign * exp(lr);
+    }
+  }
+  else
+  {
+    if (K == 0)
+      *fl_ = -exp(b);
+    else
+      *fl_ = exp(a);
+  }
+
+  if (K == 0)
+  {
+    a = exp(lNK + l2);
+    b = exp(lNK + 2*l2);
+  }
+  else if (K == N)
+  {
+    a = - exp(lK + l1);
+    b = + exp(lK + 2*l1);
+  }
+  else
+  {
+    a = - exp(lK + l1)   + exp(lNK + l2);
+    b = + exp(lK + 2*l1) + exp(lNK + 2*l2);
+  }
+  *fll_ = x * a - b;
 }
