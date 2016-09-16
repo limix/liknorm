@@ -2,6 +2,7 @@ cmake_minimum_required (VERSION 3.4)
 project (liknorm)
 set(CMAKE_BUILD_TYPE Release)
 
+include_directories(include)
 add_subdirectory (src)
 add_subdirectory (test)
 

@@ -1,4 +1,5 @@
-#include "base.h"
+#include "liknorm_impl.h"
+#include "liknorm.h"
 #include <stdio.h>
 #include <math.h>
 
@@ -26,10 +27,3 @@ void integrate_step(double si, double step, double Ty,
 
 void integrate(Interval *interval)
 {}
-
-int  main()
-{
-  Normal normal = { 0, 1 };
-
-  printf("BLA BLA BLA");
-}
