@@ -11,8 +11,8 @@ typedef struct
 typedef struct
 {
   double* log_zeroth;
-  double* log_first;
-  double* log_second;
+  double* first;
+  double* second;
 } LogMoments;
 
 #endif /* ifndef LIKNORM_IMPL_H */

@@ -20,21 +20,24 @@ double logaddexp(double x, double y)
 void binomial_log_partition(double  x,
                             double *A0,
                             double *logA1,
-                            double *logA2)
+                            double *logA2,
+                            double *sign)
 {
-  double N = 1;
+  double N  = 1;
+  double ax = logaddexp(0, x);
 
-  *A0    = N * logaddexp(0, x);
-  *logA1 = log(N) + x - logaddexp(0, x);
-  *logA2 = log(N) + x - 2 * logaddexp(0, x);
+  *A0    = N * ax;
+  *logA1 = log(N) + x - ax;
+  *logA2 = log(N) + x - 2 * ax;
+  *sign  = +1;
 }
 
 int main()
 {
   Normal normal = { 0, 1 };
-  double A0, logA1, logA2;
+  double A0, logA1, logA2, sign;
 
-  binomial_log_partition(1.2, &A0, &logA1, &logA2);
+  binomial_log_partition(1.2, &A0, &logA1, &logA2, &sign);
 
   if (fabs(A0 - 1.46328246733803113422) > 1e-10) return 1;
 
@@ -44,10 +47,10 @@ int main()
 
   LikNormMachine *machine = create_liknorm_machine(10, 1e-7);
 
-  // ExpFam ef               = { 5, &binomial_log_partition };
-  // Normal normal           = { 0, 1 };
-  //
-  // integrate(machine, ef, normal);
+  ExpFam ef = { 5, &binomial_log_partition };
+
+  double mean, variance;
+  integrate(machine, ef, normal, &mean, &variance);
 
   destroy_liknorm_machine(machine);
 

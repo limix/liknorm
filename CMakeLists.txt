@@ -3,6 +3,7 @@ project (liknorm)
 set(CMAKE_BUILD_TYPE Release)
 
 include_directories(include)
+include_directories(lib)
 add_subdirectory (src)
 add_subdirectory (test)
 
