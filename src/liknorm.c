@@ -27,16 +27,37 @@ void integrate_step(double     si,
   printf("A0 logA1 logA2 sign %.10f %.10f %.10f %.1f\n", A0,  logA1, logA2,
          sign);
 
-  double a  = -A0 + exp(logaddexps(logA1, logA2, sign * mi, -(mi * mi) / 2));
-  double b  = ef.Ty + eta + exp(logaddexps(logA1, logA2, -sign, mi));
-  double c  = -(tau + exp(logA2)) / 2;
-  double bc = b / c;
+  double a = -A0 + exp(logaddexps(logA1, logA2, sign * mi, -(mi * mi) / 2));
+  double bsign;
+  double tmp = logaddexpss(logA1, logA2, -sign, mi, &bsign);
+  double b   = ef.Ty + eta + copysign(exp(tmp), bsign);
+  double c   = -(tau + exp(logA2)) / 2;
+  double bc  = b / (2 * c);
 
   printf("a b c %.10f %.10f %.10f\n", a, b, c);
 
-  *(lm.log_zeroth) = a - b * bc + log(PI) / 2 - log(-c) / 2;
+  *(lm.log_zeroth) = a - b * bc / 2 + log(PI) / 2 - log(-c) / 2;
   *(lm.first)      = -bc;
-  *(lm.second)     = bc * bc - 1 / (2 * c);
+  printf("  lm.log_zeroth %.10f\n", *(lm.log_zeroth));
+  printf("  lm.first      %.10f\n", *(lm.first));
+  *(lm.second) = bc * bc - 1 / (2 * c);
+}
+
+void combine_steps(LikNormMachine *machine, double *mean, double *variance)
+{
+  (*mean)     = 0;
+  (*variance) = 0;
+
+  double total = logaddexp(machine->log_zeroth[0], machine->log_zeroth[1]);
+  int    i;
+
+  for (i = 2; i < machine->n; i++) total = logaddexp(total,
+                                                     machine->log_zeroth[i]);
+
+  for (i = 0; i < machine->n; i++)
+  {
+    (*mean) += machine->first[i] * exp(machine->log_zeroth[i] - total);
+  }
 }
 
 void integrate(LikNormMachine *machine,
@@ -69,6 +90,12 @@ void integrate(LikNormMachine *machine,
 
     integrate_step(si, interval.step, ef, normal, lm);
   }
+
+  combine_steps(machine, mean, variance);
+
+  printf("mean     %.10f\n", *mean);
+
+  // printf("variance %.10f\n", *variance);
 }
 
 LikNormMachine* create_liknorm_machine(int n, double precision)
