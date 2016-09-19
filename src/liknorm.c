@@ -36,11 +36,34 @@ void integrate_step(double     si,
 
   printf("a b c %.10f %.10f %.10f\n", a, b, c);
 
-  *(lm.log_zeroth) = a - b * bc / 2 + log(PI) / 2 - log(-c) / 2;
-  *(lm.first)      = -bc;
+  double hmu   = -b / (2 * c);
+  double hvar  = 1 / (-2 * c);
+  double hstd  = sqrt(hvar);
+  double beta  = (sii - hmu) / hvar;
+  double alpha = (si - hmu) / hvar;
+
+  double logPbeta  = logcdf(beta);
+  double logPalpha = logcdf(alpha);
+
+  double logP = logaddexps(logPbeta, logPalpha, 1, -1);
+
+  double logpbeta  = logpdf(beta);
+  double logpalpha = logpdf(alpha);
+
+  *(lm.log_zeroth) = a - b * bc / 2 + log(PI) / 2 - log(-c) / 2 + logP;
+
+  double u = hmu;
+
+  if (fabs(beta) <
+      fabs(alpha)) u -= hstd * exp(logaddexps(logpbeta, logpalpha, 1, -1));
+  else u += hstd * exp(logaddexps(logpalpha, logpbeta, +1, -1));
+
+  *(lm.first) = u;
   printf("  lm.log_zeroth %.10f\n", *(lm.log_zeroth));
   printf("  lm.first      %.10f\n", *(lm.first));
+
   *(lm.second) = bc * bc - 1 / (2 * c);
+  *(lm.second) = 0;
 }
 
 void combine_steps(LikNormMachine *machine, double *mean, double *variance)

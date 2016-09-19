@@ -1,8 +1,8 @@
 #ifndef LOGADDEXP_H
 #define LOGADDEXP_H
 
-#include "math.h"
-#include "float.h"
+#include <math.h>
+#include <float.h>
 
 /* Implements log(e^x + e^y).
  */
