@@ -24,7 +24,7 @@ void integrate_step(double     si,
 
   double A0, logA1, logA2, sign;
 
-  (*ef.lp)(mi, &A0, &logA1, &logA2, &sign);
+  (*ef.lp)(mi, ef.lp_data, &A0, &logA1, &logA2, &sign);
 
   double tmp, tmp_sign;
 

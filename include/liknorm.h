@@ -2,6 +2,7 @@
 #define LIKNORM_H
 
 typedef void log_partition (double x,
+                            void* lp_data,
                             double *A0,
                             double *logA1,
                             double *logA2,
@@ -11,6 +12,7 @@ typedef struct
 {
         double Ty;
         log_partition* lp;
+        void* lp_data;
 } ExpFam;
 
 typedef struct

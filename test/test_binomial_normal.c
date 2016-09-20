@@ -18,12 +18,13 @@ double logaddexp(double x, double y)
 // A'(X) = N e^x / (1 + e^x)
 // A''(X) = N e^x / (1 + e^x)^2
 void binomial_log_partition(double  x,
+                            void   *lp_data,
                             double *A0,
                             double *logA1,
                             double *logA2,
                             double *sign)
 {
-  double N  = 10;
+  double N  = *((double *)lp_data);
   double ax = logaddexp(0, x);
 
   *A0    = N * ax;
@@ -47,13 +48,27 @@ int main()
 
   LikNormMachine *machine = create_liknorm_machine(10, 1e-7);
 
-  ExpFam ef = { 5, &binomial_log_partition };
+  double N  = 10;
+  double K  = 5;
+  ExpFam ef = { K, &binomial_log_partition, &N };
 
   double mean, variance;
 
   integrate(machine, ef, normal, &mean, &variance);
 
+  if (fabs(mean) > 1e-10) return 1;
+
   destroy_liknorm_machine(machine);
+
+  N = 5;
+  K = 2;
+
+  // double mu  = 0.1;
+  // double var = 1.2;
+
+  // double lmom0   = -1.87923983187;
+  // double mu_res  = -0.189211912705;
+  // double var_res = 0.256669390778;
 
   return 0;
 }
