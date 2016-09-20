@@ -27,10 +27,13 @@ void binomial_log_partition(double  x,
   double N  = *((double *)lp_data);
   double ax = logaddexp(0, x);
 
-  *A0    = N * ax;
-  *logA1 = log(N) + x - ax;
-  *logA2 = log(N) + x - 2 * ax;
-  *sign  = +1;
+  *A0 = N * ax;
+
+  if (logA1 != 0) *logA1 = log(N) + x - ax;
+
+  if (logA2 != 0) *logA2 = log(N) + x - 2 * ax;
+
+  if (sign != 0) *sign = +1;
 }
 
 int main()

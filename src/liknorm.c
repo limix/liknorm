@@ -17,7 +17,6 @@ void integrate_step(double     si,
 {
   double sii = si + step;
 
-  // printf("si sii %.10f %.10f\n", si, sii);
   double mi  = si / 2 + sii / 2;
   double eta = normal.eta;
   double tau = normal.tau;
@@ -114,6 +113,29 @@ void combine_steps(LikNormMachine *machine, double *mean, double *variance)
   (*variance) = (*variance) - (*mean) * (*mean);
 }
 
+void shrink_interval(ExpFam ef, double step, double *left, double *right)
+{
+  double A0;
+
+  goto left_loop;
+
+  while (*left < *right && fabs(*left * ef.Ty - A0) > 700)
+  {
+    *left += step;
+left_loop:;
+    (*ef.lp)(*left, ef.lp_data, &A0, 0, 0, 0);
+  }
+
+  goto right_loop;
+
+  while (*left < *right && fabs(*right * ef.Ty - A0) > 700)
+  {
+    *right -= step;
+right_loop:;
+    (*ef.lp)(*right, ef.lp_data, &A0, 0, 0, 0);
+  }
+}
+
 void integrate(LikNormMachine *machine,
                ExpFam          ef,
                Normal          normal,
@@ -123,7 +145,16 @@ void integrate(LikNormMachine *machine,
   double left  = normal.eta / normal.tau - 10 * sqrt(1 / normal.tau);
   double right = normal.eta / normal.tau + 10 * sqrt(1 / normal.tau);
 
-  // printf("left right %.10f %.10f\n", left, right);
+  double step = (right - left) / machine->n;
+
+  // double before_left  = left;
+  // double before_right = right;
+
+  shrink_interval(ef, step, &left, &right);
+  step = (right - left) / machine->n;
+
+  // printf("left %.10f -> %.10f\n",    before_left,  left);
+  // printf("right %.10f -> %.10f\n\n", before_right, right);
 
   Interval   interval;
   LogMoments lm;
@@ -131,7 +162,7 @@ void integrate(LikNormMachine *machine,
   interval.left  = left;
   interval.right = right;
   interval.n     = machine->n;
-  interval.step  = (right - left) / interval.n;
+  interval.step  = step;
 
   double si;
 
