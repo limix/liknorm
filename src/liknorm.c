@@ -40,13 +40,30 @@ void integrate_step(double     si,
   double hmu   = -b / (2 * c);
   double hvar  = 1 / (-2 * c);
   double hstd  = sqrt(hvar);
-  double beta  = (sii - hmu) / hvar;
-  double alpha = (si - hmu) / hvar;
+  double beta  = (sii - hmu) / hstd;
+  double alpha = (si - hmu) / hstd;
 
-  double logPbeta  = logcdf(beta);
-  double logPalpha = logcdf(alpha);
+  double lcdf_a, lcdf_b, lsf_a, lsf_b;
+  double lcdf_diff;
 
-  double logP = logaddexps(logPbeta, logPalpha, 1, -1);
+  printf(" alpha %.10f beta %.10f\n", alpha, beta);
+
+  if (alpha + beta >= 0)
+  {
+    lsf_a = logcdf(-alpha);
+    lsf_b = logcdf(-beta);
+    printf(" lsf_a %.50f lsf_b %.50f\n", lsf_a, lsf_b);
+    lcdf_diff = logaddexps(lsf_a, lsf_b, 1.0, -1.0);
+  } else {
+    lcdf_a = logcdf(alpha);
+    lcdf_b = logcdf(beta);
+    printf(" lcdf_a %.50f lcdf_b %.50f\n", lcdf_a, lcdf_b);
+    lcdf_diff = logaddexps(lcdf_b, lcdf_a, 1.0, -1.0);
+  }
+
+  // double lcdf_diff = logaddexps(logPbeta, logPalpha, 1, -1);
+
+  printf(":%f:\n", lcdf_diff);
 
   double logpbeta  = logpdf(beta);
   double logpalpha = logpdf(alpha);
@@ -55,18 +72,23 @@ void integrate_step(double     si,
 
   if (fabs(beta) < fabs(alpha))
   {
-    logp      = logaddexps(logpbeta, logpalpha, 1, -1);
+    logp      = logaddexps(logpbeta, logpalpha, +1, -1);
     logp_sign = +1;
   }
   else {
-    logp      = logaddexps(logpalpha, logpbeta, +1, -1);
+    logp      = logaddexps(logpbeta, logpalpha, -1, +1);
     logp_sign = -1;
   }
 
-  *(lm.log_zeroth) = a - b * bc / 2 + log(PI) / 2 - log(-c) / 2 + logP;
+  printf(" logpalpha %.10f logpbeta %.10f\n",
+         logpalpha,
+         logpbeta);
+  printf(" fabs(beta) %.10f fabs(alpha) %.10f lcdf_diff %.10f\n", fabs(beta),
+         fabs(alpha), lcdf_diff);
+  *(lm.log_zeroth) = a - b * bc / 2 + log(PI) / 2 - log(-c) / 2 + lcdf_diff;
   printf("  lm.log_zeroth %.10f\n", *(lm.log_zeroth));
 
-  double u = hmu - logp_sign * hstd * exp(logp - logP);
+  double u = hmu - logp_sign * hstd * exp(logp - lcdf_diff);
 
   *(lm.u) = u;
   printf("  lm.u      %.10f\n", *(lm.u));
