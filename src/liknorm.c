@@ -8,6 +8,9 @@
 
 #define PI 3.14159265358979323846
 
+// log(PI) / 2
+#define LPI2 0.572364942924700081938738094323
+
 
 void integrate_step(double     si,
                     double     step,
@@ -17,9 +20,7 @@ void integrate_step(double     si,
 {
   double sii = si + step;
 
-  double mi  = si / 2 + sii / 2;
-  double eta = normal.eta;
-  double tau = normal.tau;
+  double mi = si / 2 + sii / 2;
 
   double A0, logA1, logA2, sign;
 
@@ -31,14 +32,13 @@ void integrate_step(double     si,
   double a = -A0 + copysign(exp(tmp), tmp_sign);
 
   tmp = logaddexpss(logA1, logA2, -sign, mi, &tmp_sign);
-  double b = ef.Ty + eta + copysign(exp(tmp), tmp_sign);
+  double b = ef.Ty + normal.eta + copysign(exp(tmp), tmp_sign);
 
-  double c  = -(tau + exp(logA2)) / 2;
-  double bc = b / (2 * c);
+  double c = -(normal.tau + exp(logA2)) / 2;
 
 
-  double hmu   = -b / (2 * c);
-  double hvar  = 1 / (-2 * c);
+  double hvar  = -1 / (2 * c);
+  double hmu   = b * hvar;
   double hstd  = sqrt(hvar);
   double beta  = (sii - hmu) / hstd;
   double alpha = (si - hmu) / hstd;
@@ -59,8 +59,6 @@ void integrate_step(double     si,
     lcdf_diff = logaddexps(lcdf_b, lcdf_a, 1.0, -1.0);
   }
 
-  // printf(":%f:\n", lcdf_diff);
-
   double logpbeta  = logpdf(beta);
   double logpalpha = logpdf(alpha);
 
@@ -76,17 +74,9 @@ void integrate_step(double     si,
     logp_sign = -1;
   }
 
-  // printf(" a: %.10f b: %.10f c: %.10f lcdf_diff: %.50f\n", a, b, c,
-  // lcdf_diff);
-  *(lm.log_zeroth) = a - b * bc / 2 + log(PI) / 2 - log(-c) / 2 + lcdf_diff;
+  *(lm.log_zeroth) = a + (b * hmu) / 2 + LPI2 - log(-c) / 2 + lcdf_diff;
 
-  // printf("  lm.log_zeroth %.10f\n",                        *(lm.log_zeroth));
-
-  double u = hmu - logp_sign * hstd * exp(logp - lcdf_diff);
-
-  *(lm.u) = u;
-
-  // printf("  lm.u      %.10f\n", *(lm.u));
+  *(lm.u) = hmu - logp_sign * hstd * exp(logp - lcdf_diff);
 
   tmp  = logaddexpss(logpbeta, logpalpha, hmu + sii, -hmu - si, &tmp_sign);
   tmp -= lcdf_diff;
@@ -105,10 +95,13 @@ void combine_steps(LikNormMachine *machine, double *mean, double *variance)
   for (i = 2; i < machine->n; i++) total = logaddexp(total,
                                                      machine->log_zeroth[i]);
 
+  double diff;
+
   for (i = 0; i < machine->n; i++)
   {
-    (*mean)     += machine->u[i] * exp(machine->log_zeroth[i] - total);
-    (*variance) += machine->v[i] * exp(machine->log_zeroth[i] - total);
+    diff         = exp(machine->log_zeroth[i] - total);
+    (*mean)     += machine->u[i] * diff;
+    (*variance) += machine->v[i] * diff;
   }
   (*variance) = (*variance) - (*mean) * (*mean);
 }
@@ -147,14 +140,8 @@ void integrate(LikNormMachine *machine,
 
   double step = (right - left) / machine->n;
 
-  // double before_left  = left;
-  // double before_right = right;
-
   shrink_interval(ef, step, &left, &right);
   step = (right - left) / machine->n;
-
-  // printf("left %.10f -> %.10f\n",    before_left,  left);
-  // printf("right %.10f -> %.10f\n\n", before_right, right);
 
   Interval   interval;
   LogMoments lm;
@@ -177,9 +164,6 @@ void integrate(LikNormMachine *machine,
   }
 
   combine_steps(machine, mean, variance);
-
-  // printf("mean     %.30f\n", *mean);
-  // printf("variance %.30f\n", *variance);
 }
 
 LikNormMachine* create_liknorm_machine(int n, double precision)
