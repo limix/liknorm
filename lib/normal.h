@@ -5,19 +5,30 @@
 #include <float.h>
 #include <math.h>
 
+#ifndef M_PI
+#define M_PI       3.14159265358979323846264338328      /* pi */
+#endif
+
+// log(2*PI)/2
+#define LOG2PI_2 0.91893853320467266954096885456237941980361938476562
+
 /* Cumulative distribution function of the Normal distribution.
  */
 static double cdf(double x);
+
 /* Log of the cumulative distribution function of the Normal distribution.
  */
 static double logcdf(double x);
 
+/* Log of the probability distribution function of the Normal distribution.
+ */
+inline static double logpdf(double x)
+{
+    return - (x*x)/2 - LOG2PI_2;
+}
+
 
 /* IMPLEMENTATION */
-
-#ifndef M_PI
-#define M_PI       3.14159265358979323846264338328      /* pi */
-#endif
 
 #define GAUSS_EPSILON  (DBL_EPSILON / 2)
 #define GAUSS_XUPPER (8.572)

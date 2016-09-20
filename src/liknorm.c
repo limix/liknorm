@@ -1,6 +1,7 @@
 #include "liknorm_impl.h"
 #include "liknorm.h"
 #include "logaddexp.h"
+#include "normal.h"
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
@@ -50,20 +51,30 @@ void integrate_step(double     si,
   double logpbeta  = logpdf(beta);
   double logpalpha = logpdf(alpha);
 
+  double logp, logp_sign;
+
+  if (fabs(beta) < fabs(alpha))
+  {
+    logp      = logaddexps(logpbeta, logpalpha, 1, -1);
+    logp_sign = +1;
+  }
+  else {
+    logp      = logaddexps(logpalpha, logpbeta, +1, -1);
+    logp_sign = -1;
+  }
+
   *(lm.log_zeroth) = a - b * bc / 2 + log(PI) / 2 - log(-c) / 2 + logP;
-
-  double u = hmu;
-
-  if (fabs(beta) <
-      fabs(alpha)) u -= hstd * exp(logaddexps(logpbeta, logpalpha, 1, -1));
-  else u += hstd * exp(logaddexps(logpalpha, logpbeta, +1, -1));
-
-  *(lm.first) = u;
   printf("  lm.log_zeroth %.10f\n", *(lm.log_zeroth));
-  printf("  lm.first      %.10f\n", *(lm.first));
 
-  *(lm.second) = bc * bc - 1 / (2 * c);
-  *(lm.second) = 0;
+  double u = hmu - logp_sign * hstd * exp(logp - logP);
+
+  *(lm.u) = u;
+  printf("  lm.u      %.10f\n", *(lm.u));
+
+  *(lm.v) = 0;
+
+  // *(lm.second) = bc * bc - 1 / (2 * c);
+  // *(lm.second) = 0;
 }
 
 void combine_steps(LikNormMachine *machine, double *mean, double *variance)
@@ -108,15 +119,15 @@ void integrate(LikNormMachine *machine,
   {
     si            = interval.left + interval.step * i;
     lm.log_zeroth = machine->log_zeroth + i;
-    lm.first      = machine->first + i;
-    lm.second     = machine->second + i;
+    lm.u          = machine->first + i;
+    lm.v          = machine->second + i;
 
     integrate_step(si, interval.step, ef, normal, lm);
   }
 
-  combine_steps(machine, mean, variance);
+  // combine_steps(machine, mean, variance);
 
-  printf("mean     %.10f\n", *mean);
+  // printf("mean     %.10f\n", *mean);
 
   // printf("variance %.10f\n", *variance);
 }
