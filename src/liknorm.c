@@ -121,7 +121,7 @@ void integrate(LikNormMachine *machine,
   double left  = normal.eta / normal.tau - 10 * sqrt(1 / normal.tau);
   double right = normal.eta / normal.tau + 10 * sqrt(1 / normal.tau);
 
-  printf("left right %.10f %.10f\n", left, right);
+  // printf("left right %.10f %.10f\n", left, right);
 
   Interval   interval;
   LogMoments lm;
@@ -145,7 +145,7 @@ void integrate(LikNormMachine *machine,
 
   combine_steps(machine, mean, variance);
 
-  printf("mean     %.10f\n", *mean);
+  printf("mean     %.30f\n", *mean);
 
   // printf("variance %.10f\n", *variance);
 }
