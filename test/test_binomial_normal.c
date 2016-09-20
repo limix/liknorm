@@ -192,6 +192,45 @@ int main()
 
   if (fabs(mean + 90.713060785598017332631570752710) > 1e-7) return 1;
 
+  N          = 6939;
+  K          = 5;
+  ef.Ty      = K;
+  ef.lp      = &binomial_log_partition;
+  ef.lp_data = &N;
+  mu         = -1.2;
+  var        = 2.1;
+  normal.tau = 1 / var;
+  normal.eta = mu / var;
+  integrate(machine, ef, normal, &mean, &variance);
+
+  if (fabs(mean + 6.864942360573377477805934177013) > 1e-7) return 1;
+
+  N          = 6939;
+  K          = 0;
+  ef.Ty      = K;
+  ef.lp      = &binomial_log_partition;
+  ef.lp_data = &N;
+  mu         = -1.2;
+  var        = 2.1;
+  normal.tau = 1 / var;
+  normal.eta = mu / var;
+  integrate(machine, ef, normal, &mean, &variance);
+
+  if (fabs(mean + 7.834540772782059292467238265090) > 1e-7) return 1;
+
+  N          = 6939;
+  K          = 6939;
+  ef.Ty      = K;
+  ef.lp      = &binomial_log_partition;
+  ef.lp_data = &N;
+  mu         = -1.2;
+  var        = 2.1;
+  normal.tau = 1 / var;
+  normal.eta = mu / var;
+  integrate(machine, ef, normal, &mean, &variance);
+
+  if (fabs(mean - 7.529622541121558043641925905831) > 1e-7) return 1;
+
   destroy_liknorm_machine(machine);
 
   return 0;
