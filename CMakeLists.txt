@@ -8,4 +8,4 @@ add_subdirectory (src)
 add_subdirectory (test)
 
 enable_testing()
-add_test( NAME BinomialNormal COMMAND test_binomial_normal )
+add_test( NAME BinomialNormal COMMAND test_binomial )
