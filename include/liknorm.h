@@ -22,8 +22,8 @@ typedef struct
 typedef struct
 {
         double *log_zeroth;
-        double *first;
-        double *second;
+        double *u;
+        double *v;
         int n;
         double precision;
 } LikNormMachine;
