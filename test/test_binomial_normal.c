@@ -58,7 +58,7 @@ int main()
   double mu;
   double var;
 
-  machine    = create_liknorm_machine(1000, 1e-7);
+  machine    = create_liknorm_machine(250, 1e-7);
   N          = 3;
   K          = 1;
   mu         = 0;
