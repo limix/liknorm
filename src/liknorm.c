@@ -89,10 +89,10 @@ void integrate_step(double     si,
 
   // printf("  lm.u      %.10f\n", *(lm.u));
 
-  *(lm.v) = 0;
+  tmp  = logaddexpss(logpbeta, logpalpha, hmu + sii, -hmu - si, &tmp_sign);
+  tmp -= lcdf_diff;
 
-  // *(lm.second) = bc * bc - 1 / (2 * c);
-  // *(lm.second) = 0;
+  *(lm.v) = hmu * hmu + hvar - hstd * copysign(exp(tmp), tmp_sign);
 }
 
 void combine_steps(LikNormMachine *machine, double *mean, double *variance)
@@ -108,8 +108,10 @@ void combine_steps(LikNormMachine *machine, double *mean, double *variance)
 
   for (i = 0; i < machine->n; i++)
   {
-    (*mean) += machine->u[i] * exp(machine->log_zeroth[i] - total);
+    (*mean)     += machine->u[i] * exp(machine->log_zeroth[i] - total);
+    (*variance) += machine->v[i] * exp(machine->log_zeroth[i] - total);
   }
+  (*variance) = (*variance) - (*mean) * (*mean);
 }
 
 void integrate(LikNormMachine *machine,
@@ -146,8 +148,7 @@ void integrate(LikNormMachine *machine,
   combine_steps(machine, mean, variance);
 
   printf("mean     %.30f\n", *mean);
-
-  // printf("variance %.10f\n", *variance);
+  printf("variance %.30f\n", *variance);
 }
 
 LikNormMachine* create_liknorm_machine(int n, double precision)

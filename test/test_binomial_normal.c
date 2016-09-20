@@ -69,6 +69,8 @@ int main()
 
   if (fabs(mean + 0.301985252166403428386587393106) > 1e-7) return 1;
 
+  if (fabs(variance - 0.606819655307590410941998015915) > 1e-7) return 1;
+
   N          = 9;
   K          = 2;
   ef.Ty      = K;
@@ -78,6 +80,8 @@ int main()
 
   if (fabs(mean + 0.838185833081513509412729945325) > 1e-7) return 1;
 
+  if (fabs(variance - 0.358983364571609286919340320310) > 1e-7) return 1;
+
   N          = 9;
   K          = 8;
   ef.Ty      = K;
@@ -86,6 +90,8 @@ int main()
   integrate(machine, ef, normal, &mean, &variance);
 
   if (fabs(mean - 1.214643858827865630090059312352) > 1e-7) return 1;
+
+  if (fabs(variance - 0.396670062739750806102279057086) > 1e-7) return 1;
 
   N          = 9;
   K          = 8;
@@ -113,6 +119,8 @@ int main()
 
   if (fabs(mean - 1.442314118365103814412009342050) > 1e-7) return 1;
 
+  if (fabs(variance - 0.211982113771149283110162286903) > 1e-7) return 1;
+
   N          = 29;
   K          = 2;
   ef.Ty      = K;
@@ -125,6 +133,8 @@ int main()
   integrate(machine, ef, normal, &mean, &variance);
 
   if (fabs(mean + 2.074258852713208423068635966047) > 1e-7) return 1;
+
+  if (fabs(variance - 0.301924384992626748669408698333) > 1e-7) return 1;
 
   N          = 29;
   K          = 2;
@@ -139,6 +149,8 @@ int main()
 
   if (fabs(mean + 5.482916813361223162814894749317) > 1e-7) return 1;
 
+  if (fabs(variance - 1.502949277724678012191361631267) > 1e-7) return 1;
+
   N          = 5;
   K          = 0;
   ef.Ty      = K;
@@ -152,6 +164,8 @@ int main()
 
   if (fabs(mean + 9.202995428625960983026743633673) > 1e-7) return 1;
 
+  if (fabs(variance - 2.093781911512067495095834601671) > 1e-7) return 1;
+
   N          = 5;
   K          = 5;
   ef.Ty      = K;
@@ -164,6 +178,8 @@ int main()
   integrate(machine, ef, normal, &mean, &variance);
 
   if (fabs(mean - 1.332358223280064590809956825979) > 1e-7) return 1;
+
+  if (fabs(variance - 0.802589191386011258089183684206) > 1e-7) return 1;
 
 
   N          = 5;
@@ -179,6 +195,8 @@ int main()
 
   if (fabs(mean + 101.200000000255741383625718299299) > 1e-7) return 1;
 
+  if (fabs(variance - 2.099999974132515490055084228516) > 1e-7) return 1;
+
   N          = 5;
   K          = 5;
   ef.Ty      = K;
@@ -191,6 +209,8 @@ int main()
   integrate(machine, ef, normal, &mean, &variance);
 
   if (fabs(mean + 90.713060785598017332631570752710) > 1e-7) return 1;
+
+  if (fabs(variance - 2.047698892607513698749244213104) > 1e-7) return 1;
 
   N          = 6939;
   K          = 5;
@@ -205,6 +225,8 @@ int main()
 
   if (fabs(mean + 6.864942360573377477805934177013) > 1e-7) return 1;
 
+  if (fabs(variance - 0.129256236959996329005662119016) > 1e-7) return 1;
+
   N          = 6939;
   K          = 0;
   ef.Ty      = K;
@@ -218,6 +240,8 @@ int main()
 
   if (fabs(mean + 7.834540772782059292467238265090) > 1e-7) return 1;
 
+  if (fabs(variance - 0.303887318965657016178738558665) > 1e-7) return 1;
+
   N          = 6939;
   K          = 6939;
   ef.Ty      = K;
@@ -230,6 +254,8 @@ int main()
   integrate(machine, ef, normal, &mean, &variance);
 
   if (fabs(mean - 7.529622541121558043641925905831) > 1e-7) return 1;
+
+  if (fabs(variance - 0.235014238273393516465148422867) > 1e-7) return 1;
 
   destroy_liknorm_machine(machine);
 
