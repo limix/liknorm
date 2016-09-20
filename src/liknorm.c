@@ -178,8 +178,8 @@ void integrate(LikNormMachine *machine,
 
   combine_steps(machine, mean, variance);
 
-  printf("mean     %.30f\n", *mean);
-  printf("variance %.30f\n", *variance);
+  // printf("mean     %.30f\n", *mean);
+  // printf("variance %.30f\n", *variance);
 }
 
 LikNormMachine* create_liknorm_machine(int n, double precision)
