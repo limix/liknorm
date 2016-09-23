@@ -1,5 +1,7 @@
 include_directories (${TEST_SOURCE_DIR}/src)
 add_executable (test_binomial test_binomial.c)
 add_executable (test_binomial_speed test_binomial_speed.c)
+add_executable (test_speed test_speed.c)
 target_link_libraries (test_binomial liknorm)
 target_link_libraries (test_binomial_speed liknorm)
+target_link_libraries (test_speed liknorm)
