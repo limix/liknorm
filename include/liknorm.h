@@ -1,18 +1,17 @@
 #ifndef LIKNORM_H
 #define LIKNORM_H
 
-typedef void log_partition (double x,
-                            void* lp_data,
-                            double *A0,
-                            double *logA1,
-                            double *logA2,
-                            double* sign);
+typedef void log_partition (double  theta,
+                            double *b0,
+                            double *logb1,
+                            double *logb2,
+                            double *sign);
 
 typedef struct
 {
-        double Ty;
+        double y;
+        double aphi;
         log_partition* lp;
-        void* lp_data;
 } ExpFam;
 
 typedef struct

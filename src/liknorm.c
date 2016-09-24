@@ -22,9 +22,12 @@ void integrate_step(double     si,
 
   double mi = si / 2 + sii / 2;
 
-  double A0, logA1, logA2, sign;
+  double b0, logb1, logb2, sign;
 
-  (*ef.lp)(mi, ef.lp_data, &A0, &logA1, &logA2, &sign);
+  (*ef.lp)(mi, &b0, &logb1, &logb2, &sign);
+  double A0    = b0 / ef.aphi;
+  double logA1 = logb1 - log(ef.aphi);
+  double logA2 = logb2 - log(ef.aphi);
 
   double tmp, tmp_sign;
 
@@ -32,7 +35,8 @@ void integrate_step(double     si,
   double a = -A0 + copysign(exp(tmp), tmp_sign);
 
   tmp = logaddexpss(logA1, logA2, -sign, mi, &tmp_sign);
-  double b = ef.Ty + normal.eta + copysign(exp(tmp), tmp_sign);
+  double Ty = ef.y / ef.aphi;
+  double b  = Ty + normal.eta + copysign(exp(tmp), tmp_sign);
 
   double c = -(normal.tau + exp(logA2)) / 2;
 
@@ -108,24 +112,24 @@ void combine_steps(LikNormMachine *machine, double *mean, double *variance)
 
 void shrink_interval(ExpFam ef, double step, double *left, double *right)
 {
-  double A0;
+  double b0;
 
   goto left_loop;
 
-  while (*left < *right && fabs(*left * ef.Ty - A0) > 700)
+  while (*left < *right && fabs(*left * ef.y / ef.aphi - b0 / ef.aphi) > 700)
   {
     *left += step;
 left_loop:;
-    (*ef.lp)(*left, ef.lp_data, &A0, 0, 0, 0);
+    (*ef.lp)(*left, &b0, 0, 0, 0);
   }
 
   goto right_loop;
 
-  while (*left < *right && fabs(*right * ef.Ty - A0) > 700)
+  while (*left < *right && fabs(*right * ef.y / ef.aphi - b0 / ef.aphi) > 700)
   {
     *right -= step;
 right_loop:;
-    (*ef.lp)(*right, ef.lp_data, &A0, 0, 0, 0);
+    (*ef.lp)(*right, &b0, 0, 0, 0);
   }
 }
 

@@ -45,21 +45,17 @@ double logaddexp(double x, double y)
 // A(X) = N log(1 + e^x)
 // A'(X) = N e^x / (1 + e^x)
 // A''(X) = N e^x / (1 + e^x)^2
-void binomial_log_partition(double  x,
-                            void   *lp_data,
-                            double *A0,
-                            double *logA1,
-                            double *logA2,
+void binomial_log_partition(double  theta,
+                            double *b0,
+                            double *logb1,
+                            double *logb2,
                             double *sign)
 {
-  double N  = *((double *)lp_data);
-  double ax = logaddexp(0, x);
+  *b0 = logaddexp(0, theta);
 
-  *A0 = N * ax;
+  if (logb1 != 0) *logb1 = theta - *b0;
 
-  if (logA1 != 0) *logA1 = log(N) + x - ax;
-
-  if (logA2 != 0) *logA2 = log(N) + x - 2 * ax;
+  if (logb2 != 0) *logb2 = theta - 2 * (*b0);
 
   if (sign != 0) *sign = +1;
 }
@@ -72,7 +68,7 @@ int main()
 
   double N  = 10;
   double K  = 5;
-  ExpFam ef = { K, &binomial_log_partition, &N };
+  ExpFam ef = { K, 1 / N, &binomial_log_partition };
 
   double mean, variance;
   double mu;
@@ -84,9 +80,9 @@ int main()
   K          = 1;
   mu         = 0;
   var        = 1;
-  ef.Ty      = K;
+  ef.y       = K;
   ef.lp      = &binomial_log_partition;
-  ef.lp_data = &N;
+  ef.aphi    = 1 / N;
   normal.tau = 1 / var;
   normal.eta = mu / var;
 
@@ -94,6 +90,8 @@ int main()
   double start = get_time();
 
   for (int i = 0; i < nrep; i++) integrate(machine, ef, normal, &mean, &variance);
+
+
 
   printf("Elapsed time: %.30f\n", (get_time() - start) / nrep);
 

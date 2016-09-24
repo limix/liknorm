@@ -14,24 +14,44 @@ double logaddexp(double x, double y)
   return tmp;
 }
 
-// A(X) = N log(1 + e^x)
-// A'(X) = N e^x / (1 + e^x)
-// A''(X) = N e^x / (1 + e^x)^2
-void binomial_log_partition(double  x,
-                            void   *lp_data,
-                            double *A0,
-                            double *logA1,
-                            double *logA2,
+// // A(X) = N log(1 + e^x)
+// // A'(X) = N e^x / (1 + e^x)
+// // A''(X) = N e^x / (1 + e^x)^2
+// void binomial_log_partition(double  x,
+//                             void   *lp_data,
+//                             double *A0,
+//                             double *logA1,
+//                             double *logA2,
+//                             double *sign)
+// {
+//   double N  = *((double *)lp_data);
+//   double ax = logaddexp(0, x);
+//
+//   *A0 = N * ax;
+//
+//   if (logA1 != 0) *logA1 = log(N) + x - ax;
+//
+//   if (logA2 != 0) *logA2 = log(N) + x - 2 * ax;
+//
+//   if (sign != 0) *sign = +1;
+// }
+
+// \phi = N
+// a(\phi) = 1/\phi
+// b(\theta) = log(1 + e^\theta)
+// b'(\theta) = e^\theta / (1 + e^\theta)
+// b''(\theta) = e^\theta / (1 + e^\theta)^2
+void binomial_log_partition(double  theta,
+                            double *b0,
+                            double *logb1,
+                            double *logb2,
                             double *sign)
 {
-  double N  = *((double *)lp_data);
-  double ax = logaddexp(0, x);
+  *b0 = logaddexp(0, theta);
 
-  *A0 = N * ax;
+  if (logb1 != 0) *logb1 = theta - *b0;
 
-  if (logA1 != 0) *logA1 = log(N) + x - ax;
-
-  if (logA2 != 0) *logA2 = log(N) + x - 2 * ax;
+  if (logb2 != 0) *logb2 = theta - 2 * (*b0);
 
   if (sign != 0) *sign = +1;
 }
@@ -44,8 +64,8 @@ int main()
   LikNormMachine *machine = create_liknorm_machine(10, 1e-7);
 
   double N  = 10;
-  double K  = 5;
-  ExpFam ef = { K, &binomial_log_partition, &N };
+  double K  = 5 / N;
+  ExpFam ef = { K, 1 / N, &binomial_log_partition };
 
   double mean, variance;
 
@@ -63,9 +83,9 @@ int main()
   K          = 1;
   mu         = 0;
   var        = 1;
-  ef.Ty      = K;
+  ef.y       = K / N;
   ef.lp      = &binomial_log_partition;
-  ef.lp_data = &N;
+  ef.aphi    = 1 / N;
   normal.tau = 1 / var;
   normal.eta = mu / var;
   integrate(machine, ef, normal, &mean, &variance);
@@ -74,22 +94,23 @@ int main()
 
   if (fabs(variance - 0.606819655307590410941998015915) > 1e-7) return 1;
 
-  N          = 9;
-  K          = 2;
-  ef.Ty      = K;
-  ef.lp      = &binomial_log_partition;
-  ef.lp_data = &N;
+
+  N       = 9;
+  K       = 2;
+  ef.y    = K / N;
+  ef.lp   = &binomial_log_partition;
+  ef.aphi = 1 / N;
   integrate(machine, ef, normal, &mean, &variance);
 
   if (fabs(mean + 0.838185833081513509412729945325) > 1e-7) return 1;
 
   if (fabs(variance - 0.358983364571609286919340320310) > 1e-7) return 1;
 
-  N          = 9;
-  K          = 8;
-  ef.Ty      = K;
-  ef.lp      = &binomial_log_partition;
-  ef.lp_data = &N;
+  N       = 9;
+  K       = 8;
+  ef.y    = K / N;
+  ef.lp   = &binomial_log_partition;
+  ef.aphi = 1 / N;
   integrate(machine, ef, normal, &mean, &variance);
 
   if (fabs(mean - 1.214643858827865630090059312352) > 1e-7) return 1;
@@ -98,9 +119,9 @@ int main()
 
   N          = 9;
   K          = 8;
-  ef.Ty      = K;
+  ef.y       = K / N;
   ef.lp      = &binomial_log_partition;
-  ef.lp_data = &N;
+  ef.aphi    = 1 / N;
   mu         = 1.2;
   var        = 1.0;
   normal.tau = 1 / var;
@@ -111,9 +132,9 @@ int main()
 
   N          = 9;
   K          = 8;
-  ef.Ty      = K;
+  ef.y       = K / N;
   ef.lp      = &binomial_log_partition;
-  ef.lp_data = &N;
+  ef.aphi    = 1 / N;
   mu         = 1.2;
   var        = 0.3;
   normal.tau = 1 / var;
@@ -126,9 +147,9 @@ int main()
 
   N          = 29;
   K          = 2;
-  ef.Ty      = K;
+  ef.y       = K / N;
   ef.lp      = &binomial_log_partition;
-  ef.lp_data = &N;
+  ef.aphi    = 1 / N;
   mu         = 1.2;
   var        = 2.1;
   normal.tau = 1 / var;
@@ -141,9 +162,9 @@ int main()
 
   N          = 29;
   K          = 2;
-  ef.Ty      = K;
+  ef.y       = K / N;
   ef.lp      = &binomial_log_partition;
-  ef.lp_data = &N;
+  ef.aphi    = 1 / N;
   mu         = -9.2;
   var        = 2.1;
   normal.tau = 1 / var;
@@ -156,9 +177,9 @@ int main()
 
   N          = 5;
   K          = 0;
-  ef.Ty      = K;
+  ef.y       = K / N;
   ef.lp      = &binomial_log_partition;
-  ef.lp_data = &N;
+  ef.aphi    = 1 / N;
   mu         = -9.2;
   var        = 2.1;
   normal.tau = 1 / var;
@@ -171,9 +192,9 @@ int main()
 
   N          = 5;
   K          = 5;
-  ef.Ty      = K;
+  ef.y       = K / N;
   ef.lp      = &binomial_log_partition;
-  ef.lp_data = &N;
+  ef.aphi    = 1 / N;
   mu         = -1.2;
   var        = 2.1;
   normal.tau = 1 / var;
@@ -187,9 +208,9 @@ int main()
 
   N          = 5;
   K          = 0;
-  ef.Ty      = K;
+  ef.y       = K / N;
   ef.lp      = &binomial_log_partition;
-  ef.lp_data = &N;
+  ef.aphi    = 1 / N;
   mu         = -101.2;
   var        = 2.1;
   normal.tau = 1 / var;
@@ -202,9 +223,9 @@ int main()
 
   N          = 5;
   K          = 5;
-  ef.Ty      = K;
+  ef.y       = K / N;
   ef.lp      = &binomial_log_partition;
-  ef.lp_data = &N;
+  ef.aphi    = 1 / N;
   mu         = -101.2;
   var        = 2.1;
   normal.tau = 1 / var;
@@ -217,9 +238,9 @@ int main()
 
   N          = 6939;
   K          = 5;
-  ef.Ty      = K;
+  ef.y       = K / N;
   ef.lp      = &binomial_log_partition;
-  ef.lp_data = &N;
+  ef.aphi    = 1 / N;
   mu         = -1.2;
   var        = 2.1;
   normal.tau = 1 / var;
@@ -232,9 +253,9 @@ int main()
 
   N          = 6939;
   K          = 0;
-  ef.Ty      = K;
+  ef.y       = K / N;
   ef.lp      = &binomial_log_partition;
-  ef.lp_data = &N;
+  ef.aphi    = 1 / N;
   mu         = -1.2;
   var        = 2.1;
   normal.tau = 1 / var;
@@ -247,9 +268,9 @@ int main()
 
   N          = 6939;
   K          = 6939;
-  ef.Ty      = K;
+  ef.y       = K / N;
   ef.lp      = &binomial_log_partition;
-  ef.lp_data = &N;
+  ef.aphi    = 1 / N;
   mu         = -1.2;
   var        = 2.1;
   normal.tau = 1 / var;
