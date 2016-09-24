@@ -2,60 +2,6 @@
 #include <stdio.h>
 #include <math.h>
 
-double logaddexp(double x, double y)
-{
-  double tmp = x - y;
-
-  if (x == y) return x + M_LN2;
-
-  if (tmp > 0) return x + log1p(exp(-tmp));
-  else if (tmp <= 0) return y + log1p(exp(tmp));
-
-  return tmp;
-}
-
-// // A(X) = N log(1 + e^x)
-// // A'(X) = N e^x / (1 + e^x)
-// // A''(X) = N e^x / (1 + e^x)^2
-// void binomial_log_partition(double  x,
-//                             void   *lp_data,
-//                             double *A0,
-//                             double *logA1,
-//                             double *logA2,
-//                             double *sign)
-// {
-//   double N  = *((double *)lp_data);
-//   double ax = logaddexp(0, x);
-//
-//   *A0 = N * ax;
-//
-//   if (logA1 != 0) *logA1 = log(N) + x - ax;
-//
-//   if (logA2 != 0) *logA2 = log(N) + x - 2 * ax;
-//
-//   if (sign != 0) *sign = +1;
-// }
-
-// \phi = N
-// a(\phi) = 1/\phi
-// b(\theta) = log(1 + e^\theta)
-// b'(\theta) = e^\theta / (1 + e^\theta)
-// b''(\theta) = e^\theta / (1 + e^\theta)^2
-// void binomial_log_partition(double  theta,
-//                             double *b0,
-//                             double *logb1,
-//                             double *logb2,
-//                             double *sign)
-// {
-//   *b0 = logaddexp(0, theta);
-//
-//   if (logb1 != 0) *logb1 = theta - *b0;
-//
-//   if (logb2 != 0) *logb2 = theta - 2 * (*b0);
-//
-//   if (sign != 0) *sign = +1;
-// }
-
 int main()
 {
   Normal normal = { 0, 1 };
