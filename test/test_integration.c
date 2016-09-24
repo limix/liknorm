@@ -107,17 +107,17 @@ int test_it(LikNormMachine *machine, Line *l)
   double mean, variance;
   integrate(machine, ef, normal, &mean, &variance);
 
-  if (fabs(mean - l->mean) > 1e-7) return 1;
+  if (fabs(mean - l->mean) > 1e-6) return 1;
 
-  if (fabs(variance - l->variance) > 1e-7) return 1;
+  if (fabs(variance - l->variance) > 1e-6) return 1;
 
-  // printf("%g %g %g %g %g %g\n",
-  //        l->normal_mean,
-  //        l->normal_variance,
-  //        ef.y,
-  //        ef.aphi,
-  //        mean - l->mean,
-  //        variance - l->variance);
+  printf("%g %g %g %g %g %g\n",
+         l->normal_mean,
+         l->normal_variance,
+         ef.y,
+         ef.aphi,
+         mean - l->mean,
+         variance - l->variance);
 
   return 0;
 }
