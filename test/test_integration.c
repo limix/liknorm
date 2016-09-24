@@ -1,3 +1,5 @@
+#include "liknorm.h"
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -93,8 +95,30 @@ Line* read_table()
   return root;
 }
 
-int test_it(Line *l)
+int test_it(LikNormMachine *machine, Line *l)
 {
+  Normal normal;
+
+  ExpFam ef = { l->y, l->aphi, get_log_partition(l->likname) };
+
+  normal.tau = 1 / l->normal_variance;
+  normal.eta = l->normal_mean / l->normal_variance;
+
+  double mean, variance;
+  integrate(machine, ef, normal, &mean, &variance);
+
+  if (fabs(mean - l->mean) > 1e-7) return 1;
+
+  if (fabs(variance - l->variance) > 1e-7) return 1;
+
+  // printf("%g %g %g %g %g %g\n",
+  //        l->normal_mean,
+  //        l->normal_variance,
+  //        ef.y,
+  //        ef.aphi,
+  //        mean - l->mean,
+  //        variance - l->variance);
+
   return 0;
 }
 
@@ -104,14 +128,17 @@ int main()
   Line *l    = root;
   int   e;
 
+  LikNormMachine *machine = create_liknorm_machine(250, 1e-7);
+
   while (l != 0)
   {
-    e = test_it(l);
+    e = test_it(machine, l);
 
     if (e != 0) return 1;
 
     l = l->next;
   }
 
+  destroy_liknorm_machine(machine);
   return 0;
 }
