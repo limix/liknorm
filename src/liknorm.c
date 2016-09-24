@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define PI 3.14159265358979323846
 
@@ -189,4 +190,31 @@ void destroy_liknorm_machine(LikNormMachine *machine)
   free(machine->u);
   free(machine->v);
   free(machine);
+}
+
+// \phi = N
+// a(\phi) = 1/\phi
+// b(\theta) = log(1 + e^\theta)
+// b'(\theta) = e^\theta / (1 + e^\theta)
+// b''(\theta) = e^\theta / (1 + e^\theta)^2
+void binomial_log_partition(double  theta,
+                            double *b0,
+                            double *logb1,
+                            double *logb2,
+                            double *sign)
+{
+  *b0 = logaddexp(0, theta);
+
+  if (logb1 != 0) *logb1 = theta - *b0;
+
+  if (logb2 != 0) *logb2 = theta - 2 * (*b0);
+
+  if (sign != 0) *sign = +1;
+}
+
+log_partition* get_log_partition(char *name)
+{
+  if (strcmp(name, "binomial") == 0) return binomial_log_partition;
+
+  return 0;
 }

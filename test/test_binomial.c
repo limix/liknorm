@@ -41,20 +41,20 @@ double logaddexp(double x, double y)
 // b(\theta) = log(1 + e^\theta)
 // b'(\theta) = e^\theta / (1 + e^\theta)
 // b''(\theta) = e^\theta / (1 + e^\theta)^2
-void binomial_log_partition(double  theta,
-                            double *b0,
-                            double *logb1,
-                            double *logb2,
-                            double *sign)
-{
-  *b0 = logaddexp(0, theta);
-
-  if (logb1 != 0) *logb1 = theta - *b0;
-
-  if (logb2 != 0) *logb2 = theta - 2 * (*b0);
-
-  if (sign != 0) *sign = +1;
-}
+// void binomial_log_partition(double  theta,
+//                             double *b0,
+//                             double *logb1,
+//                             double *logb2,
+//                             double *sign)
+// {
+//   *b0 = logaddexp(0, theta);
+//
+//   if (logb1 != 0) *logb1 = theta - *b0;
+//
+//   if (logb2 != 0) *logb2 = theta - 2 * (*b0);
+//
+//   if (sign != 0) *sign = +1;
+// }
 
 int main()
 {
@@ -65,7 +65,7 @@ int main()
 
   double N  = 10;
   double K  = 5 / N;
-  ExpFam ef = { K, 1 / N, &binomial_log_partition };
+  ExpFam ef = { K, 1 / N, get_log_partition("binomial") };
 
   double mean, variance;
 
@@ -84,7 +84,7 @@ int main()
   mu         = 0;
   var        = 1;
   ef.y       = K / N;
-  ef.lp      = &binomial_log_partition;
+  ef.lp      = get_log_partition("binomial");
   ef.aphi    = 1 / N;
   normal.tau = 1 / var;
   normal.eta = mu / var;
@@ -98,7 +98,7 @@ int main()
   N       = 9;
   K       = 2;
   ef.y    = K / N;
-  ef.lp   = &binomial_log_partition;
+  ef.lp   = get_log_partition("binomial");
   ef.aphi = 1 / N;
   integrate(machine, ef, normal, &mean, &variance);
 
@@ -109,7 +109,7 @@ int main()
   N       = 9;
   K       = 8;
   ef.y    = K / N;
-  ef.lp   = &binomial_log_partition;
+  ef.lp   = get_log_partition("binomial");
   ef.aphi = 1 / N;
   integrate(machine, ef, normal, &mean, &variance);
 
@@ -120,7 +120,7 @@ int main()
   N          = 9;
   K          = 8;
   ef.y       = K / N;
-  ef.lp      = &binomial_log_partition;
+  ef.lp      = get_log_partition("binomial");
   ef.aphi    = 1 / N;
   mu         = 1.2;
   var        = 1.0;
@@ -133,7 +133,7 @@ int main()
   N          = 9;
   K          = 8;
   ef.y       = K / N;
-  ef.lp      = &binomial_log_partition;
+  ef.lp      = get_log_partition("binomial");
   ef.aphi    = 1 / N;
   mu         = 1.2;
   var        = 0.3;
@@ -148,7 +148,7 @@ int main()
   N          = 29;
   K          = 2;
   ef.y       = K / N;
-  ef.lp      = &binomial_log_partition;
+  ef.lp      = get_log_partition("binomial");
   ef.aphi    = 1 / N;
   mu         = 1.2;
   var        = 2.1;
@@ -163,7 +163,7 @@ int main()
   N          = 29;
   K          = 2;
   ef.y       = K / N;
-  ef.lp      = &binomial_log_partition;
+  ef.lp      = get_log_partition("binomial");
   ef.aphi    = 1 / N;
   mu         = -9.2;
   var        = 2.1;
@@ -178,7 +178,7 @@ int main()
   N          = 5;
   K          = 0;
   ef.y       = K / N;
-  ef.lp      = &binomial_log_partition;
+  ef.lp      = get_log_partition("binomial");
   ef.aphi    = 1 / N;
   mu         = -9.2;
   var        = 2.1;
@@ -193,7 +193,7 @@ int main()
   N          = 5;
   K          = 5;
   ef.y       = K / N;
-  ef.lp      = &binomial_log_partition;
+  ef.lp      = get_log_partition("binomial");
   ef.aphi    = 1 / N;
   mu         = -1.2;
   var        = 2.1;
@@ -209,7 +209,7 @@ int main()
   N          = 5;
   K          = 0;
   ef.y       = K / N;
-  ef.lp      = &binomial_log_partition;
+  ef.lp      = get_log_partition("binomial");
   ef.aphi    = 1 / N;
   mu         = -101.2;
   var        = 2.1;
@@ -224,7 +224,7 @@ int main()
   N          = 5;
   K          = 5;
   ef.y       = K / N;
-  ef.lp      = &binomial_log_partition;
+  ef.lp      = get_log_partition("binomial");
   ef.aphi    = 1 / N;
   mu         = -101.2;
   var        = 2.1;
@@ -239,7 +239,7 @@ int main()
   N          = 6939;
   K          = 5;
   ef.y       = K / N;
-  ef.lp      = &binomial_log_partition;
+  ef.lp      = get_log_partition("binomial");
   ef.aphi    = 1 / N;
   mu         = -1.2;
   var        = 2.1;
@@ -254,7 +254,7 @@ int main()
   N          = 6939;
   K          = 0;
   ef.y       = K / N;
-  ef.lp      = &binomial_log_partition;
+  ef.lp      = get_log_partition("binomial");
   ef.aphi    = 1 / N;
   mu         = -1.2;
   var        = 2.1;
@@ -269,7 +269,7 @@ int main()
   N          = 6939;
   K          = 6939;
   ef.y       = K / N;
-  ef.lp      = &binomial_log_partition;
+  ef.lp      = get_log_partition("binomial");
   ef.aphi    = 1 / N;
   mu         = -1.2;
   var        = 2.1;
