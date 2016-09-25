@@ -212,9 +212,43 @@ void binomial_log_partition(double  theta,
   if (sign != 0) *sign = +1;
 }
 
+void bernoulli_log_partition(double  theta,
+                             double *b0,
+                             double *logb1,
+                             double *logb2,
+                             double *sign)
+{
+  *b0 = logaddexp(0, theta);
+
+  if (logb1 != 0) *logb1 = theta - *b0;
+
+  if (logb2 != 0) *logb2 = theta - 2 * (*b0);
+
+  if (sign != 0) *sign = +1;
+}
+
+void poisson_log_partition(double  theta,
+                           double *b0,
+                           double *logb1,
+                           double *logb2,
+                           double *sign)
+{
+  *b0 = exp(theta);
+
+  if (logb1 != 0) *logb1 = theta;
+
+  if (logb2 != 0) *logb2 = theta;
+
+  if (sign != 0) *sign = +1;
+}
+
 log_partition* get_log_partition(char *name)
 {
   if (strcmp(name, "binomial") == 0) return binomial_log_partition;
+
+  if (strcmp(name, "bernoulli") == 0) return bernoulli_log_partition;
+
+  if (strcmp(name, "poisson") == 0) return poisson_log_partition;
 
   return 0;
 }
