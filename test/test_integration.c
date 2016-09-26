@@ -113,7 +113,8 @@ int test_it(LikNormMachine *machine, Line *l)
   double mean, variance;
   integrate(machine, ef, normal, &mean, &variance);
 
-  int ok = fabs(mean - l->mean) < 1e-4 && fabs(variance - l->variance) < 1e-4;
+  double eps = 1e-4;
+  int    ok  = fabs(mean - l->mean) < eps && fabs(variance - l->variance) < eps;
   ok = ok && isfinite(mean) && isfinite(variance);
 
   // if (!ok)
@@ -143,7 +144,7 @@ int main()
   Line *l    = root;
   int   e;
 
-  LikNormMachine *machine = create_liknorm_machine(2000, 1e-7);
+  LikNormMachine *machine = create_liknorm_machine(500, 1e-7);
 
   while (l != 0)
   {
