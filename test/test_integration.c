@@ -121,21 +121,22 @@ int test_it(LikNormMachine *machine, Line *l, double *elapsed)
   int    ok  = fabs(mean - l->mean) < eps && fabs(variance - l->variance) < eps;
   ok = ok && isfinite(mean) && isfinite(variance);
 
-  // if (!ok)
-  // {
-  //   printf("%g %g %g %g %g %g\n",
-  //          l->normal_mean,
-  //          l->normal_variance,
-  //          ef.y,
-  //          ef.aphi,
-  //          mean - l->mean,
-  //          variance - l->variance);
-  //   printf("mean variance %g %g l->mean l->variance %g %g\n",
-  //          mean,
-  //          variance,
-  //          l->mean,
-  //          l->variance);
-  // }
+  if (!ok)
+  {
+    printf("%s %g %g %g %g %g %g\n",
+           l->likname,
+           l->normal_mean,
+           l->normal_variance,
+           ef.y,
+           ef.aphi,
+           mean - l->mean,
+           variance - l->variance);
+    printf("mean variance %g %g l->mean l->variance %g %g\n",
+           mean,
+           variance,
+           l->mean,
+           l->variance);
+  }
 
   if (!ok) return 1;
 
@@ -149,7 +150,7 @@ int main()
   int    e;
   double elapsed = 0;
 
-  LikNormMachine *machine = create_liknorm_machine(500, 1e-7);
+  LikNormMachine *machine = create_liknorm_machine(350, 1e-7);
 
   int i = 0;
 

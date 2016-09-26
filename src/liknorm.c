@@ -161,6 +161,8 @@ void shrink_interval(ExpFam *ef, double step, double *left, double *right)
     *left += step;
 left_loop:;
     (*ef->lp)(*left, &b0, 0, 0);
+
+    // printf("fabs(*left * ef->y - b0) %g\n", fabs(*left * ef->y - b0));
   }
 
   goto right_loop;
@@ -170,6 +172,8 @@ left_loop:;
     *right -= step;
 right_loop:;
     (*ef->lp)(*right, &b0, 0, 0);
+
+    // printf("fabs(*right * ef->y - b0) %g\n", fabs(*right * ef->y - b0));
   }
 }
 
@@ -179,14 +183,17 @@ void integrate(LikNormMachine *machine,
                double         *mean,
                double         *variance)
 {
-  double std  = sqrt(1 / normal->tau);
-  double mu   = normal->eta / normal->tau;
-  double left = mu - 10 * std;
+  const double times = 7;
+  double std         = sqrt(1 / normal->tau);
+  double mu          = normal->eta / normal->tau;
+  double left        = mu - times * std;
 
   left = fmax(left, ef->left);
 
-  double right = mu + 10 * std;
+  double right = mu + times * std;
   right = fmin(right, ef->right);
+
+  // printf("left right %g %g\n", left, right);
 
   if (left >= ef->right)
   {
@@ -199,6 +206,8 @@ void integrate(LikNormMachine *machine,
 
   shrink_interval(ef, step, &left, &right);
   step = (right - left) / machine->n;
+
+  // printf("left right %g %g\n", left, right);
 
   Interval interval;
 
