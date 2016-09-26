@@ -107,8 +107,9 @@ int test_it(LikNormMachine *machine, Line *l, double *elapsed)
 
   get_interval(l->likname, &(ef.left), &(ef.right));
 
-  normal.tau = 1 / l->normal_variance;
-  normal.eta = l->normal_mean / l->normal_variance;
+  normal.tau     = 1 / l->normal_variance;
+  normal.eta     = l->normal_mean / l->normal_variance;
+  normal.log_tau = -log(l->normal_variance);
 
   double mean, variance;
 

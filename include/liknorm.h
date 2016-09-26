@@ -19,6 +19,7 @@ typedef struct
 typedef struct
 {
         double eta;
+        double log_tau;
         double tau;
 } Normal;
 

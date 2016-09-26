@@ -16,6 +16,9 @@
 // log(2)
 #define LOG2 0.693147180559945286226763982995
 
+// sqrt(2)
+#define SQRT2 1.41421356237309514547462185874
+
 
 void integrate_step(double     si,
                     double     step,
@@ -64,9 +67,8 @@ void integrate_step(double     si,
     }
   }
 
-  double c = -(normal.tau + exp(logA2)) / 2;
+  double hvar = exp(-logaddexp(normal.log_tau, logA2));
 
-  double hvar  = -1 / (2 * c);
   double hmu   = b * hvar;
   double hstd  = sqrt(hvar);
   double beta  = (sii - hmu) / hstd;
@@ -100,7 +102,7 @@ void integrate_step(double     si,
     logp_sign = -1;
   }
 
-  *(lm.log_zeroth) = a + (b * hmu) / 2 + LPI2 - log(-c) / 2 + lcdf_diff;
+  *(lm.log_zeroth) = a + (b * hmu) / 2 + LPI2 + log(SQRT2 * hstd) + lcdf_diff;
 
   *(lm.u) = hmu - logp_sign * hstd * exp(logp - lcdf_diff);
 
@@ -255,7 +257,7 @@ void binomial_log_partition(double  theta,
                             double *logb1,
                             double *logb2)
 {
-  *b0 = logaddexp(0, theta);
+  *b0 = theta + log1p(exp(-theta));
 
   if (logb1 == 0) return;
 
@@ -268,7 +270,7 @@ void bernoulli_log_partition(double  theta,
                              double *logb1,
                              double *logb2)
 {
-  *b0 = logaddexp(0, theta);
+  *b0 = theta + log1p(exp(-theta));
 
   if (logb1 == 0) return;
 
@@ -285,9 +287,7 @@ void poisson_log_partition(double  theta,
 
   if (logb1 == 0) return;
 
-  if (logb1 != 0) *logb1 = theta;
-
-  if (logb2 != 0) *logb2 = theta;
+  *logb2 = *logb1 = theta;
 }
 
 void gamma_log_partition(double  theta,
@@ -295,12 +295,12 @@ void gamma_log_partition(double  theta,
                          double *logb1,
                          double *logb2)
 {
-  *b0 = log(-1 / theta);
+  *b0 = -log(-theta);
 
   if (logb1 == 0) return;
 
-  *logb1 = -log(-theta);
-  *logb2 = -2 * log(fabs(theta));
+  *logb1 = *b0;
+  *logb2 = 2 * (*b0);
 }
 
 void exponential_log_partition(double  theta,
@@ -308,12 +308,12 @@ void exponential_log_partition(double  theta,
                                double *logb1,
                                double *logb2)
 {
-  *b0 = log(-1 / theta);
+  *b0 = -log(-theta);
 
   if (logb1 == 0) return;
 
-  *logb1 = -log(-theta);
-  *logb2 = -2 * log(fabs(theta));
+  *logb1 = *b0;
+  *logb2 = 2 * (*b0);
 }
 
 void geometric_log_partition(double  theta,
@@ -321,7 +321,7 @@ void geometric_log_partition(double  theta,
                              double *logb1,
                              double *logb2)
 {
-  *b0 = -logaddexps(0, theta, 1, -1);
+  *b0 = -log1p(-exp(theta));
 
   if (logb1 == 0) return;
 
