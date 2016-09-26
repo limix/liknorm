@@ -305,6 +305,24 @@ void exponential_log_partition(double  theta,
   *b2_sign = +1;
 }
 
+void geometric_log_partition(double  theta,
+                             double *b0,
+                             double *logb1,
+                             double *b1_sign,
+                             double *logb2,
+                             double *b2_sign)
+{
+  *b0 = -logaddexps(0, theta, 1, -1);
+
+  if (logb1 == 0) return;
+
+  *logb1   = theta + *b0;
+  *b1_sign = +1;
+
+  *logb2   = theta + 2 * (*b0);
+  *b2_sign = +1;
+}
+
 log_partition* get_log_partition(char *name)
 {
   if (strcmp(name, "binomial") == 0) return binomial_log_partition;
@@ -317,6 +335,8 @@ log_partition* get_log_partition(char *name)
 
   if (strcmp(name, "exponential") == 0) return exponential_log_partition;
 
+  if (strcmp(name, "geometric") == 0) return geometric_log_partition;
+
   return 0;
 }
 
@@ -328,4 +348,6 @@ void get_interval(char *name, double *left, double *right)
   if (strcmp(name, "gamma") == 0) *right = -1e-15;
 
   if (strcmp(name, "exponential") == 0) *right = -1e-15;
+
+  if (strcmp(name, "geometric") == 0) *right = -1e-15;
 }
