@@ -45,7 +45,7 @@ int main()
 
     if (r == 0.28723) printf("nao eh pra chegar aqui");
   }
-  printf("Elapsed time for exp: %.30f\n", (get_time() - start) / nrep);
+  printf("Elapsed time for exp  : %.30f\n", (get_time() - start) / nrep);
   r += 1;
 
   start = get_time();
@@ -56,7 +56,7 @@ int main()
 
     if (r == 0.28723) printf("nao eh pra chegar aqui");
   }
-  printf("Elapsed time for log: %.30f\n", (get_time() - start) / nrep);
+  printf("Elapsed time for log  : %.30f\n", (get_time() - start) / nrep);
   r += 1;
 
   start = get_time();
@@ -67,29 +67,7 @@ int main()
 
     if (r == 0.28723) printf("nao eh pra chegar aqui");
   }
-  printf("Elapsed time for lae: %.30f\n", (get_time() - start) / nrep);
-  r += 1;
-
-  start = get_time();
-
-  for (int i = 0; i < nrep; i++)
-  {
-    r = logaddexps(-3.1 + 1. / i, 1.2 + 1. / (i + 1), -1, +1);
-
-    if (r == 0.28723) printf("nao eh pra chegar aqui");
-  }
-  printf("Elapsed time for las: %.30f\n", (get_time() - start) / nrep);
-  r += 1;
-
-  start = get_time();
-
-  for (int i = 0; i < nrep; i++)
-  {
-    r = logaddexpss(-3.1 + 1. / i, 1.2 + 1. / (i + 1), -1, +1, &tmp);
-
-    if (r == 0.28723) printf("nao eh pra chegar aqui");
-  }
-  printf("Elapsed time for lss: %.30f\n", (get_time() - start) / nrep);
+  printf("Elapsed time for logae: %.30f\n", (get_time() - start) / nrep);
   r += 1;
 
   start = get_time();
@@ -100,7 +78,7 @@ int main()
 
     if (r == 0.28723) printf("nao eh pra chegar aqui");
   }
-  printf("Elapsed time for lcd: %.30f\n", (get_time() - start) / nrep);
+  printf("Elapsed time for logcd: %.30f\n", (get_time() - start) / nrep);
   r += 1;
 
   start = get_time();
@@ -111,9 +89,31 @@ int main()
 
     if (r == 0.28723) printf("nao eh pra chegar aqui");
   }
-  printf("Elapsed time for lpd: %.30f\n", (get_time() - start) / nrep);
+  printf("Elapsed time for logpd: %.30f\n", (get_time() - start) / nrep);
   r += 1;
 
+  start = get_time();
+
+  for (int i = 0; i < nrep; i++)
+  {
+    r = log1p(+3.1 + 1. / i);
+
+    if (r == 0.28723) printf("nao eh pra chegar aqui");
+  }
+  printf("Elapsed time for log1p: %.30f\n", (get_time() - start) / nrep);
+  r += 1;
+
+
+  start = get_time();
+
+  for (int i = 0; i < nrep; i++)
+  {
+    r = 1. / i + log1p(exp(-3.1 + 1. / i));
+
+    if (r == 0.28723) printf("nao eh pra chegar aqui");
+  }
+  printf("Elapsed time for log1e: %.30f\n", (get_time() - start) / nrep);
+  r += 1;
 
   return 0;
 }
