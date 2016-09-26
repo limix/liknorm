@@ -13,6 +13,9 @@
 // log(PI) / 2
 #define LPI2 0.572364942924700081938738094323
 
+// log(2)
+#define LOG2 0.693147180559945286226763982995
+
 
 void integrate_step(double     si,
                     double     step,
@@ -32,29 +35,36 @@ void integrate_step(double     si,
   double logA1 = logb1 - ef.log_aphi;
   double logA2 = logb2 - ef.log_aphi;
 
-  // int mi_pos = mi > 0;
-
   double tmp, tmp_sign;
 
-  // tmp = logaddexpss(logA1, logA2, mi, -(mi * mi) / 2, &tmp_sign);
-  // double a = -A0;
+  double diff  = logA1 - logA2;
+  double a     = -A0;
+  double Ty    = ef.y / ef.aphi;
+  double b     = Ty + normal.eta;
+  double logmi = log(fabs(mi));
 
-  // A1 + (-mi/2) A2
-  bool   positive = mi < 0 || log(mi / 2) + logA2 < logA1;
-  double diff     = logA1 - logA2;
-  double a        = -A0;
+  double falta = logA1 - logmi - logA2 + LOG2;
 
-  if (positive) a += mi * exp(logA1 + log1p((-mi / 2) * exp(-diff)));
-  else a -= mi * exp(logA2 + log(mi / 2) + log1p((-2 / mi) * exp(+diff)));
-
-  // a = -A0 + copysign(exp(tmp), tmp_sign);
-
-  tmp = logaddexpss(logA1, logA2, -1, mi, &tmp_sign);
-  double Ty = ef.y / ef.aphi;
-  double b  = Ty + normal.eta + copysign(exp(tmp), tmp_sign);
+  if ((mi < 0) || (falta > LOG2))
+  {
+    double ed = -mi* exp(-diff);
+    a += mi * exp(logA1 + log1p(ed / 2));
+    b -= exp(logA1 + log1p(ed));
+  } else
+  {
+    if (falta > 0)
+    {
+      double ed = -mi* exp(-diff);
+      a += mi * exp(logA1 + log1p(ed / 2));
+      b += exp(logA2 + logmi + log1p(1 / ed));
+    } else {
+      double ed = -exp(diff) / mi;
+      a -= mi * exp(logA2 + logmi - LOG2 + log1p(2 * ed));
+      b += exp(logA2 + logmi + log1p(ed));
+    }
+  }
 
   double c = -(normal.tau + exp(logA2)) / 2;
-
 
   double hvar  = -1 / (2 * c);
   double hmu   = b * hvar;
@@ -67,15 +77,13 @@ void integrate_step(double     si,
 
   if (alpha + beta >= 0)
   {
-    lsf_a = logcdf(-alpha);
-    lsf_b = logcdf(-beta);
-
-    lcdf_diff = logaddexps(lsf_a, lsf_b, 1.0, -1.0);
+    lsf_a     = logcdf(-alpha);
+    lsf_b     = logcdf(-beta);
+    lcdf_diff = lsf_a + log1p(-exp(-lsf_a + lsf_b));
   } else {
-    lcdf_a = logcdf(alpha);
-    lcdf_b = logcdf(beta);
-
-    lcdf_diff = logaddexps(lcdf_b, lcdf_a, 1.0, -1.0);
+    lcdf_a    = logcdf(alpha);
+    lcdf_b    = logcdf(beta);
+    lcdf_diff = lcdf_b + log1p(-exp(-lcdf_b + lcdf_a));
   }
 
   double logpbeta  = logpdf(beta);
@@ -83,13 +91,12 @@ void integrate_step(double     si,
 
   double logp, logp_sign;
 
-  if (fabs(beta) < fabs(alpha))
+  if (logpbeta > logpalpha)
   {
-    logp      = logaddexps(logpbeta, logpalpha, +1, -1);
-    logp_sign = +1;
-  }
-  else {
-    logp      = logaddexps(logpbeta, logpalpha, -1, +1);
+    logp      = logpbeta + log1p(-exp(-logpbeta + logpalpha));
+    logp_sign = 1;
+  } else {
+    logp      = logpalpha + log1p(-exp(-logpalpha + logpbeta));
     logp_sign = -1;
   }
 
@@ -97,7 +104,28 @@ void integrate_step(double     si,
 
   *(lm.u) = hmu - logp_sign * hstd * exp(logp - lcdf_diff);
 
-  tmp  = logaddexpss(logpbeta, logpalpha, hmu + sii, -hmu - si, &tmp_sign);
+  double k = hmu + si;
+
+  double sxx = log(fabs(logp_sign * k)) + logp;
+  double syy = log(step) + logpbeta;
+  double sx  = logp_sign * k;
+  double sy  = step;
+
+  if (sxx > syy)
+  {
+    if (sx >= 0)
+    {
+      tmp      = syy + log1p((sx / sy) * exp(logp - logpbeta));
+      tmp_sign = +1;
+    } else {
+      tmp      = sxx + log1p((sy / sx) * exp(-logp + logpbeta));
+      tmp_sign = -1;
+    }
+  } else {
+    tmp      = syy + log1p((sx / sy) * exp(logp - logpbeta));
+    tmp_sign = +1;
+  }
+
   tmp -= lcdf_diff;
 
   *(lm.v) = hmu * hmu + hvar - hstd * copysign(exp(tmp), tmp_sign);
