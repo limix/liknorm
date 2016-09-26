@@ -364,7 +364,7 @@ void geometric_log_partition(double  theta,
   *logb2 = theta + 2 * (*b0);
 }
 
-log_partition* get_log_partition(char *name)
+log_partition* get_log_partition(const char *name)
 {
   if (strcmp(name, "binomial") == 0) return binomial_log_partition;
 
@@ -381,7 +381,7 @@ log_partition* get_log_partition(char *name)
   return 0;
 }
 
-void get_interval(char *name, double *left, double *right)
+void get_interval(const char *name, double *left, double *right)
 {
   *left  = -DBL_MAX;
   *right = +DBL_MAX;
