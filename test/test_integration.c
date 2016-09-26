@@ -1,4 +1,5 @@
 #include "liknorm.h"
+#include "benchmark.h"
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -95,7 +96,7 @@ Line* read_table()
   return root;
 }
 
-int test_it(LikNormMachine *machine, Line *l)
+int test_it(LikNormMachine *machine, Line *l, double *elapsed)
 {
   Normal normal;
 
@@ -109,7 +110,10 @@ int test_it(LikNormMachine *machine, Line *l)
   normal.eta = l->normal_mean / l->normal_variance;
 
   double mean, variance;
+
+  double start = get_time();
   integrate(machine, ef, normal, &mean, &variance);
+  *elapsed += (get_time() - start);
 
   double eps = 1e-4;
   int    ok  = fabs(mean - l->mean) < eps && fabs(variance - l->variance) < eps;
@@ -138,21 +142,27 @@ int test_it(LikNormMachine *machine, Line *l)
 
 int main()
 {
-  Line *root = read_table();
-  Line *l    = root;
-  int   e;
+  Line  *root = read_table();
+  Line  *l    = root;
+  int    e;
+  double elapsed = 0;
 
   LikNormMachine *machine = create_liknorm_machine(500, 1e-7);
 
+  int i = 0;
+
   while (l != 0)
   {
-    e = test_it(machine, l);
+    e = test_it(machine, l, &elapsed);
 
     if (e != 0) return 1;
 
     l = l->next;
+    i++;
   }
 
   destroy_liknorm_machine(machine);
+
+  printf("Elapsed time: %.10f\n", elapsed / i);
   return 0;
 }
