@@ -10,6 +10,7 @@ typedef struct
 {
         double y;
         double aphi;
+        double log_aphi;
         log_partition* lp;
         double left;
         double right;

@@ -102,7 +102,8 @@ int test_it(LikNormMachine *machine, Line *l, double *elapsed)
 
   // printf("%s\n", l->likname);
 
-  ExpFam ef = { l->y, l->aphi, get_log_partition(l->likname), 0, 0 };
+  ExpFam ef =
+  { l->y, l->aphi, log(l->aphi), get_log_partition(l->likname), 0, 0 };
 
   get_interval(l->likname, &(ef.left), &(ef.right));
 

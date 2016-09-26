@@ -6,6 +6,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 #define PI 3.14159265358979323846
 
@@ -21,23 +22,32 @@ void integrate_step(double     si,
 {
   double sii = si + step;
 
-  double mi = si / 2 + sii / 2;
+  double mi = (si + sii) / 2;
 
-  double b0, logb1, logb2, b1_sign, b2_sign;
+  double b0, logb1, logb2;
 
   (*ef.lp)(mi, &b0, &logb1, &logb2);
 
-  // printf("sign1 sign2 %g %g\n",    sign1,     sign2);
-
-  // printf("aphi_sign aphi %g %g\n", aphi_sign, ef.aphi);
   double A0    = b0 / ef.aphi;
-  double logA1 = logb1 - log(ef.aphi);
-  double logA2 = logb2 - log(ef.aphi);
+  double logA1 = logb1 - ef.log_aphi;
+  double logA2 = logb2 - ef.log_aphi;
+
+  // int mi_pos = mi > 0;
 
   double tmp, tmp_sign;
 
-  tmp = logaddexpss(logA1, logA2, mi, -(mi * mi) / 2, &tmp_sign);
-  double a = -A0 + copysign(exp(tmp), tmp_sign);
+  // tmp = logaddexpss(logA1, logA2, mi, -(mi * mi) / 2, &tmp_sign);
+  // double a = -A0;
+
+  // A1 + (-mi/2) A2
+  bool   positive = mi < 0 || log(mi / 2) + logA2 < logA1;
+  double diff     = logA1 - logA2;
+  double a        = -A0;
+
+  if (positive) a += mi * exp(logA1 + log1p((-mi / 2) * exp(-diff)));
+  else a -= mi * exp(logA2 + log(mi / 2) + log1p((-2 / mi) * exp(+diff)));
+
+  // a = -A0 + copysign(exp(tmp), tmp_sign);
 
   tmp = logaddexpss(logA1, logA2, -1, mi, &tmp_sign);
   double Ty = ef.y / ef.aphi;
