@@ -99,7 +99,13 @@ int test_it(LikNormMachine *machine, Line *l)
 {
   Normal normal;
 
-  ExpFam ef = { l->y, l->aphi, get_log_partition(l->likname) };
+  // printf("%s\n", l->likname);
+
+  double aphi_sign = l->aphi > 0 ? +1 : -1;
+  ExpFam ef        =
+  { l->y, fabs(l->aphi), aphi_sign, get_log_partition(l->likname), 0, 0 };
+
+  get_interval(l->likname, &(ef.left), &(ef.right));
 
   normal.tau = 1 / l->normal_variance;
   normal.eta = l->normal_mean / l->normal_variance;
@@ -107,23 +113,26 @@ int test_it(LikNormMachine *machine, Line *l)
   double mean, variance;
   integrate(machine, ef, normal, &mean, &variance);
 
-  double EPS = 1e-5;
+  int ok = fabs(mean - l->mean) < 1e-4 && fabs(variance - l->variance) < 1e-4;
+  ok = ok && isfinite(mean) && isfinite(variance);
 
-  // if (fabs(mean - l->mean) > 1e-4) return 1;
-  //
-  // if (fabs(variance - l->variance) > 1e-4) return 1;
+  // if (!ok)
+  // {
+  //   printf("%g %g %g %g %g %g\n",
+  //          l->normal_mean,
+  //          l->normal_variance,
+  //          ef.y,
+  //          ef.aphi,
+  //          mean - l->mean,
+  //          variance - l->variance);
+  //   printf("mean variance %g %g l->mean l->variance %g %g\n",
+  //          mean,
+  //          variance,
+  //          l->mean,
+  //          l->variance);
+  // }
 
-  if ((fabs(mean - l->mean) > EPS) || (fabs(variance - l->variance) > EPS))
-  {
-    printf("%g %g %g %g %g %g\n",
-           l->normal_mean,
-           l->normal_variance,
-           ef.y,
-           ef.aphi,
-           mean - l->mean,
-           variance - l->variance);
-    printf("mean variance %g %g\n", mean, variance);
-  }
+  if (!ok) return 1;
 
   return 0;
 }

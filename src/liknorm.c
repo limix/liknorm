@@ -23,20 +23,27 @@ void integrate_step(double     si,
 
   double mi = si / 2 + sii / 2;
 
-  double b0, logb1, logb2, sign;
+  double b0, logb1, logb2, b1_sign, b2_sign;
 
-  (*ef.lp)(mi, &b0, &logb1, &logb2, &sign);
-  double A0    = b0 / ef.aphi;
+  (*ef.lp)(mi, &b0, &logb1, &b1_sign, &logb2, &b2_sign);
+  double aphi_sign = ef.aphi_sign;
+  double sign1     = b1_sign * aphi_sign;
+  double sign2     = b2_sign * aphi_sign;
+
+  // printf("sign1 sign2 %g %g\n",    sign1,     sign2);
+
+  // printf("aphi_sign aphi %g %g\n", aphi_sign, ef.aphi);
+  double A0    = aphi_sign * b0 / ef.aphi;
   double logA1 = logb1 - log(ef.aphi);
   double logA2 = logb2 - log(ef.aphi);
 
   double tmp, tmp_sign;
 
-  tmp = logaddexpss(logA1, logA2, sign * mi, -(mi * mi) / 2, &tmp_sign);
+  tmp = logaddexpss(logA1, logA2, sign1 * mi, -(mi * mi) / 2, &tmp_sign);
   double a = -A0 + copysign(exp(tmp), tmp_sign);
 
-  tmp = logaddexpss(logA1, logA2, -sign, mi, &tmp_sign);
-  double Ty = ef.y / ef.aphi;
+  tmp = logaddexpss(logA1, logA2, -sign1, mi, &tmp_sign);
+  double Ty = aphi_sign * ef.y / ef.aphi;
   double b  = Ty + normal.eta + copysign(exp(tmp), tmp_sign);
 
   double c = -(normal.tau + exp(logA2)) / 2;
@@ -121,7 +128,7 @@ void shrink_interval(ExpFam ef, double step, double *left, double *right)
   {
     *left += step;
 left_loop:;
-    (*ef.lp)(*left, &b0, 0, 0, 0);
+    (*ef.lp)(*left, &b0, 0, 0, 0, 0);
   }
 
   goto right_loop;
@@ -130,7 +137,7 @@ left_loop:;
   {
     *right -= step;
 right_loop:;
-    (*ef.lp)(*right, &b0, 0, 0, 0);
+    (*ef.lp)(*right, &b0, 0, 0, 0, 0);
   }
 }
 
@@ -140,8 +147,19 @@ void integrate(LikNormMachine *machine,
                double         *mean,
                double         *variance)
 {
-  double left  = normal.eta / normal.tau - 10 * sqrt(1 / normal.tau);
+  double left = normal.eta / normal.tau - 10 * sqrt(1 / normal.tau);
+
+  left = fmax(left, ef.left);
+
   double right = normal.eta / normal.tau + 10 * sqrt(1 / normal.tau);
+  right = fmin(right, ef.right);
+
+  if (left >= ef.right)
+  {
+    *mean     = 0;
+    *variance = 0;
+    return;
+  }
 
   double step = (right - left) / machine->n;
 
@@ -200,46 +218,73 @@ void destroy_liknorm_machine(LikNormMachine *machine)
 void binomial_log_partition(double  theta,
                             double *b0,
                             double *logb1,
+                            double *b1_sign,
                             double *logb2,
-                            double *sign)
+                            double *b2_sign)
 {
   *b0 = logaddexp(0, theta);
 
-  if (logb1 != 0) *logb1 = theta - *b0;
+  if (logb1 == 0) return;
 
-  if (logb2 != 0) *logb2 = theta - 2 * (*b0);
+  *logb1   = theta - *b0;
+  *b1_sign = +1;
 
-  if (sign != 0) *sign = +1;
+  *logb2   = theta - 2 * (*b0);
+  *b2_sign = +1;
 }
 
 void bernoulli_log_partition(double  theta,
                              double *b0,
                              double *logb1,
+                             double *b1_sign,
                              double *logb2,
-                             double *sign)
+                             double *b2_sign)
 {
   *b0 = logaddexp(0, theta);
 
-  if (logb1 != 0) *logb1 = theta - *b0;
+  if (logb1 == 0) return;
 
-  if (logb2 != 0) *logb2 = theta - 2 * (*b0);
+  *logb1   = theta - *b0;
+  *b1_sign = +1;
 
-  if (sign != 0) *sign = +1;
+  *logb2   = theta - 2 * (*b0);
+  *b2_sign = +1;
 }
 
 void poisson_log_partition(double  theta,
                            double *b0,
                            double *logb1,
+                           double *b1_sign,
                            double *logb2,
-                           double *sign)
+                           double *b2_sign)
 {
   *b0 = exp(theta);
 
+  if (logb1 == 0) return;
+
   if (logb1 != 0) *logb1 = theta;
+  *b1_sign = +1;
 
   if (logb2 != 0) *logb2 = theta;
+  *b2_sign = +1;
+}
 
-  if (sign != 0) *sign = +1;
+void gamma_log_partition(double  theta,
+                         double *b0,
+                         double *logb1,
+                         double *b1_sign,
+                         double *logb2,
+                         double *b2_sign)
+{
+  *b0 = log(-1 / theta);
+
+  if (logb1 == 0) return;
+
+  *logb1   = -log(-theta);
+  *b1_sign = +1;
+
+  *logb2   = -2 * log(fabs(theta));
+  *b2_sign = +1;
 }
 
 log_partition* get_log_partition(char *name)
@@ -250,5 +295,15 @@ log_partition* get_log_partition(char *name)
 
   if (strcmp(name, "poisson") == 0) return poisson_log_partition;
 
+  if (strcmp(name, "gamma") == 0) return gamma_log_partition;
+
   return 0;
+}
+
+void get_interval(char *name, double *left, double *right)
+{
+  *left  = -DBL_MAX;
+  *right = +DBL_MAX;
+
+  if (strcmp(name, "gamma") == 0) *right = -1e-15;
 }
