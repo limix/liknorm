@@ -25,25 +25,22 @@ void integrate_step(double     si,
 
   double b0, logb1, logb2, b1_sign, b2_sign;
 
-  (*ef.lp)(mi, &b0, &logb1, &b1_sign, &logb2, &b2_sign);
-  double aphi_sign = ef.aphi_sign;
-  double sign1     = b1_sign * aphi_sign;
-  double sign2     = b2_sign * aphi_sign;
+  (*ef.lp)(mi, &b0, &logb1, &logb2);
 
   // printf("sign1 sign2 %g %g\n",    sign1,     sign2);
 
   // printf("aphi_sign aphi %g %g\n", aphi_sign, ef.aphi);
-  double A0    = aphi_sign * b0 / ef.aphi;
+  double A0    = b0 / ef.aphi;
   double logA1 = logb1 - log(ef.aphi);
   double logA2 = logb2 - log(ef.aphi);
 
   double tmp, tmp_sign;
 
-  tmp = logaddexpss(logA1, logA2, sign1 * mi, -(mi * mi) / 2, &tmp_sign);
+  tmp = logaddexpss(logA1, logA2, mi, -(mi * mi) / 2, &tmp_sign);
   double a = -A0 + copysign(exp(tmp), tmp_sign);
 
-  tmp = logaddexpss(logA1, logA2, -sign1, mi, &tmp_sign);
-  double Ty = aphi_sign * ef.y / ef.aphi;
+  tmp = logaddexpss(logA1, logA2, -1, mi, &tmp_sign);
+  double Ty = ef.y / ef.aphi;
   double b  = Ty + normal.eta + copysign(exp(tmp), tmp_sign);
 
   double c = -(normal.tau + exp(logA2)) / 2;
@@ -128,7 +125,7 @@ void shrink_interval(ExpFam ef, double step, double *left, double *right)
   {
     *left += step;
 left_loop:;
-    (*ef.lp)(*left, &b0, 0, 0, 0, 0);
+    (*ef.lp)(*left, &b0, 0, 0);
   }
 
   goto right_loop;
@@ -137,7 +134,7 @@ left_loop:;
   {
     *right -= step;
 right_loop:;
-    (*ef.lp)(*right, &b0, 0, 0, 0, 0);
+    (*ef.lp)(*right, &b0, 0, 0);
   }
 }
 
@@ -218,109 +215,80 @@ void destroy_liknorm_machine(LikNormMachine *machine)
 void binomial_log_partition(double  theta,
                             double *b0,
                             double *logb1,
-                            double *b1_sign,
-                            double *logb2,
-                            double *b2_sign)
+                            double *logb2)
 {
   *b0 = logaddexp(0, theta);
 
   if (logb1 == 0) return;
 
-  *logb1   = theta - *b0;
-  *b1_sign = +1;
-
-  *logb2   = theta - 2 * (*b0);
-  *b2_sign = +1;
+  *logb1 = theta - *b0;
+  *logb2 = theta - 2 * (*b0);
 }
 
 void bernoulli_log_partition(double  theta,
                              double *b0,
                              double *logb1,
-                             double *b1_sign,
-                             double *logb2,
-                             double *b2_sign)
+                             double *logb2)
 {
   *b0 = logaddexp(0, theta);
 
   if (logb1 == 0) return;
 
-  *logb1   = theta - *b0;
-  *b1_sign = +1;
-
-  *logb2   = theta - 2 * (*b0);
-  *b2_sign = +1;
+  *logb1 = theta - *b0;
+  *logb2 = theta - 2 * (*b0);
 }
 
 void poisson_log_partition(double  theta,
                            double *b0,
                            double *logb1,
-                           double *b1_sign,
-                           double *logb2,
-                           double *b2_sign)
+                           double *logb2)
 {
   *b0 = exp(theta);
 
   if (logb1 == 0) return;
 
   if (logb1 != 0) *logb1 = theta;
-  *b1_sign = +1;
 
   if (logb2 != 0) *logb2 = theta;
-  *b2_sign = +1;
 }
 
 void gamma_log_partition(double  theta,
                          double *b0,
                          double *logb1,
-                         double *b1_sign,
-                         double *logb2,
-                         double *b2_sign)
+                         double *logb2)
 {
   *b0 = log(-1 / theta);
 
   if (logb1 == 0) return;
 
-  *logb1   = -log(-theta);
-  *b1_sign = +1;
-
-  *logb2   = -2 * log(fabs(theta));
-  *b2_sign = +1;
+  *logb1 = -log(-theta);
+  *logb2 = -2 * log(fabs(theta));
 }
 
 void exponential_log_partition(double  theta,
                                double *b0,
                                double *logb1,
-                               double *b1_sign,
-                               double *logb2,
-                               double *b2_sign)
+                               double *logb2)
 {
   *b0 = log(-1 / theta);
 
   if (logb1 == 0) return;
 
-  *logb1   = -log(-theta);
-  *b1_sign = +1;
-
-  *logb2   = -2 * log(fabs(theta));
-  *b2_sign = +1;
+  *logb1 = -log(-theta);
+  *logb2 = -2 * log(fabs(theta));
 }
 
 void geometric_log_partition(double  theta,
                              double *b0,
                              double *logb1,
-                             double *b1_sign,
-                             double *logb2,
-                             double *b2_sign)
+                             double *logb2)
 {
   *b0 = -logaddexps(0, theta, 1, -1);
 
   if (logb1 == 0) return;
 
-  *logb1   = theta + *b0;
-  *b1_sign = +1;
-
-  *logb2   = theta + 2 * (*b0);
-  *b2_sign = +1;
+  *logb1 = theta + *b0;
+  *logb2 = theta + 2 * (*b0);
 }
 
 log_partition* get_log_partition(char *name)

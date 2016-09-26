@@ -4,9 +4,7 @@
 typedef void log_partition (double  theta,
                             double *b0,
                             double *logb1,
-                            double *b1_sign,
-                            double *logb2,
-                            double *b2_sign);
+                            double *logb2);
 
 typedef struct
 {
