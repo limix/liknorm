@@ -20,54 +20,48 @@
 #define SQRT2 1.41421356237309514547462185874
 
 
-void integrate_step(double     si,
-                    double     step,
-                    ExpFam    *ef,
-                    Normal    *normal,
-                    LogMoments lm)
+void integrate_step(double  si,
+                    double  step,
+                    ExpFam *ef,
+                    Normal *normal,
+                    double *log_zeroth,
+                    double *u,
+                    double *v,
+                    double *A0,
+                    double *logA1,
+                    double *logA2,
+                    double *midiff)
 {
   double sii = si + step;
 
   double mi = (si + sii) / 2;
 
-  double b0, logb1, logb2;
-
-  (*ef->lp)(mi, &b0, &logb1, &logb2);
-
-  double A0    = b0 / ef->aphi;
-  double logA1 = logb1 - ef->log_aphi;
-  double logA2 = logb2 - ef->log_aphi;
-
   double tmp, tmp_sign;
 
-  double diff  = logA1 - logA2;
-  double a     = -A0;
+  double a     = -(*A0);
   double Ty    = ef->y / ef->aphi;
   double b     = Ty + normal->eta;
   double logmi = log(fabs(mi));
 
-  double falta = logA1 - logmi - logA2 + LOG2;
+  double falta = *logA1 - logmi - *logA2 + LOG2;
 
   if ((mi < 0) || (falta > LOG2))
   {
-    double ed = -mi* exp(-diff);
-    a += mi * exp(logA1 + log1p(ed / 2));
-    b -= exp(logA1 + log1p(ed));
+    a += mi * exp(*logA1 + log1p(*midiff / 2));
+    b -= exp(*logA1 + log1p(*midiff));
   } else
   {
     if (falta > 0)
     {
-      double ed = -mi* exp(-diff);
-      a += mi * exp(logA1 + log1p(ed / 2));
-      b += exp(logA2 + logmi + log1p(1 / ed));
+      a += mi * exp(*logA1 + log1p(*midiff / 2));
+      b += exp(*logA2 + logmi + log1p(1 / *midiff));
     } else {
-      double ed = -exp(diff) / mi;
-      a -= mi * exp(logA2 + logmi - LOG2 + log1p(2 * ed));
-      b += exp(logA2 + logmi + log1p(ed));
+      a -= mi * exp(*logA2 + logmi - LOG2 + log1p(2 / *midiff));
+      b += exp(*logA2 + logmi + log1p(1 / *midiff));
     }
   }
 
-  double hvar = exp(-logaddexp(normal->log_tau, logA2));
+  double hvar = exp(-logaddexp(normal->log_tau, *logA2));
 
   double hmu   = b * hvar;
   double hstd  = sqrt(hvar);
@@ -102,9 +96,9 @@ void integrate_step(double     si,
     logp_sign = -1;
   }
 
-  *(lm.log_zeroth) = a + (b * hmu) / 2 + LPI2 + log(SQRT2 * hstd) + lcdf_diff;
+  *log_zeroth = a + (b * hmu) / 2 + LPI2 + log(SQRT2 * hstd) + lcdf_diff;
 
-  *(lm.u) = hmu - logp_sign * hstd * exp(logp - lcdf_diff);
+  *u = hmu - logp_sign * hstd * exp(logp - lcdf_diff);
 
   double k = hmu + si;
 
@@ -130,7 +124,7 @@ void integrate_step(double     si,
 
   tmp -= lcdf_diff;
 
-  *(lm.v) = hmu * hmu + hvar - hstd * copysign(exp(tmp), tmp_sign);
+  *v = hmu * hmu + hvar - hstd * copysign(exp(tmp), tmp_sign);
 }
 
 void combine_steps(LikNormMachine *machine, double *mean, double *variance)
@@ -206,24 +200,45 @@ void integrate(LikNormMachine *machine,
   shrink_interval(ef, step, &left, &right);
   step = (right - left) / machine->n;
 
-  Interval   interval;
-  LogMoments lm;
+  Interval interval;
 
   interval.left  = left;
   interval.right = right;
   interval.n     = machine->n;
   interval.step  = step;
 
-  double si;
-
-  for (int i = 0; i < interval.n; i++)
+  for (int i = 0; i < interval.n; ++i)
   {
-    si            = interval.left + interval.step * i;
-    lm.log_zeroth = machine->log_zeroth + i;
-    lm.u          = machine->u + i;
-    lm.v          = machine->v + i;
+    double mi = (2 * interval.left + (2 * i + 1) * interval.step) / 2;
+    (*ef->lp)(mi, machine->A0 + i, machine->logA1 + i, machine->logA2 + i);
+  }
 
-    integrate_step(si, interval.step, ef, normal, lm);
+  for (int i = 0; i < interval.n; ++i)
+  {
+    machine->A0[i]    /= ef->aphi;
+    machine->logA1[i] -= ef->log_aphi;
+    machine->logA2[i] -= ef->log_aphi;
+  }
+
+  for (int i = 0; i < interval.n; ++i)
+  {
+    double mi = (2 * interval.left + (2 * i + 1) * interval.step) / 2;
+    machine->midiff[i] = -mi* exp(machine->logA2[i] - machine->logA1[i]);
+  }
+
+  for (int i = 0; i < interval.n; ++i)
+  {
+    integrate_step(interval.left + interval.step * i,
+                   interval.step,
+                   ef,
+                   normal,
+                   machine->log_zeroth + i,
+                   machine->u + i,
+                   machine->v + i,
+                   machine->A0 + i,
+                   machine->logA1 + i,
+                   machine->logA2 + i,
+                   machine->midiff + i);
   }
 
   combine_steps(machine, mean, variance);
@@ -237,6 +252,10 @@ LikNormMachine* create_liknorm_machine(int n, double precision)
   machine->log_zeroth = malloc(n * sizeof(double));
   machine->u          = malloc(n * sizeof(double));
   machine->v          = malloc(n * sizeof(double));
+  machine->A0         = malloc(n * sizeof(double));
+  machine->logA1      = malloc(n * sizeof(double));
+  machine->logA2      = malloc(n * sizeof(double));
+  machine->midiff     = malloc(n * sizeof(double));
   machine->precision  = precision;
 
   return machine;
@@ -247,6 +266,10 @@ void destroy_liknorm_machine(LikNormMachine *machine)
   free(machine->log_zeroth);
   free(machine->u);
   free(machine->v);
+  free(machine->A0);
+  free(machine->logA1);
+  free(machine->logA2);
+  free(machine->midiff);
   free(machine);
 }
 

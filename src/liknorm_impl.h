@@ -8,11 +8,4 @@ typedef struct
   double step;
 } Interval;
 
-typedef struct
-{
-  double* log_zeroth;
-  double* u;
-  double* v;
-} LogMoments;
-
 #endif /* ifndef LIKNORM_IMPL_H */

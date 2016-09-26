@@ -29,6 +29,10 @@ typedef struct
         double *u;
         double *v;
         int n;
+        double *A0;
+        double *logA1;
+        double *logA2;
+        double *midiff;
         double precision;
 } LikNormMachine;
 
