@@ -114,7 +114,7 @@ int test_it(LikNormMachine *machine, Line *l, double *elapsed)
   double mean, variance;
 
   double start = get_time();
-  integrate(machine, ef, normal, &mean, &variance);
+  integrate(machine, &ef, &normal, &mean, &variance);
   *elapsed += (get_time() - start);
 
   double eps = 1e-4;

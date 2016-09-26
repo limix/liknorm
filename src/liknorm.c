@@ -22,8 +22,8 @@
 
 void integrate_step(double     si,
                     double     step,
-                    ExpFam     ef,
-                    Normal     normal,
+                    ExpFam    *ef,
+                    Normal    *normal,
                     LogMoments lm)
 {
   double sii = si + step;
@@ -32,18 +32,18 @@ void integrate_step(double     si,
 
   double b0, logb1, logb2;
 
-  (*ef.lp)(mi, &b0, &logb1, &logb2);
+  (*ef->lp)(mi, &b0, &logb1, &logb2);
 
-  double A0    = b0 / ef.aphi;
-  double logA1 = logb1 - ef.log_aphi;
-  double logA2 = logb2 - ef.log_aphi;
+  double A0    = b0 / ef->aphi;
+  double logA1 = logb1 - ef->log_aphi;
+  double logA2 = logb2 - ef->log_aphi;
 
   double tmp, tmp_sign;
 
   double diff  = logA1 - logA2;
   double a     = -A0;
-  double Ty    = ef.y / ef.aphi;
-  double b     = Ty + normal.eta;
+  double Ty    = ef->y / ef->aphi;
+  double b     = Ty + normal->eta;
   double logmi = log(fabs(mi));
 
   double falta = logA1 - logmi - logA2 + LOG2;
@@ -67,7 +67,7 @@ void integrate_step(double     si,
     }
   }
 
-  double hvar = exp(-logaddexp(normal.log_tau, logA2));
+  double hvar = exp(-logaddexp(normal->log_tau, logA2));
 
   double hmu   = b * hvar;
   double hstd  = sqrt(hvar);
@@ -155,43 +155,46 @@ void combine_steps(LikNormMachine *machine, double *mean, double *variance)
   (*variance) = (*variance) - (*mean) * (*mean);
 }
 
-void shrink_interval(ExpFam ef, double step, double *left, double *right)
+void shrink_interval(ExpFam *ef, double step, double *left, double *right)
 {
   double b0;
+  double limit = 700 * ef->aphi;
 
   goto left_loop;
 
-  while (*left < *right && fabs(*left * ef.y / ef.aphi - b0 / ef.aphi) > 700)
+  while (*left < *right && fabs(*left * ef->y - b0) > limit)
   {
     *left += step;
 left_loop:;
-    (*ef.lp)(*left, &b0, 0, 0);
+    (*ef->lp)(*left, &b0, 0, 0);
   }
 
   goto right_loop;
 
-  while (*left < *right && fabs(*right * ef.y / ef.aphi - b0 / ef.aphi) > 700)
+  while (*left < *right && fabs(*right * ef->y - b0) > limit)
   {
     *right -= step;
 right_loop:;
-    (*ef.lp)(*right, &b0, 0, 0);
+    (*ef->lp)(*right, &b0, 0, 0);
   }
 }
 
 void integrate(LikNormMachine *machine,
-               ExpFam          ef,
-               Normal          normal,
+               ExpFam         *ef,
+               Normal         *normal,
                double         *mean,
                double         *variance)
 {
-  double left = normal.eta / normal.tau - 10 * sqrt(1 / normal.tau);
+  double std  = sqrt(1 / normal->tau);
+  double mu   = normal->eta / normal->tau;
+  double left = mu - 10 * std;
 
-  left = fmax(left, ef.left);
+  left = fmax(left, ef->left);
 
-  double right = normal.eta / normal.tau + 10 * sqrt(1 / normal.tau);
-  right = fmin(right, ef.right);
+  double right = mu + 10 * std;
+  right = fmin(right, ef->right);
 
-  if (left >= ef.right)
+  if (left >= ef->right)
   {
     *mean     = 0;
     *variance = 0;

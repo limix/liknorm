@@ -34,7 +34,7 @@ typedef struct
 
 LikNormMachine* create_liknorm_machine(int n, double precision);
 void destroy_liknorm_machine(LikNormMachine* machine);
-void integrate(LikNormMachine *machine, ExpFam ef, Normal normal,
+void integrate(LikNormMachine *machine, ExpFam *ef, Normal *normal,
                double* mean, double *variance);
 log_partition* get_log_partition(char *name);
 void get_interval(char *name, double* left, double* right);
