@@ -5,7 +5,6 @@ set(CMAKE_BUILD_TYPE Release)
 SET(CMAKE_C_FLAGS "-Ofast")
 
 include_directories(.)
-# include_directories(include)
 add_subdirectory(test)
 
 enable_testing()
