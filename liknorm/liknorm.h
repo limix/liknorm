@@ -1,23 +1,122 @@
-#include "liknorm_impl.h"
-#include "liknorm.h"
-#include "logaddexp.h"
-#include "normal.h"
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include "normal.h"
 
-#define PI 3.14159265358979323846
+#define M_E    2.7182818284590452354 /* e */
+#define M_LOG2E  1.4426950408889634074 /* log_2 e */
+#define M_LOG10E 0.43429448190325182765  /* log_10 e */
+#define M_LN2    0.69314718055994530942  /* log_e 2 */
+#define M_LN10   2.30258509299404568402  /* log_e 10 */
+#define M_PI   3.14159265358979323846  /* pi */
+#define M_PI_2   1.57079632679489661923  /* pi/2 */
+#define M_PI_4   0.78539816339744830962  /* pi/4 */
+#define M_1_PI   0.31830988618379067154  /* 1/pi */
+#define M_2_PI   0.63661977236758134308  /* 2/pi */
+#define M_2_SQRTPI 1.12837916709551257390  /* 2/sqrt(pi) */
+#define M_SQRT2  1.41421356237309504880  /* sqrt(2) */
+#define M_SQRT1_2  0.70710678118654752440  /* 1/sqrt(2) */
+#define LPI2 0.572364942924700081938738094323 /* log(pi)/2 */
 
-// log(PI) / 2
-#define LPI2 0.572364942924700081938738094323
+typedef struct
+{
+  double left, right;
+  int    n;
+  double step;
+} Interval;
 
-// log(2)
-#define LOG2 0.693147180559945286226763982995
+typedef void log_partition (double  theta,
+                            double *b0,
+                            double *logb1,
+                            double *logb2);
 
-// sqrt(2)
-#define SQRT2 1.41421356237309514547462185874
+typedef struct
+{
+        double y;
+        double aphi;
+        double log_aphi;
+        log_partition* lp;
+        double left;
+        double right;
+} ExpFam;
+
+typedef struct
+{
+        double eta;
+        double log_tau;
+        double tau;
+} Normal;
+
+typedef struct
+{
+        double *log_zeroth;
+        double *u;
+        double *v;
+        int n;
+        double *A0;
+        double *logA1;
+        double *logA2;
+        double *midiff;
+        double precision;
+} LikNormMachine;
+
+
+/* Implements log(e^x + e^y).
+ */
+inline static double logaddexp(double x, double y)
+{
+    double tmp = x - y;
+
+    if (x == y)
+        return x + M_LN2;
+
+    if (tmp > 0)
+        return x + log1p(exp(-tmp));
+    else if (tmp <= 0)
+        return y + log1p(exp(tmp));
+
+    return tmp;
+}
+
+void integrate_step(double  si,
+                    double  step,
+                    ExpFam *ef,
+                    Normal *normal,
+                    double *log_zeroth,
+                    double *u,
+                    double *v,
+                    double *A0,
+                    double *logA1,
+                    double *logA2,
+                    double *midiff);
+void combine_steps(LikNormMachine *machine, double *mean, double *variance);
+void shrink_interval(ExpFam *ef, double step, double *left, double *right);
+void integrate(LikNormMachine *machine,
+               ExpFam         *ef,
+               Normal         *normal,
+               double         *mean,
+               double         *variance);
+LikNormMachine* create_liknorm_machine(int n, double precision);
+void destroy_liknorm_machine(LikNormMachine *machine);
+void binomial_log_partition(double  theta, double *b0, double *logb1,
+                            double *logb2);
+void bernoulli_log_partition(double  theta, double *b0, double *logb1,
+                             double *logb2);
+
+void poisson_log_partition(double  theta, double *b0, double *logb1,
+                           double *logb2);
+
+void gamma_log_partition(double theta, double *b0, double *logb1,
+                         double *logb2);
+void exponential_log_partition(double  theta, double *b0, double *logb1,
+                               double *logb2);
+void geometric_log_partition(double  theta, double *b0, double *logb1,
+                             double *logb2);
+log_partition* get_log_partition(const char *name);
+void get_interval(const char *name, double *left, double *right);
+
 
 
 void integrate_step(double  si,
@@ -43,9 +142,9 @@ void integrate_step(double  si,
   double b     = Ty + normal->eta;
   double logmi = log(fabs(mi));
 
-  double falta = *logA1 - logmi - *logA2 + LOG2;
+  double falta = *logA1 - logmi - *logA2 + M_LN2;
 
-  if ((mi < 0) || (falta > LOG2))
+  if ((mi < 0) || (falta > M_LN2))
   {
     a += mi * exp(*logA1 + log1p(*midiff / 2));
     b -= exp(*logA1 + log1p(*midiff));
@@ -56,7 +155,7 @@ void integrate_step(double  si,
       a += mi * exp(*logA1 + log1p(*midiff / 2));
       b += exp(*logA2 + logmi + log1p(1 / *midiff));
     } else {
-      a -= mi * exp(*logA2 + logmi - LOG2 + log1p(2 / *midiff));
+      a -= mi * exp(*logA2 + logmi - M_LN2 + log1p(2 / *midiff));
       b += exp(*logA2 + logmi + log1p(1 / *midiff));
     }
   }
@@ -96,7 +195,7 @@ void integrate_step(double  si,
     logp_sign = -1;
   }
 
-  *log_zeroth = a + (b * hmu) / 2 + LPI2 + log(SQRT2 * hstd) + lcdf_diff;
+  *log_zeroth = a + (b * hmu) / 2 + LPI2 + log(M_SQRT2 * hstd) + lcdf_diff;
 
   *u = hmu - logp_sign * hstd * exp(logp - lcdf_diff);
 
