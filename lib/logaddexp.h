@@ -4,6 +4,22 @@
 #include <math.h>
 #include <float.h>
 
+#ifndef M_LN2
+#define M_LN2 0.69314718055994530942
+#endif
+
+#ifndef M_SQRT1_2
+#define M_SQRT1_2 0.707106781186547461715008466854
+#endif
+
+#ifndef M_2_SQRTPI
+#define M_2_SQRTPI 1.128379167095512558560699289956
+#endif
+
+#ifndef M_SQRT2
+#define M_SQRT2 1.414213562373095145474621858739
+#endif
+
 /* Implements log(e^x + e^y).
  */
 inline static double logaddexp(double x, double y)

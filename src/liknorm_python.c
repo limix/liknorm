@@ -13,7 +13,7 @@ void py_create_liknorm_machine(int n, double precision)
   machine = create_liknorm_machine(350, 1e-7);
 }
 
-void py_destroy_liknorm_machine()
+void py_destroy_liknorm_machine(void)
 {
   destroy_liknorm_machine(machine);
 }
