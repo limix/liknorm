@@ -2,10 +2,10 @@
 #define DEFINITIONS_H
 
 typedef
-  void log_partition (double theta, double *b0, double *logb1, double *logb2);
+  void log_partition(double theta, double *b0, double *logb1, double *logb2);
 
 typedef
-  void log_partition0 (double theta, double *b0);
+  double log_partition0(double theta);
 
 typedef struct
 {
@@ -13,6 +13,7 @@ typedef struct
   double         aphi;
   double         log_aphi;
   log_partition *lp;
+  log_partition0 *lp0;
   double         left;
   double         right;
 } ExpFam;

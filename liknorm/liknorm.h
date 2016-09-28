@@ -66,37 +66,6 @@ void shrink_interval(ExpFam *ef,
                      double  step,
                      double *left,
                      double *right);
-void binomial_log_partition(double  theta,
-                            double *b0,
-                            double *logb1,
-                            double *logb2);
-void bernoulli_log_partition(double  theta,
-                             double *b0,
-                             double *logb1,
-                             double *logb2);
-
-void poisson_log_partition(double  theta,
-                           double *b0,
-                           double *logb1,
-                           double *logb2);
-
-void gamma_log_partition(double  theta,
-                         double *b0,
-                         double *logb1,
-                         double *logb2);
-void exponential_log_partition(double  theta,
-                               double *b0,
-                               double *logb1,
-                               double *logb2);
-void geometric_log_partition(double  theta,
-                             double *b0,
-                             double *logb1,
-                             double *logb2);
-log_partition* get_log_partition(const char *name);
-void           get_interval(const char *name,
-                            double     *left,
-                            double     *right);
-
 
 void integrate_step(double  si,
                     double  step,
@@ -211,25 +180,15 @@ void combine_steps(LikNormMachine *machine,
                    double         *mean,
                    double         *variance)
 {
-  (*log_zeroth) = 0;
-  (*mean)       = 0;
-  (*variance)   = 0;
+  (*log_zeroth) = logaddexp_array(machine->log_zeroth, machine->n,
+                                  max_log_zeroth);
 
-  double total = logaddexp_array(machine->log_zeroth, machine->n,
-                                 max_log_zeroth);
-
-  // double total = logaddexp(machine->log_zeroth[0], machine->log_zeroth[1]);
-  // int    i;
-  //
-  // for (i = 2; i < machine->n; i++) total = logaddexp(total,
-  //                                                    machine->log_zeroth[i]);
-
-  (*log_zeroth) = total;
-  double diff;
+  (*mean)     = 0;
+  (*variance) = 0;
 
   for (int i = 0; i < machine->n; i++)
   {
-    diff         = exp(machine->log_zeroth[i] - total);
+    double diff = exp(machine->log_zeroth[i] - (*log_zeroth));
     (*mean)     += machine->u[i] * diff;
     (*variance) += machine->v[i] * diff;
   }
@@ -247,7 +206,7 @@ void shrink_interval(ExpFam *ef, double step, double *left, double *right)
   {
     *left += step;
 left_loop:;
-    (*ef->lp)(*left, &b0, 0, 0);
+    b0 = (*ef->lp0)(*left);
   }
 
   goto right_loop;
@@ -256,7 +215,7 @@ left_loop:;
   {
     *right -= step;
 right_loop:;
-    (*ef->lp)(*right, &b0, 0, 0);
+    b0 = (*ef->lp0)(*right);
   }
 }
 
@@ -353,115 +312,6 @@ void liknorm_destroy_machine(LikNormMachine *machine)
   free(machine);
 }
 
-// \phi = N
-// a(\phi) = 1/\phi
-// b(\theta) = log(1 + e^\theta)
-// b'(\theta) = e^\theta / (1 + e^\theta)
-// b''(\theta) = e^\theta / (1 + e^\theta)^2
-void binomial_log_partition(double  theta,
-                            double *b0,
-                            double *logb1,
-                            double *logb2)
-{
-  *b0 = theta + log1p(exp(-theta));
-
-  if (logb1 == 0) return;
-
-  *logb1 = theta - *b0;
-  *logb2 = theta - 2 * (*b0);
-}
-
-void bernoulli_log_partition(double  theta,
-                             double *b0,
-                             double *logb1,
-                             double *logb2)
-{
-  *b0 = theta + log1p(exp(-theta));
-
-  if (logb1 == 0) return;
-
-  *logb1 = theta - *b0;
-  *logb2 = theta - 2 * (*b0);
-}
-
-void poisson_log_partition(double  theta,
-                           double *b0,
-                           double *logb1,
-                           double *logb2)
-{
-  *b0 = exp(theta);
-
-  if (logb1 == 0) return;
-
-  *logb2 = *logb1 = theta;
-}
-
-void gamma_log_partition(double  theta,
-                         double *b0,
-                         double *logb1,
-                         double *logb2)
-{
-  *b0 = -log(-theta);
-
-  if (logb1 == 0) return;
-
-  *logb1 = *b0;
-  *logb2 = 2 * (*b0);
-}
-
-void exponential_log_partition(double  theta,
-                               double *b0,
-                               double *logb1,
-                               double *logb2)
-{
-  *b0 = -log(-theta);
-
-  if (logb1 == 0) return;
-
-  *logb1 = *b0;
-  *logb2 = 2 * (*b0);
-}
-
-void geometric_log_partition(double  theta,
-                             double *b0,
-                             double *logb1,
-                             double *logb2)
-{
-  *b0 = -log1p(-exp(theta));
-
-  if (logb1 == 0) return;
-
-  *logb1 = theta + *b0;
-  *logb2 = theta + 2 * (*b0);
-}
-
-log_partition* get_log_partition(const char *name)
-{
-  if (strcmp(name, "binomial") == 0) return binomial_log_partition;
-
-  if (strcmp(name, "bernoulli") == 0) return bernoulli_log_partition;
-
-  if (strcmp(name, "poisson") == 0) return poisson_log_partition;
-
-  if (strcmp(name, "gamma") == 0) return gamma_log_partition;
-
-  if (strcmp(name, "exponential") == 0) return exponential_log_partition;
-
-  if (strcmp(name, "geometric") == 0) return geometric_log_partition;
-
-  return 0;
-}
-
-void get_interval(const char *name, double *left, double *right)
-{
-  *left  = -DBL_MAX;
-  *right = +DBL_MAX;
-
-  if (strcmp(name, "gamma") == 0) *right = -1e-15;
-
-  if (strcmp(name, "exponential") == 0) *right = -1e-15;
-
-  if (strcmp(name, "geometric") == 0) *right = -1e-15;
-}
+#include "log_partitions.h"
 
 #endif /* end of include guard: LIKNORM_H */
