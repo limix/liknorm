@@ -111,10 +111,10 @@ int test_it(LikNormMachine *machine, Line *l, double *elapsed)
   normal.eta     = l->normal_mean / l->normal_variance;
   normal.log_tau = -log(l->normal_variance);
 
-  double mean, variance;
+  double log_zeroth, mean, variance;
 
   double start = get_time();
-  integrate(machine, &ef, &normal, &mean, &variance);
+  liknorm_integrate(machine, &ef, &normal, &log_zeroth, &mean, &variance);
   *elapsed += (get_time() - start);
 
   double eps = 1e-4;
@@ -150,7 +150,7 @@ int main()
   int    e;
   double elapsed = 0;
 
-  LikNormMachine *machine = create_liknorm_machine(350, 1e-7);
+  LikNormMachine *machine = liknorm_create_machine(350);
 
   int i = 0;
 
@@ -164,7 +164,7 @@ int main()
     i++;
   }
 
-  destroy_liknorm_machine(machine);
+  liknorm_destroy_machine(machine);
 
   printf("Elapsed time: %.10f\n", elapsed / i);
   return 0;

@@ -1,70 +1,49 @@
+#ifndef LIKNORM_H
+#define LIKNORM_H
+
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+
 #include "constants.h"
 #include "normal.h"
+#include "definitions.h"
+#include "compiler.h"
 
-
-typedef struct
-{
-  double left, right;
-  int    n;
-  double step;
-} Interval;
-
-typedef void log_partition (double  theta,
-                            double *b0,
-                            double *logb1,
-                            double *logb2);
-
-typedef struct
-{
-        double y;
-        double aphi;
-        double log_aphi;
-        log_partition* lp;
-        double left;
-        double right;
-} ExpFam;
-
-typedef struct
-{
-        double eta;
-        double log_tau;
-        double tau;
-} Normal;
-
-typedef struct
-{
-        double *log_zeroth;
-        double *u;
-        double *v;
-        int n;
-        double *A0;
-        double *logA1;
-        double *logA2;
-        double *midiff;
-        double precision;
-} LikNormMachine;
+/* ========================== Interface ========================== */
+void liknorm_integrate(LikNormMachine *machine,
+                       ExpFam         *ef,
+                       Normal         *normal,
+                       double         *log_zeroth,
+                       double         *mean,
+                       double         *variance);
+LikNormMachine* liknorm_create_machine(int n);
+void            liknorm_destroy_machine(LikNormMachine *machine);
 
 
 /* Implements log(e^x + e^y).
  */
 inline static double logaddexp(double x, double y)
 {
-    double tmp = x - y;
+  double tmp = x - y;
 
-    if (x == y)
-        return x + M_LN2;
+  if (LIKNORM_UNLIKELY(x == y)) return x + M_LN2;
 
-    if (tmp > 0)
-        return x + log1p(exp(-tmp));
-    else if (tmp <= 0)
-        return y + log1p(exp(tmp));
+  if (tmp > 0) return x + log1p(exp(-tmp));
+  else if (tmp <= 0) return y + log1p(exp(tmp));
 
-    return tmp;
+  return tmp;
+}
+
+double logaddexp_array(double *x, int n, double xmax)
+{
+  double total = 0;
+
+  for (int i = 0; i < n; ++i) total += exp(x[i] - xmax);
+
+  return xmax + log(total);
 }
 
 void integrate_step(double  si,
@@ -78,32 +57,45 @@ void integrate_step(double  si,
                     double *logA1,
                     double *logA2,
                     double *midiff);
-void combine_steps(LikNormMachine *machine, double *mean, double *variance);
-void shrink_interval(ExpFam *ef, double step, double *left, double *right);
-void integrate(LikNormMachine *machine,
-               ExpFam         *ef,
-               Normal         *normal,
-               double         *mean,
-               double         *variance);
-LikNormMachine* create_liknorm_machine(int n, double precision);
-void destroy_liknorm_machine(LikNormMachine *machine);
-void binomial_log_partition(double  theta, double *b0, double *logb1,
+void combine_steps(LikNormMachine *machine,
+                   double          max_log_zeroth,
+                   double         *log_zeroth,
+                   double         *mean,
+                   double         *variance);
+void shrink_interval(ExpFam *ef,
+                     double  step,
+                     double *left,
+                     double *right);
+void binomial_log_partition(double  theta,
+                            double *b0,
+                            double *logb1,
                             double *logb2);
-void bernoulli_log_partition(double  theta, double *b0, double *logb1,
+void bernoulli_log_partition(double  theta,
+                             double *b0,
+                             double *logb1,
                              double *logb2);
 
-void poisson_log_partition(double  theta, double *b0, double *logb1,
+void poisson_log_partition(double  theta,
+                           double *b0,
+                           double *logb1,
                            double *logb2);
 
-void gamma_log_partition(double theta, double *b0, double *logb1,
+void gamma_log_partition(double  theta,
+                         double *b0,
+                         double *logb1,
                          double *logb2);
-void exponential_log_partition(double  theta, double *b0, double *logb1,
+void exponential_log_partition(double  theta,
+                               double *b0,
+                               double *logb1,
                                double *logb2);
-void geometric_log_partition(double  theta, double *b0, double *logb1,
+void geometric_log_partition(double  theta,
+                             double *b0,
+                             double *logb1,
                              double *logb2);
 log_partition* get_log_partition(const char *name);
-void get_interval(const char *name, double *left, double *right);
-
+void           get_interval(const char *name,
+                            double     *left,
+                            double     *right);
 
 
 void integrate_step(double  si,
@@ -213,20 +205,29 @@ void integrate_step(double  si,
   *v = hmu * hmu + hvar - hstd * copysign(exp(tmp), tmp_sign);
 }
 
-void combine_steps(LikNormMachine *machine, double *mean, double *variance)
+void combine_steps(LikNormMachine *machine,
+                   double          max_log_zeroth,
+                   double         *log_zeroth,
+                   double         *mean,
+                   double         *variance)
 {
-  (*mean)     = 0;
-  (*variance) = 0;
+  (*log_zeroth) = 0;
+  (*mean)       = 0;
+  (*variance)   = 0;
 
-  double total = logaddexp(machine->log_zeroth[0], machine->log_zeroth[1]);
-  int    i;
+  double total = logaddexp_array(machine->log_zeroth, machine->n,
+                                 max_log_zeroth);
 
-  for (i = 2; i < machine->n; i++) total = logaddexp(total,
-                                                     machine->log_zeroth[i]);
+  // double total = logaddexp(machine->log_zeroth[0], machine->log_zeroth[1]);
+  // int    i;
+  //
+  // for (i = 2; i < machine->n; i++) total = logaddexp(total,
+  //                                                    machine->log_zeroth[i]);
 
+  (*log_zeroth) = total;
   double diff;
 
-  for (i = 0; i < machine->n; i++)
+  for (int i = 0; i < machine->n; i++)
   {
     diff         = exp(machine->log_zeroth[i] - total);
     (*mean)     += machine->u[i] * diff;
@@ -247,8 +248,6 @@ void shrink_interval(ExpFam *ef, double step, double *left, double *right)
     *left += step;
 left_loop:;
     (*ef->lp)(*left, &b0, 0, 0);
-
-    // printf("fabs(*left * ef->y - b0) %g\n", fabs(*left * ef->y - b0));
   }
 
   goto right_loop;
@@ -258,16 +257,15 @@ left_loop:;
     *right -= step;
 right_loop:;
     (*ef->lp)(*right, &b0, 0, 0);
-
-    // printf("fabs(*right * ef->y - b0) %g\n", fabs(*right * ef->y - b0));
   }
 }
 
-void integrate(LikNormMachine *machine,
-               ExpFam         *ef,
-               Normal         *normal,
-               double         *mean,
-               double         *variance)
+void liknorm_integrate(LikNormMachine *machine,
+                       ExpFam         *ef,
+                       Normal         *normal,
+                       double         *log_zeroth,
+                       double         *mean,
+                       double         *variance)
 {
   const double times = 7;
   double std         = sqrt(1 / normal->tau);
@@ -278,8 +276,6 @@ void integrate(LikNormMachine *machine,
 
   double right = mu + times * std;
   right = fmin(right, ef->right);
-
-  // printf("left right %g %g\n", left, right);
 
   if (left >= ef->right)
   {
@@ -293,53 +289,43 @@ void integrate(LikNormMachine *machine,
   shrink_interval(ef, step, &left, &right);
   step = (right - left) / machine->n;
 
-  // printf("left right %g %g\n", left, right);
-
-  Interval interval;
-
-  interval.left  = left;
-  interval.right = right;
-  interval.n     = machine->n;
-  interval.step  = step;
-
-  for (int i = 0; i < interval.n; ++i)
+  for (int i = 0; i < machine->n; ++i)
   {
-    double mi = (2 * interval.left + (2 * i + 1) * interval.step) / 2;
+    double mi = (2 * left + (2 * i + 1) * step) / 2;
     (*ef->lp)(mi, machine->A0 + i, machine->logA1 + i, machine->logA2 + i);
   }
 
-  for (int i = 0; i < interval.n; ++i)
+  for (int i = 0; i < machine->n; ++i)
   {
     machine->A0[i]    /= ef->aphi;
     machine->logA1[i] -= ef->log_aphi;
     machine->logA2[i] -= ef->log_aphi;
   }
 
-  for (int i = 0; i < interval.n; ++i)
+  for (int i = 0; i < machine->n; ++i)
   {
-    double mi = (2 * interval.left + (2 * i + 1) * interval.step) / 2;
+    double mi = (2 * left + (2 * i + 1) * step) / 2;
     machine->midiff[i] = -mi* exp(machine->logA2[i] - machine->logA1[i]);
   }
 
-  for (int i = 0; i < interval.n; ++i)
+  double max_log_zeroth = -DBL_MAX;
+
+  for (int i = 0; i < machine->n; ++i)
   {
-    integrate_step(interval.left + interval.step * i,
-                   interval.step,
-                   ef,
-                   normal,
-                   machine->log_zeroth + i,
+    integrate_step(left + step * i, step, ef, normal, machine->log_zeroth + i,
                    machine->u + i,
                    machine->v + i,
                    machine->A0 + i,
                    machine->logA1 + i,
                    machine->logA2 + i,
                    machine->midiff + i);
+    max_log_zeroth = fmax(max_log_zeroth, machine->log_zeroth[i]);
   }
 
-  combine_steps(machine, mean, variance);
+  combine_steps(machine, max_log_zeroth, log_zeroth, mean, variance);
 }
 
-LikNormMachine* create_liknorm_machine(int n, double precision)
+LikNormMachine* liknorm_create_machine(int n)
 {
   LikNormMachine *machine = malloc(sizeof(LikNormMachine));
 
@@ -351,12 +337,11 @@ LikNormMachine* create_liknorm_machine(int n, double precision)
   machine->logA1      = malloc(n * sizeof(double));
   machine->logA2      = malloc(n * sizeof(double));
   machine->midiff     = malloc(n * sizeof(double));
-  machine->precision  = precision;
 
   return machine;
 }
 
-void destroy_liknorm_machine(LikNormMachine *machine)
+void liknorm_destroy_machine(LikNormMachine *machine)
 {
   free(machine->log_zeroth);
   free(machine->u);
@@ -478,3 +463,5 @@ void get_interval(const char *name, double *left, double *right)
 
   if (strcmp(name, "geometric") == 0) *right = -1e-15;
 }
+
+#endif /* end of include guard: LIKNORM_H */
