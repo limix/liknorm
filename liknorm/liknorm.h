@@ -198,7 +198,7 @@ void combine_steps(LikNormMachine *machine,
 void shrink_interval(ExpFam *ef, double step, double *left, double *right)
 {
   double b0;
-  double limit = 700 * ef->aphi;
+  double limit = 700;
 
   goto left_loop;
 
@@ -216,6 +216,12 @@ left_loop:;
     *right -= step;
 right_loop:;
     b0 = (*ef->lp0)(*right);
+  }
+
+  if (*left >= *right)
+  {
+    fprintf(stderr, "Invalid shrinked interval: [%g, %g].\n", *left, *right);
+    exit(EXIT_FAILURE);
   }
 }
 
@@ -235,6 +241,7 @@ void liknorm_integrate(LikNormMachine *machine,
 
   double right = mu + times * std;
   right = fmin(right, ef->right);
+
 
   if (left >= ef->right)
   {
