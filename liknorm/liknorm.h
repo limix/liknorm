@@ -46,6 +46,40 @@ double logaddexp_array(double *x, int n, double xmax)
   return xmax + log(total);
 }
 
+inline static double logaddexps(double x, double y, double sx, double sy)
+{
+  double tmp = x - y;
+
+  double sxx = log(fabs(sx)) + x;
+  double syy = log(fabs(sy)) + y;
+
+  if (sxx == syy)
+  {
+    if (sx * sy > 0) return sxx + M_LN2;
+
+    return -DBL_MAX;
+  }
+
+  if ((sx > 0) && (sy > 0))
+  {
+    if (tmp > 0) return sxx + log1p((sy / sx) * exp(-tmp));
+    else if (tmp <= 0) return syy + log1p((sx / sy) * exp(tmp));
+  }
+  else if (sx > 0) return sxx + log1p((sy / sx) * exp(-tmp));
+  else return syy + log1p((sx / sy) * exp(tmp));
+
+  return tmp;
+}
+
+double logaddexps_array(double *x, double *sx, int n, double xmax)
+{
+  double total = 0;
+
+  for (int i = 0; i < n; ++i) total += sx[i] * exp(x[i] - xmax);
+
+  return xmax + log(total);
+}
+
 void integrate_step(double  si,
                     double  step,
                     ExpFam *ef,
@@ -59,13 +93,14 @@ void integrate_step(double  si,
                     double *midiff);
 void combine_steps(LikNormMachine *machine,
                    double          max_log_zeroth,
+                   double          max_log_v,
                    double         *log_zeroth,
                    double         *mean,
                    double         *variance);
-void shrink_interval(ExpFam *ef,
-                     double  step,
-                     double *left,
-                     double *right);
+int shrink_interval(ExpFam *ef,
+                    double  step,
+                    double *left,
+                    double *right);
 
 void integrate_step(double  si,
                     double  step,
@@ -171,34 +206,93 @@ void integrate_step(double  si,
 
   tmp -= lcdf_diff;
 
-  *v = hmu * hmu + hvar - hstd * copysign(exp(tmp), tmp_sign);
+
+  // if (ahmu > 1)
+  // {
+  //   double tmp_c;
+  //   tmp_c = hstd * copysign(exp(tmp - log(ahmu)),
+  //                           tmp_sign);
+  //   *v = hvar + ahmu * (ahmu - tmp_c);
+  // } else {
+  //   *v = hvar + (hmu * hmu - hstd * copysign(exp(tmp), tmp_sign));
+  // }
+
+  double ahmu = fabs(hmu);
+
+  // if ((fabs(tmp) > 1) && (ahmu > 0))
+  // {
+  //   double loghvar = log(hvar);
+  //
+  //   double logahmu = log(ahmu);
+  //   double tmp1    = logaddexp(loghvar, logahmu);
+  //   double tmp2    = logaddexps(logahmu, tmp - logahmu, 1, -tmp_sign * hstd);
+  //   *v = logaddexp(tmp1, tmp2);
+  // } else {
+  *v = log(hvar + (hmu * hmu - hstd * copysign(exp(tmp), tmp_sign)));
+
+  // *v = hvar + (hmu * hmu - hstd * copysign(exp(tmp), tmp_sign));
+
+  // }
+
+  // *v = hmu * hmu + hvar - hstd * copysign(exp(tmp), tmp_sign);
+
+  // printf("!%g %g %g %g %g %g\n", hmu, hmu * hmu, hvar, hstd,
+  //        -hstd * copysign(exp(tmp), tmp_sign), tmp);
 }
 
 void combine_steps(LikNormMachine *machine,
                    double          max_log_zeroth,
+                   double          max_log_v,
                    double         *log_zeroth,
                    double         *mean,
                    double         *variance)
 {
-  (*log_zeroth) = logaddexp_array(machine->log_zeroth, machine->n,
-                                  max_log_zeroth);
+  double n          = machine->n;
+  LikNormMachine *m = machine;
+
+  (*log_zeroth) = logaddexp_array(m->log_zeroth, m->n, max_log_zeroth);
+
+  for (int i = 0; i < n; ++i) m->diff[i] = exp(m->log_zeroth[i] - *log_zeroth);
+
 
   (*mean)     = 0;
   (*variance) = 0;
 
-  for (int i = 0; i < machine->n; i++)
+  for (int i = 0; i < n; ++i) (*mean) += m->u[i] * m->diff[i];
+
+  (*variance) = logaddexps_array(m->v, m->diff, n, max_log_v);
+
+  double amean = fabs(*mean);
+
+  if (amean > 1)
   {
-    double diff = exp(machine->log_zeroth[i] - (*log_zeroth));
-    (*mean)     += machine->u[i] * diff;
-    (*variance) += machine->v[i] * diff;
+    (*variance) = exp(logaddexps((*variance), 2 * log(fabs(*mean)), 1, -1));
   }
-  (*variance) = (*variance) - (*mean) * (*mean);
+  else {
+    (*variance) = exp(*variance) - (*mean) * (*mean);
+  }
 }
 
-void shrink_interval(ExpFam *ef, double step, double *left, double *right)
+void fprintf_expfam(FILE *stream, const ExpFam *ef)
+{
+  fprintf(stream, "ExpFam:\n");
+  fprintf(stream, "  name    : %s\n", ef->name);
+  fprintf(stream, "  y       : %g\n", ef->y);
+  fprintf(stream, "  aphi    : %g\n", ef->aphi);
+  fprintf(stream, "  log_aphi: %g\n", ef->log_aphi);
+}
+
+void fprintf_normal(FILE *stream, const Normal *normal)
+{
+  fprintf(stream, "Normal:\n");
+  fprintf(stream, "  tau: %g\n", normal->tau);
+  fprintf(stream, "  eta: %g\n", normal->eta);
+}
+
+int shrink_interval(ExpFam *ef, double step, double *left, double *right)
 {
   double b0;
-  double limit = 700;
+  double limit = 7000;
 
   goto left_loop;
 
@@ -221,8 +315,9 @@ right_loop:;
   if (*left >= *right)
   {
     fprintf(stderr, "Invalid shrinked interval: [%g, %g].\n", *left, *right);
-    exit(EXIT_FAILURE);
+    return 1;
   }
+  return 0;
 }
 
 void liknorm_integrate(LikNormMachine *machine,
@@ -252,7 +347,15 @@ void liknorm_integrate(LikNormMachine *machine,
 
   double step = (right - left) / machine->n;
 
-  shrink_interval(ef, step, &left, &right);
+  int err = shrink_interval(ef, step, &left, &right);
+
+  if (err)
+  {
+    fprintf_normal(stderr, normal);
+    fprintf_expfam(stderr, ef);
+    exit(EXIT_FAILURE);
+  }
+
   step = (right - left) / machine->n;
 
   for (int i = 0; i < machine->n; ++i)
@@ -271,10 +374,11 @@ void liknorm_integrate(LikNormMachine *machine,
   for (int i = 0; i < machine->n; ++i)
   {
     double mi = (2 * left + (2 * i + 1) * step) / 2;
-    machine->midiff[i] = -mi* exp(machine->logA2[i] - machine->logA1[i]);
+    machine->diff[i] = -mi* exp(machine->logA2[i] - machine->logA1[i]);
   }
 
   double max_log_zeroth = -DBL_MAX;
+  double max_log_v      = -DBL_MAX;
 
   for (int i = 0; i < machine->n; ++i)
   {
@@ -284,11 +388,13 @@ void liknorm_integrate(LikNormMachine *machine,
                    machine->A0 + i,
                    machine->logA1 + i,
                    machine->logA2 + i,
-                   machine->midiff + i);
+                   machine->diff + i);
     max_log_zeroth = fmax(max_log_zeroth, machine->log_zeroth[i]);
+    max_log_v      = fmax(max_log_v, machine->v[i]);
   }
 
-  combine_steps(machine, max_log_zeroth, log_zeroth, mean, variance);
+  combine_steps(machine, max_log_zeroth, max_log_v, log_zeroth, mean, variance);
+  *variance = fmax(*variance, 1e-8);
 }
 
 LikNormMachine* liknorm_create_machine(int n)
@@ -302,7 +408,7 @@ LikNormMachine* liknorm_create_machine(int n)
   machine->A0         = malloc(n * sizeof(double));
   machine->logA1      = malloc(n * sizeof(double));
   machine->logA2      = malloc(n * sizeof(double));
-  machine->midiff     = malloc(n * sizeof(double));
+  machine->diff       = malloc(n * sizeof(double));
 
   return machine;
 }
@@ -315,7 +421,7 @@ void liknorm_destroy_machine(LikNormMachine *machine)
   free(machine->A0);
   free(machine->logA1);
   free(machine->logA2);
-  free(machine->midiff);
+  free(machine->diff);
   free(machine);
 }
 

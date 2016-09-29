@@ -16,6 +16,7 @@ typedef struct
   log_partition0 *lp0;
   double         left;
   double         right;
+  const char     *name;
 } ExpFam;
 
 typedef struct
@@ -34,7 +35,7 @@ typedef struct
   double *A0;
   double *logA1;
   double *logA2;
-  double *midiff;
+  double *diff;
 } LikNormMachine;
 
 #endif /* end of include guard: DEFINITIONS_H */

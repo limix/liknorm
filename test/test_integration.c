@@ -103,7 +103,7 @@ int test_it(LikNormMachine *machine, Line *l, double *elapsed)
   log_partition  *lp  = get_log_partition(l->likname);
   log_partition0 *lp0 = get_log_partition0(l->likname);
 
-  ExpFam ef = { l->y, l->aphi, log(l->aphi), lp, lp0, 0, 0 };
+  ExpFam ef = { l->y, l->aphi, log(l->aphi), lp, lp0, 0, 0, l->likname };
 
   get_interval(l->likname, &(ef.left), &(ef.right));
 
@@ -118,8 +118,12 @@ int test_it(LikNormMachine *machine, Line *l, double *elapsed)
   *elapsed += (get_time() - start);
 
   double eps = 1e-4;
-  int    ok  = fabs(mean - l->mean) < eps && fabs(variance - l->variance) < eps;
+
+  int ok = fabs(mean - l->mean) < eps && fabs(variance - l->variance) < eps;
   ok = ok && isfinite(mean) && isfinite(variance);
+
+  // int ok = fabs(mean - l->mean) < eps;
+  // ok = ok && isfinite(mean);
 
   if (!ok)
   {
