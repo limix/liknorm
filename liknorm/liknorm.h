@@ -47,56 +47,6 @@ double logaddexp_array(double *x, int n, double xmax)
   return xmax + log(total);
 }
 
-inline static double logaddexps(double x, double y, double sx, double sy)
-{
-  double tmp = x - y;
-
-  double sxx = log(fabs(sx)) + x;
-  double syy = log(fabs(sy)) + y;
-
-  if (sxx == syy)
-  {
-    if (sx * sy > 0) return sxx + M_LN2;
-
-    return -DBL_MAX;
-  }
-
-  if ((sx > 0) && (sy > 0))
-  {
-    if (tmp > 0) return sxx + log1p((sy / sx) * exp(-tmp));
-    else if (tmp <= 0) return syy + log1p((sx / sy) * exp(tmp));
-  }
-  else if (sx > 0) return sxx + log1p((sy / sx) * exp(-tmp));
-  else return syy + log1p((sx / sy) * exp(tmp));
-
-  return tmp;
-}
-
-static inline double max_array(double *arr, size_t n)
-{
-  double v = -DBL_MAX;
-
-  for (size_t i = 0; i < n; ++i) {
-    v = fmax(arr[i], v);
-  }
-  return v;
-}
-
-double logaddexps_array(double *x, double *sx, int n)
-{
-  double total = 0;
-
-  double xmax = max_array(x, n);
-
-  for (int i = 0; i < n; ++i)
-  {
-    assert(xmax >= x[i]);
-    total += sx[i] * exp(x[i] - xmax);
-  }
-
-  return xmax + log(total);
-}
-
 void integrate_step(double  si,
                     double  step,
                     ExpFam *ef,
@@ -110,7 +60,6 @@ void integrate_step(double  si,
                     double *midiff);
 void combine_steps(LikNormMachine *machine,
                    double          max_log_zeroth,
-                   double          max_log_v,
                    double         *log_zeroth,
                    double         *mean,
                    double         *variance);
@@ -118,45 +67,6 @@ int shrink_interval(ExpFam *ef,
                     double  step,
                     double *left,
                     double *right);
-
-/* Returns log(|c|) and c/|c|, for c = sx * e^x + sy * e^y.
- */
-inline static double logaddexpss(double x, double y, double sx, double sy,
-                                 double *sign)
-{
-  double sxx = log(fabs(sx)) + x;
-  double syy = log(fabs(sy)) + y;
-
-  if (sxx == syy)
-  {
-    if (sx * sy > 0)
-    {
-      if (sx > 0) *sign = +1.0;
-      else *sign = -1.0;
-      return sxx + M_LN2;
-    }
-    else
-    {
-      *sign = 1.0;
-      return -DBL_MAX;
-    }
-  }
-
-  if (sxx > syy)
-  {
-    if (sx >= 0.0) *sign = +1.0;
-    else *sign = -1.0;
-  }
-  else
-  {
-    if (sy >= 0.0) *sign = +1.0;
-    else *sign = -1.0;
-  }
-
-  sx *= *sign;
-  sy *= *sign;
-  return logaddexps(x, y, sx, sy);
-}
 
 void integrate_step(double  si,
                     double  step,
@@ -270,7 +180,6 @@ void integrate_step(double  si,
 
 void combine_steps(LikNormMachine *machine,
                    double          max_log_zeroth,
-                   double          max_log_v,
                    double         *log_zeroth,
                    double         *mean,
                    double         *variance)
@@ -295,8 +204,6 @@ void combine_steps(LikNormMachine *machine,
   while (m->diff[--right] == 0) ;
   ++right;
 
-  // max_log_v = max_array(m->v + left, right - left);
-
   assert(left < right);
 
   if ((left > 0) || (right < n))
@@ -313,11 +220,15 @@ void combine_steps(LikNormMachine *machine,
   for (int i = left; i < right; ++i)
   {
     assert(isfinite(m->u[i]));
+    assert(isfinite(m->v[i]));
     *mean     += m->u[i] * m->diff[i];
     *variance += m->v[i] * m->diff[i];
   }
 
   *variance = *variance - (*mean) * (*mean);
+
+  assert(isfinite(*variance));
+  assert(isfinite(*mean));
 }
 
 void fprintf_expfam(FILE *stream, const ExpFam *ef)
@@ -425,7 +336,6 @@ void liknorm_integrate(LikNormMachine *machine,
   }
 
   double max_log_zeroth = -DBL_MAX;
-  double max_log_v      = -DBL_MAX;
 
   for (int i = 0; i < machine->n; ++i)
   {
@@ -437,10 +347,10 @@ void liknorm_integrate(LikNormMachine *machine,
                    machine->logA2 + i,
                    machine->diff + i);
     max_log_zeroth = fmax(max_log_zeroth, machine->log_zeroth[i]);
-    max_log_v      = fmax(max_log_v, machine->v[i]);
   }
 
-  combine_steps(machine, max_log_zeroth, max_log_v, log_zeroth, mean, variance);
+  combine_steps(machine, max_log_zeroth, log_zeroth, mean, variance);
+  printf("LEFT RIGHT %g %g\n", left, right);
   *variance = fmax(*variance, 1e-8);
 }
 
