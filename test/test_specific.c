@@ -26,11 +26,13 @@ int main()
 
   liknorm_integrate(machine, &ef, &normal, &log_zeroth, &mean, &variance);
 
-  // if (fabs(log_zeroth + 1289.78232538217889668885618448) > 1e-7) return 1;
-  //
-  // if (fabs(mean + 4.66319474116641163874419362401) > 1e-7) return 1;
-  //
-  // if (fabs(variance - 1.25962109436272839957382529974e-05) > 1e-7) return 1;
+  if (fabs(log_zeroth + 1289.78232538217889668885618448) > 1e-7) return 1;
+
+  if (fabs(mean + 4.66319474116641163874419362401) > 1e-7) return 1;
+
+  if (fabs(variance - 1.25962109436272839957382529974e-05) > 1e-7) return 1;
+
+  return 0;
 
   ef.y        = 0;
   ef.aphi     = 1. / 266;
@@ -41,16 +43,18 @@ int main()
 
   // normal.eta = 1.44005e+07;
 
-  // const double total   = 10000;
-  // const double inicial = 0;
-  // const double final   = 7000;
-  // const double means[] = { 1, 100, 1000, 5000, 5001 };
-  const double means[] = { 1, 100, 1000, 5000, 5001 };
+  const double total   = 10000;
+  const double inicial = 0;
+  const double final   = 5;
 
-  for (int i = 0; i < 5; ++i)
+  // const double means[] = { 1, 100, 1000, 5000, 5001 };
+  // const double means[] = { 1, 100, 1000, 5000, 5001 };
+
+  for (int i = 0; i < total; ++i)
   {
-    // double eta = inicial + (final - inicial) * (i / total);
-    double eta = means[i];
+    double eta = inicial + (final - inicial) * (i / total);
+
+    // double eta = means[i];
     normal.eta = eta;
     liknorm_integrate(machine, &ef, &normal, &log_zeroth, &mean, &variance);
     printf("%0.30g,%0.30g,%0.30g,%0.30g\n", normal.eta, log_zeroth, mean,

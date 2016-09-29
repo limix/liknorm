@@ -206,13 +206,13 @@ void combine_steps(LikNormMachine *machine,
 
   assert(left < right);
 
-  if ((left > 0) || (right < n))
-  {
-    printf("Debug: left right perc: %d %d %g%%\n",
-           left,
-           right,
-           (100. * (right - left)) / n);
-  }
+  // if ((left > 0) || (right < n))
+  // {
+  //   printf("Debug: left right perc: %d %d %g%%\n",
+  //          left,
+  //          right,
+  //          (100. * (right - left)) / n);
+  // }
 
   *mean     = 0;
   *variance = 0;
@@ -351,7 +351,6 @@ void liknorm_integrate(LikNormMachine *machine,
   }
 
   combine_steps(machine, max_log_zeroth, log_zeroth, mean, variance);
-  printf("LEFT RIGHT %g %g\n", left, right);
   *variance = fmax(*variance, 1e-8);
 }
 
