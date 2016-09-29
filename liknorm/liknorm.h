@@ -63,10 +63,10 @@ void combine_steps(LikNormMachine *machine,
                    double         *log_zeroth,
                    double         *mean,
                    double         *variance);
-int shrink_interval(ExpFam *ef,
-                    double  step,
-                    double *left,
-                    double *right);
+void shrink_interval(ExpFam *ef,
+                     double  step,
+                     double *left,
+                     double *right);
 
 void integrate_step(double  si,
                     double  step,
@@ -206,14 +206,6 @@ void combine_steps(LikNormMachine *machine,
 
   assert(left < right);
 
-  // if ((left > 0) || (right < n))
-  // {
-  //   printf("Debug: left right perc: %d %d %g%%\n",
-  //          left,
-  //          right,
-  //          (100. * (right - left)) / n);
-  // }
-
   *mean     = 0;
   *variance = 0;
 
@@ -248,7 +240,7 @@ void fprintf_normal(FILE *stream, const Normal *normal)
   fprintf(stream, "  eta: %g\n", normal->eta);
 }
 
-int shrink_interval(ExpFam *ef, double step, double *left, double *right)
+void shrink_interval(ExpFam *ef, double step, double *left, double *right)
 {
   double b0;
   double limit = 7000;
@@ -270,13 +262,6 @@ left_loop:;
 right_loop:;
     b0 = (*ef->lp0)(*right);
   }
-
-  if (*left >= *right)
-  {
-    fprintf(stderr, "Invalid shrinked interval: [%g, %g].\n", *left, *right);
-    return 1;
-  }
-  return 0;
 }
 
 void liknorm_integrate(LikNormMachine *machine,
@@ -306,14 +291,20 @@ void liknorm_integrate(LikNormMachine *machine,
 
   double step = (right - left) / machine->n;
 
-  int err = shrink_interval(ef, step, &left, &right);
+  shrink_interval(ef, step, &left, &right);
 
-  if (err)
+  if (left >= right)
   {
-    fprintf_normal(stderr, normal);
-    fprintf_expfam(stderr, ef);
-    exit(EXIT_FAILURE);
+    left = left + (right - left) / 2;
   }
+
+
+  // if (err)
+  // {
+  //   fprintf_normal(stderr, normal);
+  //   fprintf_expfam(stderr, ef);
+  //   exit(EXIT_FAILURE);
+  // }
 
   step = (right - left) / machine->n;
 
