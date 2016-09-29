@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <assert.h>
 
 #include "constants.h"
 #include "normal.h"
@@ -71,11 +72,27 @@ inline static double logaddexps(double x, double y, double sx, double sy)
   return tmp;
 }
 
-double logaddexps_array(double *x, double *sx, int n, double xmax)
+static inline double max_array(double *arr, size_t n)
+{
+  double v = -DBL_MAX;
+
+  for (size_t i = 0; i < n; ++i) {
+    v = fmax(arr[i], v);
+  }
+  return v;
+}
+
+double logaddexps_array(double *x, double *sx, int n)
 {
   double total = 0;
 
-  for (int i = 0; i < n; ++i) total += sx[i] * exp(x[i] - xmax);
+  double xmax = max_array(x, n);
+
+  for (int i = 0; i < n; ++i)
+  {
+    assert(xmax >= x[i]);
+    total += sx[i] * exp(x[i] - xmax);
+  }
 
   return xmax + log(total);
 }
@@ -101,6 +118,45 @@ int shrink_interval(ExpFam *ef,
                     double  step,
                     double *left,
                     double *right);
+
+/* Returns log(|c|) and c/|c|, for c = sx * e^x + sy * e^y.
+ */
+inline static double logaddexpss(double x, double y, double sx, double sy,
+                                 double *sign)
+{
+  double sxx = log(fabs(sx)) + x;
+  double syy = log(fabs(sy)) + y;
+
+  if (sxx == syy)
+  {
+    if (sx * sy > 0)
+    {
+      if (sx > 0) *sign = +1.0;
+      else *sign = -1.0;
+      return sxx + M_LN2;
+    }
+    else
+    {
+      *sign = 1.0;
+      return -DBL_MAX;
+    }
+  }
+
+  if (sxx > syy)
+  {
+    if (sx >= 0.0) *sign = +1.0;
+    else *sign = -1.0;
+  }
+  else
+  {
+    if (sy >= 0.0) *sign = +1.0;
+    else *sign = -1.0;
+  }
+
+  sx *= *sign;
+  sy *= *sign;
+  return logaddexps(x, y, sx, sy);
+}
 
 void integrate_step(double  si,
                     double  step,
@@ -221,23 +277,26 @@ void integrate_step(double  si,
 
   // if ((fabs(tmp) > 1) && (ahmu > 0))
   // {
-  //   double loghvar = log(hvar);
-  //
-  //   double logahmu = log(ahmu);
-  //   double tmp1    = logaddexp(loghvar, logahmu);
-  //   double tmp2    = logaddexps(logahmu, tmp - logahmu, 1, -tmp_sign * hstd);
-  //   *v = logaddexp(tmp1, tmp2);
+  //   double porra;
+  //   double r = logaddexpss(2 * log(ahmu), tmp, 1, -hstd * tmp_sign, &porra);
+  //   *v = logaddexps(log(hvar), r, 1, porra);
   // } else {
+  //   *v = log(hvar + (hmu * hmu - hstd * copysign(exp(o), tmp_sign)));
+  //
+  //   // *v = hvar + (hmu * hmu - hstd * copysign(exp(tmp), tmp_sign));
+  // }
   *v = log(hvar + (hmu * hmu - hstd * copysign(exp(tmp), tmp_sign)));
 
-  // *v = hvar + (hmu * hmu - hstd * copysign(exp(tmp), tmp_sign));
 
-  // }
+  // *v = log(hvar + (hmu * hmu - hstd * copysign(exp(tmp), tmp_sign)));
+  // assert(isfinite(*v));
+  assert(isfinite(hvar));
+  assert(hvar >= 0);
+
+  // assert((hmu * hmu - hstd * copysign(exp(tmp), tmp_sign)) <= 0);
+  assert(hvar + (hmu * hmu - hstd * copysign(exp(tmp), tmp_sign)) > 0);
 
   // *v = hmu * hmu + hvar - hstd * copysign(exp(tmp), tmp_sign);
-
-  // printf("!%g %g %g %g %g %g\n", hmu, hmu * hmu, hvar, hstd,
-  //        -hstd * copysign(exp(tmp), tmp_sign), tmp);
 }
 
 void combine_steps(LikNormMachine *machine,
@@ -252,15 +311,49 @@ void combine_steps(LikNormMachine *machine,
 
   (*log_zeroth) = logaddexp_array(m->log_zeroth, m->n, max_log_zeroth);
 
-  for (int i = 0; i < n; ++i) m->diff[i] = exp(m->log_zeroth[i] - *log_zeroth);
+  for (int i = 0; i < n; ++i)
+  {
+    m->diff[i] = exp(m->log_zeroth[i] - *log_zeroth);
+    assert(isfinite(m->diff[i]));
+  }
 
+  int left = -1;
 
-  (*mean)     = 0;
-  (*variance) = 0;
+  while (m->diff[++left] == 0) ;
 
-  for (int i = 0; i < n; ++i) (*mean) += m->u[i] * m->diff[i];
+  int right = n;
 
-  (*variance) = logaddexps_array(m->v, m->diff, n, max_log_v);
+  while (m->diff[--right] == 0) ;
+  ++right;
+
+  max_log_v = max_array(m->v + left, right - left);
+
+  assert(left < right);
+
+  if ((left > 0) || (right < n))
+  {
+    printf("Debug: left right perc: %d %d %g%%\n",
+           left,
+           right,
+           (100. * (right - left)) / n);
+  }
+
+  (*mean) = 0;
+
+  for (int i = left; i < right; ++i)
+  {
+    assert(isfinite(m->u[i]));
+    (*mean) += m->u[i] * m->diff[i];
+  }
+
+  (*variance) = logaddexps_array(m->v + left,
+                                 m->diff + left,
+                                 right - left);
+
+  if (!isfinite(*variance))
+  {
+    printf("Non finite variance!!!!!\n");
+  }
 
   double amean = fabs(*mean);
 
