@@ -225,7 +225,8 @@ void combine_steps(LikNormMachine *machine,
     *variance += m->v[i] * m->diff[i];
   }
 
-  *variance = *variance - (*mean) * (*mean);
+  if ((right - left) / ((double)n) < 0.10) *variance = 1e-8;
+  else *variance = *variance - (*mean) * (*mean);
 
   assert(isfinite(*variance));
   assert(isfinite(*mean));
