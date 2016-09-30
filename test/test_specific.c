@@ -6,7 +6,7 @@
 
 int main()
 {
-  LikNormMachine *machine = liknorm_create_machine(350);
+  LikNormMachine *machine = liknorm_create_machine(100000);
 
   Normal normal;
 
@@ -34,45 +34,46 @@ int main()
 
   liknorm_integrate(machine, &ef, &normal, &log_zeroth, &mean, &variance);
 
-  if (fabs(log_zeroth + 1289.78232538217889668885618448) > 1e-7) return 1;
-
-  if (fabs(mean + 4.66319474116641163874419362401) > 1e-7) return 1;
-
-  if (fabs(variance - 1.25962109436272839957382529974e-05) > 1e-7) return 1;
+  // if (fabs(log_zeroth + 1289.78232538217889668885618448) > 1e-7) return 1;
+  //
+  // if (fabs(mean + 4.66319474116641163874419362401) > 1e-7) return 1;
+  //
+  // if (fabs(variance - 1.25962109436272839957382529974e-05) > 1e-7) return 1;
 
 
   ef.y        = 0;
   ef.aphi     = 1. / 266;
   ef.log_aphi = log(ef.aphi);
 
-  // normal.tau = 1.0;
-  // normal.eta = 1.44005e+07;
+  normal.tau = 1.0;
 
-  normal.tau = 1 / (10.0 * 10.0);
-  normal.eta = 700 * normal.tau;
-
-  liknorm_integrate(machine, &ef, &normal, &log_zeroth, &mean, &variance);
-  return 0;
+  // // normal.eta = 1.44005e+07;
+  //
+  // normal.tau = 1 / (10.0 * 10.0);
+  // normal.eta = 700 * normal.tau;
+  //
+  // liknorm_integrate(machine, &ef, &normal, &log_zeroth, &mean, &variance);
+  // return 0;
 
   //
   // printf("%0.30g, %0.30g, %0.30g\n", log_zeroth, mean, variance);
 
 
-  const double total   = 10000;
-  const double inicial = 0;
-  const double final   = 5;
+  const int total   = 100;
+  const int inicial = 0;
+  const int final   = 5000;
 
   // const double means[] = { 1, 100, 1000, 5000, 5001 };
   // const double means[] = { 1, 100, 1000, 5000, 5001 };
 
   for (int i = 0; i < total; ++i)
   {
-    double eta = inicial + (final - inicial) * (i / total);
+    int eta = inicial + (final - inicial) * (((double)i) / total);
 
     // double eta = means[i];
     normal.eta = eta;
     liknorm_integrate(machine, &ef, &normal, &log_zeroth, &mean, &variance);
-    printf("%0.30g,%0.30g,%0.30g,%0.30g\n", normal.eta, log_zeroth, mean,
+    printf("%d,%0.30g,%0.30g,%0.30g\n", eta, log_zeroth, mean,
            variance);
   }
 

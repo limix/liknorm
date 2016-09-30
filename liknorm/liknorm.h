@@ -288,23 +288,24 @@ void smart_shrink_interval(int n, ExpFam *ef,
   {
     gmax = dleft > 0 ? gright : gleft;
   } else {
-    gmax = zero(*left, *right, 1e-3 * fmax(fabs(gleft), fabs(gright)),
-                &g_func_base, args);
+    gmax =
+      g_function(ef, normal,
+                 zero(*left, *right, 1e-5 * fmax(fabs(gleft), fabs(gright)),
+                      &g_func_base, args));
   }
 
-  while (gmax - gleft > DBL_LOG_MAX)
-  {
-    *left += step;
-    gleft  = g_function(ef, normal, *left);
-  }
+  while (gmax -
+         g_function(ef, normal,
+                    *left + step) > DBL_LOG_MAX &&
+         *left < *right) *left += step;
 
-  while (gmax - gright > DBL_LOG_MAX)
-  {
-    *right -= step;
-    gright  = g_function(ef, normal, *right);
-  }
+  *left = fmin(*left, *right);
 
-  assert(*left <= *right);
+  while (gmax -
+         g_function(ef, normal,
+                    *right - step) > DBL_LOG_MAX &&
+         *left < *right) *right -= step;
+  *right = fmax(*right, *left);
 }
 
 void liknorm_integrate(LikNormMachine *machine,
@@ -338,10 +339,11 @@ void liknorm_integrate(LikNormMachine *machine,
   right = fmin(right, ef->right);
 
 
-  printf("BEFORE: left right: %g %g\n", left, right);
+  // printf("BEFORE: left right: %g %g\n", left, right);
   smart_shrink_interval(machine->n, ef, normal, &left, &right);
-  printf("AFTER : left right: %.50f %.50f\n", left, right);
-  printf("right-left: %g\n\n",                right - left);
+
+  // printf("AFTER : left right: %.50f %.50f\n", left, right);
+  // printf("right-left: %g\n\n",                right - left);
 
   if (right - left <= SQRT_DBL_EPSILON)
   {
