@@ -12,9 +12,17 @@ int main()
 
   log_partition  *lp  = get_log_partition("binomial");
   log_partition0 *lp0 = get_log_partition0("binomial");
+  log_partition0 *lp1 = get_log_partition1("binomial");
 
-  ExpFam ef = { 0.93146417445482865, 1 / 321.0, log(1 / 321.0), lp, lp0, 0, 0,
-                "binomial" };
+  ExpFam ef =
+  { 0.93146417445482865,
+    1 / 321.0,          log(
+      1 / 321.0),       lp,
+    lp0,
+    lp1,
+    0,
+    0,
+    "binomial" };
 
   get_interval("binomial", &(ef.left), &(ef.right));
 

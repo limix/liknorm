@@ -102,8 +102,9 @@ int test_it(LikNormMachine *machine, Line *l, double *elapsed)
 
   log_partition  *lp  = get_log_partition(l->likname);
   log_partition0 *lp0 = get_log_partition0(l->likname);
+  log_partition0 *lp1 = get_log_partition1(l->likname);
 
-  ExpFam ef = { l->y, l->aphi, log(l->aphi), lp, lp0, 0, 0, l->likname };
+  ExpFam ef = { l->y, l->aphi, log(l->aphi), lp, lp0, lp1, 0, 0, l->likname };
 
   get_interval(l->likname, &(ef.left), &(ef.right));
 

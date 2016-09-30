@@ -5,6 +5,10 @@ static inline double binomial_log_partition0(double theta)
 {
   return theta + log1p(exp(-theta));
 }
+static inline double binomial_log_partition1(double theta)
+{
+  return -log1p(exp(-theta));
+}
 // \phi = N
 // a(\phi) = 1/\phi
 // b(\theta) = log(1 + e^\theta)
@@ -25,6 +29,10 @@ static inline double bernoulli_log_partition0(double theta)
 {
   return binomial_log_partition0(theta);
 }
+static inline double bernoulli_log_partition1(double theta)
+{
+  return binomial_log_partition1(theta);
+}
 static inline
 void bernoulli_log_partition(double  theta,
                              double *b0,
@@ -37,6 +45,10 @@ void bernoulli_log_partition(double  theta,
 static inline double poisson_log_partition0(double theta)
 {
     return exp(theta);
+}
+static inline double poisson_log_partition1(double theta)
+{
+    return theta;
 }
 static inline
 void poisson_log_partition(double  theta,
@@ -51,6 +63,10 @@ void poisson_log_partition(double  theta,
 static inline double gamma_log_partition0(double theta)
 {
     return -log(-theta);
+}
+static inline double gamma_log_partition1(double theta)
+{
+    return gamma_log_partition0(theta);
 }
 static inline
 void gamma_log_partition(double  theta,
@@ -67,6 +83,10 @@ static inline double exponential_log_partition0(double theta)
 {
     return gamma_log_partition0(theta);
 }
+static inline double exponential_log_partition1(double theta)
+{
+    return gamma_log_partition1(theta);
+}
 static inline
 void exponential_log_partition(double  theta,
                                double *b0,
@@ -79,6 +99,10 @@ void exponential_log_partition(double  theta,
 static inline double geometric_log_partition0(double theta)
 {
     return -log1p(-exp(theta));
+}
+static inline double geometric_log_partition1(double theta)
+{
+    return theta + geometric_log_partition0(theta);
 }
 static inline
 void geometric_log_partition(double  theta,
@@ -121,6 +145,23 @@ log_partition0* get_log_partition0(const char *name)
   if (strcmp(name, "exponential") == 0) return exponential_log_partition0;
 
   if (strcmp(name, "geometric") == 0) return geometric_log_partition0;
+
+  return 0;
+}
+
+log_partition0* get_log_partition1(const char *name)
+{
+  if (strcmp(name, "binomial") == 0) return binomial_log_partition1;
+
+  if (strcmp(name, "bernoulli") == 0) return bernoulli_log_partition1;
+
+  if (strcmp(name, "poisson") == 0) return poisson_log_partition1;
+
+  if (strcmp(name, "gamma") == 0) return gamma_log_partition1;
+
+  if (strcmp(name, "exponential") == 0) return exponential_log_partition1;
+
+  if (strcmp(name, "geometric") == 0) return geometric_log_partition1;
 
   return 0;
 }

@@ -7,6 +7,9 @@ typedef
 typedef
   double log_partition0(double theta);
 
+typedef
+  double log_partition1(double theta);
+
 typedef struct
 {
   double         y;
@@ -14,6 +17,7 @@ typedef struct
   double         log_aphi;
   log_partition *lp;
   log_partition0 *lp0;
+  log_partition1 *lp1;
   double         left;
   double         right;
   const char     *name;

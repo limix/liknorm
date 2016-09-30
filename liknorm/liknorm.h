@@ -23,6 +23,10 @@ void liknorm_integrate(LikNormMachine *machine,
 LikNormMachine* liknorm_create_machine(int n);
 void            liknorm_destroy_machine(LikNormMachine *machine);
 
+/* log(DBL_TRUE_MIN) */
+#define DBL_LOG_MIN -744.4400719213812180896638892590999603271484375
+
+// #define GOLDEN 2 / (1 + sqrt(5.0))
 
 /* Implements log(e^x + e^y).
  */
@@ -63,10 +67,11 @@ void combine_steps(LikNormMachine *machine,
                    double         *log_zeroth,
                    double         *mean,
                    double         *variance);
-void shrink_interval(ExpFam *ef,
-                     double  step,
-                     double *left,
-                     double *right);
+void smart_shrink_interval(int     n,
+                           ExpFam *ef,
+                           Normal *normal,
+                           double *left,
+                           double *right);
 
 void integrate_step(double  si,
                     double  step,
@@ -240,28 +245,28 @@ void fprintf_normal(FILE *stream, const Normal *normal)
   fprintf(stream, "  eta: %g\n", normal->eta);
 }
 
-void shrink_interval(ExpFam *ef, double step, double *left, double *right)
+static inline double derivative(ExpFam *ef, Normal *normal, double x)
 {
-  double b0;
-  double limit = 7000;
+  return ef->y / ef->aphi + normal->eta - x * normal->tau
+         - ef->lp1(x) / ef->aphi;
+}
 
-  goto left_loop;
+void smart_shrink_interval(int n, ExpFam *ef,
+                           Normal *normal,
+                           double *left,
+                           double *right)
+{
+  double dleft  = derivative(ef, normal, *left);
+  double dright = derivative(ef, normal, *right);
 
-  while (*left < *right && fabs(*left * ef->y - b0) > limit)
-  {
-    *left += step;
-left_loop:;
-    b0 = (*ef->lp0)(*left);
-  }
+  assert(DBL_LOG_MIN < *right && *left < -DBL_LOG_MIN);
 
-  goto right_loop;
+  if (dleft * dright <= 0) return;
 
-  while (*left < *right && fabs(*right * ef->y - b0) > limit)
-  {
-    *right -= step;
-right_loop:;
-    b0 = (*ef->lp0)(*right);
-  }
+  if (dleft > 0) *left = fmax(*left, *right + DBL_LOG_MIN);
+  else *right = fmin(*right, *left - DBL_LOG_MIN);
+
+  assert(*left <= *right);
 }
 
 void liknorm_integrate(LikNormMachine *machine,
@@ -275,56 +280,40 @@ void liknorm_integrate(LikNormMachine *machine,
   double std         = sqrt(1 / normal->tau);
   double mu          = normal->eta / normal->tau;
   double left        = mu - times * std;
-
-  left = fmax(left, ef->left);
-
-  double right = mu + times * std;
-  right = fmin(right, ef->right);
-
+  double right       = mu + times * std;
 
   if (left >= ef->right)
   {
-    *mean     = 0;
+    *mean     = ef->right;
     *variance = 0;
     return;
   }
 
-  double step = (right - left) / machine->n;
-
-  shrink_interval(ef, step, &left, &right);
-
-  if (left >= right)
+  if (right <= ef->left)
   {
-    left = left + (right - left) / 2;
+    *mean     = ef->left;
+    *variance = 0;
+    return;
   }
 
+  left  = fmax(left, ef->left);
+  right = fmin(right, ef->right);
 
-  // if (err)
-  // {
-  //   fprintf_normal(stderr, normal);
-  //   fprintf_expfam(stderr, ef);
-  //   exit(EXIT_FAILURE);
-  // }
 
-  step = (right - left) / machine->n;
+  printf("BEFORE: left right: %g %g\n", left, right);
+  smart_shrink_interval(machine->n, ef, normal, &left, &right);
+  printf("AFTER : left right: %g %g\n\n", left, right);
+
+  double step = (right - left) / machine->n;
 
   for (int i = 0; i < machine->n; ++i)
   {
     double mi = (2 * left + (2 * i + 1) * step) / 2;
     (*ef->lp)(mi, machine->A0 + i, machine->logA1 + i, machine->logA2 + i);
-  }
-
-  for (int i = 0; i < machine->n; ++i)
-  {
     machine->A0[i]    /= ef->aphi;
     machine->logA1[i] -= ef->log_aphi;
     machine->logA2[i] -= ef->log_aphi;
-  }
-
-  for (int i = 0; i < machine->n; ++i)
-  {
-    double mi = (2 * left + (2 * i + 1) * step) / 2;
-    machine->diff[i] = -mi* exp(machine->logA2[i] - machine->logA1[i]);
+    machine->diff[i]   = -mi* exp(machine->logA2[i] - machine->logA1[i]);
   }
 
   double max_log_zeroth = -DBL_MAX;
