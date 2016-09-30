@@ -12,6 +12,7 @@
 #include "normal.h"
 #include "definitions.h"
 #include "compiler.h"
+#include "optimizer.h"
 
 /* ========================== Interface ========================== */
 void liknorm_integrate(LikNormMachine *machine,
@@ -23,8 +24,11 @@ void liknorm_integrate(LikNormMachine *machine,
 LikNormMachine* liknorm_create_machine(int n);
 void            liknorm_destroy_machine(LikNormMachine *machine);
 
-/* log(DBL_TRUE_MIN) */
-#define DBL_LOG_MIN -744.4400719213812180896638892590999603271484375
+/* -log(DBL_TRUE_MIN) */
+#define DBL_LOG_MAX +744.4400719213812180896638892590999603271484375
+
+/* sqrt(DBL_EPSILON) */
+#define SQRT_DBL_EPSILON 1.490116119384765625e-08
 
 // #define GOLDEN 2 / (1 + sqrt(5.0))
 
@@ -245,10 +249,25 @@ void fprintf_normal(FILE *stream, const Normal *normal)
   fprintf(stream, "  eta: %g\n", normal->eta);
 }
 
-static inline double derivative(ExpFam *ef, Normal *normal, double x)
+static inline double g_function(ExpFam *ef, Normal *normal, double x)
+{
+  return x * (ef->y / ef->aphi + normal->eta) - (normal->eta * x * x) / 2 -
+         ef->lp0(x) / ef->aphi;
+}
+
+static inline double g_func_base(double x, void *args)
+{
+  void  **args_  = args;
+  ExpFam *ef     = args_[0];
+  Normal *normal = args_[1];
+
+  return g_function(ef, normal, x);
+}
+
+static inline double g_derivative(ExpFam *ef, Normal *normal, double x)
 {
   return ef->y / ef->aphi + normal->eta - x * normal->tau
-         - ef->lp1(x) / ef->aphi;
+         - exp(ef->lp1(x)) / ef->aphi;
 }
 
 void smart_shrink_interval(int n, ExpFam *ef,
@@ -256,15 +275,34 @@ void smart_shrink_interval(int n, ExpFam *ef,
                            double *left,
                            double *right)
 {
-  double dleft  = derivative(ef, normal, *left);
-  double dright = derivative(ef, normal, *right);
+  double gleft  = g_function(ef, normal, *left);
+  double gright = g_function(ef, normal, *right);
+  double dleft  = g_derivative(ef, normal, *left);
+  double dright = g_derivative(ef, normal, *right);
+  double gmax;
+  double step = (*right - *left) / n;
 
-  assert(DBL_LOG_MIN < *right && *left < -DBL_LOG_MIN);
+  void *args[] = { ef, normal };
 
-  if (dleft * dright <= 0) return;
+  if (dleft * dright > 0)
+  {
+    gmax = dleft > 0 ? gright : gleft;
+  } else {
+    gmax = zero(*left, *right, 1e-3 * fmax(fabs(gleft), fabs(gright)),
+                &g_func_base, args);
+  }
 
-  if (dleft > 0) *left = fmax(*left, *right + DBL_LOG_MIN);
-  else *right = fmin(*right, *left - DBL_LOG_MIN);
+  while (gmax - gleft > DBL_LOG_MAX)
+  {
+    *left += step;
+    gleft  = g_function(ef, normal, *left);
+  }
+
+  while (gmax - gright > DBL_LOG_MAX)
+  {
+    *right -= step;
+    gright  = g_function(ef, normal, *right);
+  }
 
   assert(*left <= *right);
 }
@@ -302,7 +340,16 @@ void liknorm_integrate(LikNormMachine *machine,
 
   printf("BEFORE: left right: %g %g\n", left, right);
   smart_shrink_interval(machine->n, ef, normal, &left, &right);
-  printf("AFTER : left right: %g %g\n\n", left, right);
+  printf("AFTER : left right: %.50f %.50f\n", left, right);
+  printf("right-left: %g\n\n",                right - left);
+
+  if (right - left <= SQRT_DBL_EPSILON)
+  {
+    *log_zeroth = -DBL_MAX;
+    *mean       = left;
+    *variance   = 1e-8;
+    return;
+  }
 
   double step = (right - left) / machine->n;
 

@@ -40,20 +40,22 @@ int main()
 
   if (fabs(variance - 1.25962109436272839957382529974e-05) > 1e-7) return 1;
 
-  return 0;
 
   ef.y        = 0;
   ef.aphi     = 1. / 266;
   ef.log_aphi = log(ef.aphi);
 
-  normal.tau = 1.0;
-  normal.eta = 1.44005e+07;
+  // normal.tau = 1.0;
+  // normal.eta = 1.44005e+07;
+
+  normal.tau = 1 / (10.0 * 10.0);
+  normal.eta = 700 * normal.tau;
 
   liknorm_integrate(machine, &ef, &normal, &log_zeroth, &mean, &variance);
+  return 0;
 
   //
   // printf("%0.30g, %0.30g, %0.30g\n", log_zeroth, mean, variance);
-  return 0;
 
 
   const double total   = 10000;
