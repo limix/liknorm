@@ -54,6 +54,5 @@
 #endif
 
 #define LIK_LPI2 0.572364942924700081938738094323 /* log(pi)/2 */
-#define LIK_LOG2PI_2 0.9189385332046726695409688545623794196 /* log(2*PI)/2 */
 
 #endif /* end of include guard: CONSTANTS_H */

@@ -1,20 +1,19 @@
 #ifndef LIKNORM_H
 #define LIKNORM_H
 
-#include <stdio.h>
-#include <math.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdbool.h>
-#include <assert.h>
+// #include <stdio.h>
+// #include <math.h>
+// #include <stdlib.h>
+// #include <string.h>
+// #include <stdbool.h>
+// #include <assert.h>
 
-#include "constants.h"
-#include "normal.h"
-#include "definitions.h"
-#include "compiler.h"
-#include "optimizer.h"
+// #include "constants.h"
+// #include "normal.h"
+// #include "definitions.h"
+// #include "compiler.h"
+// #include "optimizer.h"
 
-/* ========================== Interface ========================== */
 void liknorm_integrate(LikNormMachine *machine,
                        ExpFam         *ef,
                        Normal         *normal,
@@ -153,7 +152,9 @@ void integrate_step(double  si,
     logp_sign = -1;
   }
 
-  *log_zeroth = a + (b * hmu) / 2 + LIK_LPI2 + log(M_SQRT2 * hstd) + lcdf_diff;
+  /* log(pi)/2 */
+  double logpi_2 = 0.572364942924700081938738094323;
+  *log_zeroth = a + (b * hmu) / 2 + logpi_2 + log(M_SQRT2 * hstd) + lcdf_diff;
 
   *u = hmu - logp_sign * hstd * exp(logp - lcdf_diff);
 
