@@ -1,5 +1,6 @@
 #include "liknorm.h"
 #include "machine.h"
+#include "partition/partition.h"
 #include <stdlib.h>
 
 enum lik_name {
@@ -47,37 +48,45 @@ void liknorm_destroy_machine(LikNormMachine *machine) {
 }
 
 void liknorm_set_bernoulli(LikNormMachine *machine, double k) {
-  // set_expfam(machine, BERNOULLI, k, 1, 0, "bernoulli");
   LikNormMachine *m = machine;
   m->ef.name = bernoulli;
   m->ef.y = k;
   m->ef.aphi = 1;
   m->ef.log_aphi = 0;
   m->ef.c = 0;
-  m->ef.lp = get_log_partition(name);
-  m->ef.lp0 = get_log_partition0(name);
-  m->ef.lp1 = get_log_partition1(name);
-  get_likelihood_interval(name, &m->ef.lower_bound, &m->ef.upper_bound);
+  m->ef.lpd = bernoulli_log_partition_derivatives;
+  m->ef.lpfd = bernoulli_log_partition_fderivative;
+  m->ef.lower_bound = -DBL_MAX;
+  m->ef.upper_bound = +DBL_MAX;
 }
 
-void liknorm_set_binomial(LikNormMachine *machine, double k, double n) {
-  set_expfam(machine, BINOMIAL, k / n, 1 / n, logbinom(k, n),
-             "binomial");
+void liknorm_set_binomial(LikNormMachine *machine, double k, double n)
+{
+   LikNormMachine *m = machine;
+   m->ef.name = binomial;
+   m->ef.y = k / n;
+   m->ef.aphi = 1 / n;
+   m->ef.log_aphi = -log(n);
+   m->ef.c = logbinom(k, n);
+   m->ef.lpd = binomial_log_partition_derivatives;
+   m->ef.lpfd = binomial_log_partition_fderivative;
+   m->ef.lower_bound = -DBL_MAX;
+   m->ef.upper_bound = +DBL_MAX;
 }
 
-void liknorm_set_poisson(LikNormMachine *machine, double k) {
-  set_expfam(machine, POISSON, k, 1, -logfactorial(k),
-             "poisson");
-}
-void liknorm_set_exponential(LikNormMachine *machine, double x) {
-  set_expfam(machine, EXPONENTIAL, x, 1, 0, "exponential");
-}
-void liknorm_set_gamma(LikNormMachine *machine, double x, double a) {
-  set_expfam(machine, GAMMA, x, 1 / a, 0, "gamma");
-}
-void liknorm_set_geometric(LikNormMachine *machine, double x) {
-  set_expfam(machine, GEOMETRIC, x, 1, 0, "geometric");
-}
+// void liknorm_set_poisson(LikNormMachine *machine, double k) {
+//   set_expfam(machine, POISSON, k, 1, -logfactorial(k),
+//              "poisson");
+// }
+// void liknorm_set_exponential(LikNormMachine *machine, double x) {
+//   set_expfam(machine, EXPONENTIAL, x, 1, 0, "exponential");
+// }
+// void liknorm_set_gamma(LikNormMachine *machine, double x, double a) {
+//   set_expfam(machine, GAMMA, x, 1 / a, 0, "gamma");
+// }
+// void liknorm_set_geometric(LikNormMachine *machine, double x) {
+//   set_expfam(machine, GEOMETRIC, x, 1, 0, "geometric");
+// }
 
 
 void liknorm_set_prior(LikNormMachine *machine, double tau, double eta) {

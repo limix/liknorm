@@ -6,13 +6,13 @@
 
 static const double max_exp = log(DBL_MAX);
 
-static inline double binomial_log_partition_fderivative(double theta)
+static inline double binomial_log_partition_fderivative(const double theta)
 {
   return -theta < max_exp ? -log1p(exp(-theta)) : theta;
 }
 
 static inline void binomial_log_partition_derivatives(
-  double theta, double *b0, double *logb1, double *logb2)
+  const double theta, double *b0, double *logb1, double *logb2)
 {
   double log1p_;
   if (-theta < max_exp)
