@@ -18,7 +18,6 @@ double get_del(double x, double rational)
   return result;
 }
 
-
 /*
  * Normal cdf for fabs(x) < 0.66291
  */

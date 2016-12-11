@@ -1,12 +1,6 @@
 #ifndef NORMAL_H
 #define NORMAL_H
 
-// #include <stddef.h>
-// #include <float.h>
-// #include <math.h>
-//
-// #include "constants.h"
-
 typedef struct
 {
   double eta;
