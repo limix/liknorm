@@ -1,5 +1,6 @@
 #include "normal.h"
 #include <float.h>
+#include <math.h>
 
 double get_del(double x, double rational)
 {
@@ -217,7 +218,7 @@ double cdf(const double x)
   return result;
 }
 
-double logcdf(double a)
+double logcdf(const double a)
 {
   /* we compute the left hand side of the approx (LHS) in one shot */
   double log_LHS;
