@@ -1,5 +1,5 @@
-#ifndef DEFINITIONS_H
-#define DEFINITIONS_H
+#ifndef MACHINE_H
+#define MACHINE_H
 
 typedef struct
 {
@@ -13,4 +13,4 @@ typedef struct
   double *diff;
 } LikNormMachine;
 
-#endif /* end of include guard: DEFINITIONS_H */
+#endif

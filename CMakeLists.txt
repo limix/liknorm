@@ -1,5 +1,6 @@
 cmake_minimum_required (VERSION 3.4)
-project (liknorm)
+
+project(liknorm C)
 
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_BUILD_TYPE Debug)
