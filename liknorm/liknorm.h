@@ -1,6 +1,8 @@
 #ifndef LIKNORM_H
 #define LIKNORM_H
 
+typedef struct LikNormMachine LikNormMachine;
+
 LikNormMachine* liknorm_create_machine(int n);
 void liknorm_integrate(LikNormMachine *machine,
                        double         *log_zeroth,

@@ -5,8 +5,10 @@ project(liknorm C)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_BUILD_TYPE Debug)
 
+include_directories(.)
+
 add_subdirectory(liknorm)
-# add_subdirectory(test)
+add_subdirectory(test)
 
 enable_testing()
 add_test(NAME TestLinking COMMAND test_linking)
