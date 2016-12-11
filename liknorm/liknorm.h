@@ -3,7 +3,7 @@
 
 typedef struct LikNormMachine LikNormMachine;
 
-LikNormMachine* liknorm_create_machine(int n);
+LikNormMachine* liknorm_create_machine(int size);
 void liknorm_integrate(LikNormMachine *machine,
                        double         *log_zeroth,
                        double         *mean,
