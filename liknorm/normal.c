@@ -1,30 +1,22 @@
 #include "normal.h"
-
-#define GAUSS_EPSILON  (DBL_EPSILON / 2)
-#define GAUSS_XUPPER (8.572)
-#define GAUSS_XLOWER (-37.519)
-#define GAUSS_SCALE (16.0)
+#include <float.h>
 
 double get_del(double x, double rational)
 {
   double xsq = 0.0;
   double del = 0.0;
   double result = 0.0;
+  const double scale = 16.0;
 
-  xsq = floor (x * GAUSS_SCALE) / GAUSS_SCALE;
+  xsq = floor(x * scale) / scale;
   del = (x - xsq) * (x + xsq);
   del *= 0.5;
 
-  result = exp (-0.5 * xsq * xsq) * exp (-1.0 * del) * rational;
+  result = exp(-0.5 * xsq * xsq) * exp(-1.0 * del) * rational;
 
   return result;
 }
 
-#ifndef M_1_SQRT2PI
-#define M_1_SQRT2PI (M_2_SQRTPI * M_SQRT1_2 / 2.0)
-#endif
-
-#define SQRT32 (4.0 * M_SQRT2)
 
 /*
  * Normal cdf for fabs(x) < 0.66291
@@ -132,6 +124,9 @@ double gauss_large(const double x)
   double xden;
   double absx;
 
+  /* 1/sqrt(2*pi) */
+  const double sq2 = 0.398942280401432702863218082712;
+
   const double p[6] = {
     0.21589853405795699,
     0.1274011611602473639,
@@ -160,7 +155,7 @@ double gauss_large(const double x)
   }
 
   temp = xsq * (xnum + p[4]) / (xden + q[4]);
-  temp = (M_1_SQRT2PI - temp) / absx;
+  temp = (sq2 - temp) / absx;
 
   result = get_del(x, temp);
 
@@ -172,7 +167,13 @@ double cdf(const double x)
   double result;
   double absx = fabs(x);
 
-  if (absx < GAUSS_EPSILON)
+  /* sqrt(32) */
+  const double sqrt32 = 5.656854249492380581898487434955;
+  const double xupper = 8.572;
+  const double xlower = -37.519;
+  const double epsilon = DBL_EPSILON / 2.0;
+
+  if (absx < epsilon)
   {
     result = 0.5;
     return result;
@@ -182,7 +183,7 @@ double cdf(const double x)
     result = 0.5 + gauss_small(x);
     return result;
   }
-  else if (absx < SQRT32)
+  else if (absx < sqrt32)
   {
     result = gauss_medium(x);
 
@@ -193,12 +194,12 @@ double cdf(const double x)
 
     return result;
   }
-  else if (x > GAUSS_XUPPER)
+  else if (x > xupper)
   {
     result = 1.0;
     return result;
   }
-  else if (x < GAUSS_XLOWER)
+  else if (x < xlower)
   {
     result = 0.0;
     return result;
