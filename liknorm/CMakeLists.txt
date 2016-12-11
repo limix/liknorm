@@ -1,4 +1,1 @@
-add_library (liknorm normal.c)
-# target_include_directories (liknorm PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-# target_include_directories (liknorm PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-# target_include_directories(lib PUBLIC "${ROOT_SOURCE_DIR}/lib/inc")
+add_library (liknorm normal.c liknorm.c)
