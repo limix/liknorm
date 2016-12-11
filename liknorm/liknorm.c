@@ -5,7 +5,14 @@
 #include <math.h>
 #include <stdlib.h>
 
-enum lik_name { bernoulli, binomial, poisson, exponential, gamma, geometric };
+enum lik_name {
+  liknorm_bernoulli,
+  liknorm_binomial,
+  liknorm_poisson,
+  liknorm_exponential,
+  liknorm_gamma,
+  liknorm_geometric
+};
 
 LikNormMachine *liknorm_create_machine(int size) {
   LikNormMachine *machine = malloc(sizeof(LikNormMachine));
@@ -35,7 +42,7 @@ void liknorm_destroy_machine(LikNormMachine *machine) {
 
 void liknorm_set_bernoulli(LikNormMachine *machine, double k) {
   LikNormMachine *m = machine;
-  m->ef.name = bernoulli;
+  m->ef.name = liknorm_bernoulli;
   m->ef.y = k;
   m->ef.aphi = 1;
   m->ef.log_aphi = 0;
@@ -48,7 +55,7 @@ void liknorm_set_bernoulli(LikNormMachine *machine, double k) {
 
 void liknorm_set_binomial(LikNormMachine *machine, double k, double n) {
   LikNormMachine *m = machine;
-  m->ef.name = binomial;
+  m->ef.name = liknorm_binomial;
   m->ef.y = k / n;
   m->ef.aphi = 1 / n;
   m->ef.log_aphi = -log(n);
