@@ -8,6 +8,7 @@ set(CMAKE_BUILD_TYPE Debug)
 add_subdirectory(liknorm)
 # add_subdirectory(test)
 
-# enable_testing()
+enable_testing()
+add_test(NAME TestLinking COMMAND test_linking)
 # add_test(NAME TestIntegration COMMAND test_integration)
 # add_test(NAME TestSpecific COMMAND test_specific)
