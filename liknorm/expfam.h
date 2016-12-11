@@ -10,6 +10,8 @@ typedef
 typedef
   double log_partition1(double theta);
 
+enum lik_name;
+
 typedef struct
 {
   double         y;
@@ -20,7 +22,7 @@ typedef struct
   log_partition1 *lp1;
   double         lower_bound;
   double         upper_bound;
-  const char     *name;
+  enum lik_name  name;
 } ExpFam;
 
 #endif
