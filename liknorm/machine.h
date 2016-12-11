@@ -1,8 +1,8 @@
 #ifndef MACHINE_H
 #define MACHINE_H
 
-struct Normal;
-struct ExpFam;
+#include "normal.h"
+#include "expfam.h"
 
 struct LikNormMachine
 {
@@ -14,8 +14,8 @@ struct LikNormMachine
   double *logA2; // array for log(A''(x))
   double *diff; // temporary array
   int     size; // size of the above arrays
-  struct ExpFam ef;
-  struct Normal normal;
+  ExpFam ef;
+  Normal normal;
 };
 
 #endif

@@ -5,15 +5,6 @@
 #include <math.h>
 #include <stdlib.h>
 
-enum lik_name {
-  liknorm_bernoulli,
-  liknorm_binomial,
-  liknorm_poisson,
-  liknorm_exponential,
-  liknorm_gamma,
-  liknorm_geometric
-};
-
 LikNormMachine *liknorm_create_machine(int size) {
   LikNormMachine *machine = malloc(sizeof(LikNormMachine));
 
@@ -53,6 +44,10 @@ void liknorm_set_bernoulli(LikNormMachine *machine, double k) {
   m->ef.upper_bound = +DBL_MAX;
 }
 
+inline double logbinom(double k, double n) {
+  return lgamma(n + 1) - lgamma(k + 1) - lgamma(n - k + 1);
+}
+
 void liknorm_set_binomial(LikNormMachine *machine, double k, double n) {
   LikNormMachine *m = machine;
   m->ef.name = liknorm_binomial;
@@ -81,7 +76,7 @@ void liknorm_set_binomial(LikNormMachine *machine, double k, double n) {
 // }
 
 void liknorm_set_prior(LikNormMachine *machine, double tau, double eta) {
-  static const double tau_min = 2 * sqrt(DBL_EPSILON);
+  const double tau_min = 2 * sqrt(DBL_EPSILON);
   tau = fmax(tau, tau_min);
   machine->normal.eta = eta;
   machine->normal.tau = tau;

@@ -4,7 +4,7 @@
 #include <float.h>
 #include <math.h>
 
-static double max_exp = log(DBL_MAX);
+extern const double max_exp;
 
 static inline double binomial_log_partition_fderivative(const double theta)
 {
