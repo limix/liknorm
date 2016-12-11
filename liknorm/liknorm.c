@@ -1,25 +1,11 @@
 #include "liknorm.h"
 #include "machine.h"
 #include "partition/partition.h"
+#include <float.h>
+#include <math.h>
 #include <stdlib.h>
 
-enum lik_name {
-  bernoulli,
-  binomial,
-  poisson,
-  exponential,
-  gamma,
-  geometric
-};
-
-static const char lik_name_str[] = {
-  "bernoulli",
-  "binomial",
-  "poisson",
-  "exponential",
-  "gamma",
-  "geometric"
-};
+enum lik_name { bernoulli, binomial, poisson, exponential, gamma, geometric };
 
 LikNormMachine *liknorm_create_machine(int size) {
   LikNormMachine *machine = malloc(sizeof(LikNormMachine));
@@ -60,18 +46,17 @@ void liknorm_set_bernoulli(LikNormMachine *machine, double k) {
   m->ef.upper_bound = +DBL_MAX;
 }
 
-void liknorm_set_binomial(LikNormMachine *machine, double k, double n)
-{
-   LikNormMachine *m = machine;
-   m->ef.name = binomial;
-   m->ef.y = k / n;
-   m->ef.aphi = 1 / n;
-   m->ef.log_aphi = -log(n);
-   m->ef.c = logbinom(k, n);
-   m->ef.lpd = binomial_log_partition_derivatives;
-   m->ef.lpfd = binomial_log_partition_fderivative;
-   m->ef.lower_bound = -DBL_MAX;
-   m->ef.upper_bound = +DBL_MAX;
+void liknorm_set_binomial(LikNormMachine *machine, double k, double n) {
+  LikNormMachine *m = machine;
+  m->ef.name = binomial;
+  m->ef.y = k / n;
+  m->ef.aphi = 1 / n;
+  m->ef.log_aphi = -log(n);
+  m->ef.c = logbinom(k, n);
+  m->ef.lpd = binomial_log_partition_derivatives;
+  m->ef.lpfd = binomial_log_partition_fderivative;
+  m->ef.lower_bound = -DBL_MAX;
+  m->ef.upper_bound = +DBL_MAX;
 }
 
 // void liknorm_set_poisson(LikNormMachine *machine, double k) {
@@ -88,10 +73,9 @@ void liknorm_set_binomial(LikNormMachine *machine, double k, double n)
 //   set_expfam(machine, GEOMETRIC, x, 1, 0, "geometric");
 // }
 
-
 void liknorm_set_prior(LikNormMachine *machine, double tau, double eta) {
-  assert(tau > 0);
-  tau = fmax(tau, LIK_SQRT_EPSILON * 2);
+  static const double tau_min = 2 * sqrt(DBL_EPSILON);
+  tau = fmax(tau, tau_min);
   machine->normal.eta = eta;
   machine->normal.tau = tau;
   machine->normal.log_tau = log(tau);

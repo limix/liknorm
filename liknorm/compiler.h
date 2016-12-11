@@ -14,4 +14,4 @@
 #endif
 #endif
 
-#endif /* end of include guard: COMPILER_H */
+#endif
