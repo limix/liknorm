@@ -98,7 +98,7 @@ Line* read_table()
 
 int test_it(LikNormMachine *machine, Line *l, double *elapsed)
 {
-  if (strcmp(l->likname, "binomial") != 0 || strcmp(l->likname, "bernoulli") != 0)
+  if (strcmp(l->likname, "binomial") != 0 || strcmp(l->likname, "bernoulli") != 0 || strcmp(l->likname, "poisson") != 0)
     return 0;
 
   liknorm_set_binomial(machine, l->y / l->aphi, 1/l->aphi);
