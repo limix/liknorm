@@ -3,6 +3,7 @@
 #include "interval.h"
 #include "normal.h"
 #include "optimizer/optimizer.h"
+#include <stdio.h>
 #include <assert.h>
 #include <math.h>
 
