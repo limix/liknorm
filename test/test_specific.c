@@ -1,4 +1,5 @@
 #include "liknorm/liknorm.h"
+#include <stdio.h>
 
 int main() {
   LikNormMachine *machine = liknorm_create_machine(100000);
@@ -8,12 +9,16 @@ int main() {
 
   liknorm_set_prior(machine, tau, eta);
 
-  double k = 3;
-  double n = 10;
+  double k = 301;
+  double n = 321;
   liknorm_set_binomial(machine, k, n);
 
   double log_zeroth, mean, variance;
   liknorm_integrate(machine, &log_zeroth, &mean, &variance);
+
+  printf("%.30f\n", log_zeroth);
+  printf("%.30f\n", mean);
+  printf("%.30f\n", variance);
 
   // log_partition  *lp  = get_log_partition("binomial");
   // log_partition0 *lp0 = get_log_partition0("binomial");

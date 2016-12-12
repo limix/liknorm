@@ -1,7 +1,9 @@
+#include "interval.h"
 #include "liknorm.h"
 #include "machine.h"
-#include "interval.h"
+#include "integrate.h"
 #include "partition/partition.h"
+#include <assert.h>
 #include <float.h>
 #include <math.h>
 #include <stdlib.h>
@@ -27,24 +29,24 @@ void liknorm_integrate(LikNormMachine *machine, double *log_zeroth,
   ExpFam *ef = &(machine->ef);
   Normal *normal = &(machine->normal);
   find_interval(ef, normal, &left, &right);
-  // assert(ef->lower_bound <= left && right <= ef->upper_bound);
-  //
-  // double step = (right - left) / machine->size;
-  // double *A0 = machine->A0;
-  // double *logA1 = machine->logA1;
-  // double *logA2 = machine->logA2;
-  // double *diff = machine->diff;
-  //
-  // for (int i = 0; i < machine->size; ++i)
-  //   (*ef->lp)(left + step * i + step / 2, A0 + i, logA1 + i, logA2 + i);
-  //
-  // for (int i = 0; i < machine->size; ++i) {
-  //   A0[i] /= ef->aphi;
-  //   logA1[i] -= ef->log_aphi;
-  //   logA2[i] -= ef->log_aphi;
-  //   diff[i] = -exp(logA2[i] - logA1[i]);
-  // }
-  //
+  assert(ef->lower_bound <= left && right <= ef->upper_bound);
+
+  double step = (right - left) / machine->size;
+  double *A0 = machine->A0;
+  double *logA1 = machine->logA1;
+  double *logA2 = machine->logA2;
+  double *diff = machine->diff;
+
+  for (int i = 0; i < machine->size; ++i)
+    (*ef->lpd)(left + step * i + step / 2, A0 + i, logA1 + i, logA2 + i);
+
+  for (int i = 0; i < machine->size; ++i) {
+    A0[i] /= ef->aphi;
+    logA1[i] -= ef->log_aphi;
+    logA2[i] -= ef->log_aphi;
+    diff[i] = -exp(logA2[i] - logA1[i]);
+  }
+
   // double *u = machine->u;
   // double *v = machine->v;
   // double *mlog_zeroth = machine->log_zeroth;
@@ -59,6 +61,7 @@ void liknorm_integrate(LikNormMachine *machine, double *log_zeroth,
   // *log_zeroth -= log((2 * M_PI) / normal->tau) / 2;
   // *log_zeroth -= (normal->eta * normal->eta) / (2 * normal->tau);
 }
+
 
 void liknorm_destroy_machine(LikNormMachine *machine) {
   free(machine->log_zeroth);
