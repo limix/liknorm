@@ -12,5 +12,4 @@ add_subdirectory(test)
 
 enable_testing()
 add_test(NAME TestLinking COMMAND test_linking)
-add_test(NAME TestSpecific COMMAND test_specific)
 add_test(NAME TestIntegration COMMAND test_integration)

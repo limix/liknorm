@@ -1,5 +1,4 @@
 #include "liknorm/liknorm.h"
-#include "benchmark.h"
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -172,6 +171,5 @@ int main()
 
   liknorm_destroy_machine(machine);
 
-  printf("Elapsed time: %.10f\n", elapsed / i);
   return 0;
 }
