@@ -20,8 +20,9 @@ struct ExpFam {
   double aphi;
   double log_aphi;
   double c;
-  log_partition_derivatives *lpd;
+  log_partition_derivatives *lp;
   log_partition_fderivative *lpfd;
+  log_partition_derivatives *lpd;
   double lower_bound;
   double upper_bound;
   enum lik_name name;

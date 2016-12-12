@@ -78,8 +78,9 @@ void liknorm_set_bernoulli(LikNormMachine *machine, double k) {
   m->ef.aphi = 1;
   m->ef.log_aphi = 0;
   m->ef.c = 0;
-  m->ef.lpd = bernoulli_log_partition_derivatives;
+  m->ef.lp = bernoulli_log_partition;
   m->ef.lpfd = bernoulli_log_partition_fderivative;
+  m->ef.lpd = bernoulli_log_partition_derivatives;
   m->ef.lower_bound = -DBL_MAX;
   m->ef.upper_bound = +DBL_MAX;
 }
@@ -95,8 +96,9 @@ void liknorm_set_binomial(LikNormMachine *machine, double k, double n) {
   m->ef.aphi = 1 / n;
   m->ef.log_aphi = -log(n);
   m->ef.c = logbinom(k, n);
-  m->ef.lpd = binomial_log_partition_derivatives;
+  m->ef.lp = binomial_log_partition;
   m->ef.lpfd = binomial_log_partition_fderivative;
+  m->ef.lpd = binomial_log_partition_derivatives
   m->ef.lower_bound = -DBL_MAX;
   m->ef.upper_bound = +DBL_MAX;
 }

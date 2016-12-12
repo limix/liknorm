@@ -6,7 +6,7 @@ double g_function(double x, ExpFam *ef, Normal *normal)
 {
   const double a = x * (ef->y / ef->aphi + normal->eta);
   const double b = (normal->tau * x * x) / 2;
-  const double c = ef->lp0(x) / ef->aphi;
+  const double c = ef->lp(x) / ef->aphi;
   assert(isfinite(a));
   assert(isfinite(b));
   assert(isfinite(c));
