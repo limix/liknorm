@@ -14,8 +14,8 @@ struct LikNormMachine
   double *logA2; // array for log(A''(x))
   double *diff; // temporary array
   int     size; // size of the above arrays
-  ExpFam ef;
-  Normal normal;
+  struct ExpFam ef;
+  struct Normal normal;
 };
 
 #endif

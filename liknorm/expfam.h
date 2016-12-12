@@ -15,7 +15,7 @@ enum lik_name {
   liknorm_geometric
 };
 
-typedef struct {
+struct ExpFam {
   double y;
   double aphi;
   double log_aphi;
@@ -25,6 +25,6 @@ typedef struct {
   double lower_bound;
   double upper_bound;
   enum lik_name name;
-} ExpFam;
+};
 
 #endif

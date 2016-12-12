@@ -1,12 +1,10 @@
 #include "liknorm/liknorm.h"
-#include <stdio.h>
 
-int main()
-{
+int main() {
   LikNormMachine *machine = liknorm_create_machine(100000);
 
-  double tau     = 4.1827910222757971;
-  double eta     = -33.806632912457161;
+  double tau = 4.1827910222757971;
+  double eta = -33.806632912457161;
 
   liknorm_set_prior(machine, tau, eta);
 
@@ -14,9 +12,8 @@ int main()
   double n = 10;
   liknorm_set_binomial(machine, k, n);
 
-  // double log_zeroth, mean, variance;
-  //
-  // liknorm_integrate(machine, &ef, &normal, &log_zeroth, &mean, &variance);
+  double log_zeroth, mean, variance;
+  liknorm_integrate(machine, &log_zeroth, &mean, &variance);
 
   // log_partition  *lp  = get_log_partition("binomial");
   // log_partition0 *lp0 = get_log_partition0("binomial");
@@ -38,7 +35,8 @@ int main()
   // //
   // // if (fabs(mean + 4.66319474116641163874419362401) > 1e-7) return 1;
   // //
-  // // if (fabs(variance - 1.25962109436272839957382529974e-05) > 1e-7) return 1;
+  // // if (fabs(variance - 1.25962109436272839957382529974e-05) > 1e-7) return
+  // 1;
   //
   //
   // ef.y        = 0;
