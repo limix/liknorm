@@ -101,6 +101,12 @@ int test_it(LikNormMachine *machine, Line *l, double *elapsed)
   if (strcmp(l->likname, "binomial") != 0)
     return 0;
 
+  liknorm_set_binomial(machine, l->y * l->aphi, 1/l->aphi);
+  liknorm_set_prior(machine, 1 / l->normal_variance,
+                    l->normal_mean / l->normal_variance);
+
+  // return 1;
+
   // log_partition  *lp  = get_log_partition(l->likname);
   // log_partition0 *lp0 = get_log_partition0(l->likname);
   // log_partition0 *lp1 = get_log_partition1(l->likname);
@@ -146,7 +152,7 @@ int test_it(LikNormMachine *machine, Line *l, double *elapsed)
   //
   // if (!ok) return 1;
   //
-  // return 0;
+  return 0;
 }
 
 int main()

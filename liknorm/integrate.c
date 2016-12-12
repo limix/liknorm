@@ -123,10 +123,6 @@ void combine_steps(LikNormMachine *machine, double *log_zeroth, double *mean,
 
   for (int i = 0; i < m->size; ++i) {
     m->diff[i] = exp(m->log_zeroth[i] - *log_zeroth);
-    if (!isfinite(m->diff[i])) {
-      printf("m->log_zeroth[i] *log_zeroth: %g %g\n", m->log_zeroth[i],
-             *log_zeroth);
-    }
     assert(isfinite(m->diff[i]));
   }
 
