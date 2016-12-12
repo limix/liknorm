@@ -97,13 +97,6 @@ Line* read_table()
 
 int test_it(LikNormMachine *machine, Line *l, double *elapsed)
 {
-  //  && strcmp(l->likname, "exponential") != 0 && strcmp(l->likname, "gamma") != 0 != 0 && strcmp(l->likname, "poisson") != 0
-  // if (strcmp(l->likname, "binomial") != 0 && strcmp(l->likname, "bernoulli") != 0 && strcmp(l->likname, "geometric"))
-  //   return 0;
-
-  // if (strcmp(l->likname, "binomial") != 0 && strcmp(l->likname, "bernoulli") != 0 && strcmp(l->likname, "poisson") != 0 && strcmp(l->likname, "exponential") != 0 && strcmp(l->likname, "gamma") != 0 && strcmp(l->likname, "geometric") != 0)
-  //   return 0;
-
   if (strcmp(l->likname, "bernoulli") == 0)
     liknorm_set_bernoulli(machine, l->y);
 
@@ -135,7 +128,8 @@ int test_it(LikNormMachine *machine, Line *l, double *elapsed)
 
   if (!ok)
   {
-    printf("name: %s", l->likname);
+    printf("Test failed:\n");
+    printf("name: %s\n", l->likname);
     printf("mean variance %g %g l->mean l->variance %g %g\n",
            mean,
            variance,

@@ -3,3 +3,5 @@ sudo: false
 language: c
 script:
   - mkdir build && cd build && cmake .. && make && make test
+after_failure:
+  - mkdir build && cd build && cmake .. && make && make test ARGS="-V"
