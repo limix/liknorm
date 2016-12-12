@@ -1,7 +1,11 @@
 #include "bracket.h"
-#ifndef NDEBUG
-#include <stdio.h>
-#endif
+#include <math.h>
+
+static inline void swap(double *a, double *b) {
+  double c = *a;
+  *a = *b;
+  *b = c;
+}
 
 void find_bracket(func_base *f, void *args, double a, double b, double lower,
                   double upper, double *left, double *right, double *fleft,

@@ -1,10 +1,10 @@
-#include "interval.h"
 #include "expfam.h"
-#include "normal.h"
 #include "gfunc.h"
+#include "interval.h"
+#include "normal.h"
 #include "optimizer/optimizer.h"
-#include <math.h>
 #include <assert.h>
+#include <math.h>
 
 static const double times_std = 7;
 static const double reps = 1e-5;
@@ -32,6 +32,35 @@ static inline void find_first_interval(ExpFam *ef, Normal *normal, double *a,
       *b += smallest_step;
   }
   assert(*b - *a >= smallest_step);
+}
+
+double g_function_root(double x, void *args) {
+  void **args_ = args;
+  func_base *fb = (func_base *)args_[0];
+  double *fxmax = args_[1];
+
+  return *fxmax - (*fb)(x, args_[2]) + log(DBL_TRUE_MIN);
+}
+
+void shrink_interval(ExpFam *ef, Normal *normal, double *a, double xmax,
+                     double *b, double fxmax) {
+  void *args[] = {ef, normal};
+  double fa = g_function_func_base(*a, args);
+  double fb = g_function_func_base(*b, args);
+
+  assert(fa <= fxmax && fb <= fxmax);
+
+  if (fxmax - fa < log(DBL_TRUE_MIN)) {
+    void *args_[] = {&g_function_func_base, &fxmax, args};
+    *a = zero(*a, xmax, 1e-5, &g_function_root, args_);
+  }
+
+  if (fxmax - fb < log(DBL_TRUE_MIN)) {
+    void *args_[] = {&g_function_func_base, &fxmax, args};
+    *b = zero(*b, xmax, 1e-5, &g_function_root, args_);
+  }
+
+  assert(*a <= *b);
 }
 
 void find_interval(ExpFam *ef, Normal *normal, double *left, double *right) {
