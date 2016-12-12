@@ -238,7 +238,9 @@ double logcdf(const double a)
 
   if (a > -20)
 	   return log(cdf(a));
-  log_LHS = -0.5 * a * a - log(-a) - 0.5 * log(2 * M_PI);
+
+  static const double pi = 3.14159265358979323846;
+  log_LHS = -0.5 * a * a - log(-a) - 0.5 * log(2 * pi);
 
   while (fabs(last_total - right_hand_side) > DBL_EPSILON)
   {
