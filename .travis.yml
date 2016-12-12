@@ -1,4 +1,5 @@
-language: c
+dist: trusty
 sudo: false
+language: c
 script:
   - mkdir build && cd build && cmake .. && make && make test
