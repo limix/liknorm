@@ -107,6 +107,22 @@ void liknorm_set_binomial(LikNormMachine *machine, double k, double n) {
   m->ef.upper_bound = +DBL_MAX;
 }
 
+static inline double logfactorial(double k) { return lgamma(k + 1); }
+
+void liknorm_set_poisson(LikNormMachine *machine, double k) {
+  LikNormMachine *m = machine;
+  m->ef.name = liknorm_poisson;
+  m->ef.y = k;
+  m->ef.aphi = 1;
+  m->ef.log_aphi = 0;
+  m->ef.c = -logfactorial(k);
+  m->ef.lp = poisson_log_partition;
+  m->ef.lpfd = poisson_log_partition_fderivative;
+  m->ef.lpd = poisson_log_partition_derivatives;
+  m->ef.lower_bound = +DBL_EPSILON;
+  m->ef.upper_bound = +DBL_MAX;
+}
+
 // void liknorm_set_poisson(LikNormMachine *machine, double k) {
 //   set_expfam(machine, POISSON, k, 1, -logfactorial(k),
 //              "poisson");
