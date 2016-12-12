@@ -28,5 +28,5 @@ double g_function_func_base(double x, void *args)
 double g_derivative(double x, ExpFam *ef, Normal *normal)
 {
   return ef->y / ef->aphi + normal->eta - x * normal->tau -
-         exp(ef->lp1(x)) / ef->aphi;
+         exp(ef->lpfd(x)) / ef->aphi;
 }

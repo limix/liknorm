@@ -1,1 +1,1 @@
-add_library (optimizer bracket.c brent.c)
+add_library (optimizer bracket.c brent.c zero.c)

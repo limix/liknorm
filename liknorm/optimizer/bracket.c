@@ -1,4 +1,5 @@
 #include "bracket.h"
+#include <assert.h>
 #include <math.h>
 
 static inline void swap(double *a, double *b) {
