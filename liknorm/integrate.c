@@ -3,6 +3,7 @@
 #include "normal.h"
 #include "expfam.h"
 #include "logaddexp.h"
+#include <float.h>
 #include <math.h>
 #include <assert.h>
 
