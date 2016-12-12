@@ -16,5 +16,7 @@ static inline void geometric_log_partition_derivatives(const double theta,
                                                        double *logb1,
                                                        double *logb2) {
   static const double log1p_ = -log1p(-exp(theta));
-  *b0 = log1p_ * logb1 = theta + log1p_ * logb2 = theta + 2 * log1p_;
+  *b0 = log1p_;
+  *logb1 = theta + log1p_;
+  *logb2 = theta + 2 * log1p_;
 }
