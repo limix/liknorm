@@ -44,7 +44,7 @@ void liknorm_set_bernoulli(LikNormMachine *machine, double k) {
   m->ef.upper_bound = +DBL_MAX;
 }
 
-inline double logbinom(double k, double n) {
+double logbinom(double k, double n) {
   return lgamma(n + 1) - lgamma(k + 1) - lgamma(n - k + 1);
 }
 
