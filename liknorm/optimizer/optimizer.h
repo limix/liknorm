@@ -3,5 +3,6 @@
 
 #include "bracket.h"
 #include "brent.h"
+#include "zero.h"
 
 #endif

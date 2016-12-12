@@ -1,6 +1,8 @@
 #include "gfunc.h"
 #include "expfam.h"
 #include "normal.h"
+#include <assert.h>
+#include <math.h>
 
 double g_function(double x, ExpFam *ef, Normal *normal)
 {
