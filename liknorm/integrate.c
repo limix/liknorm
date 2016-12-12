@@ -1,6 +1,7 @@
 #include "integrate.h"
 #include "machine.h"
 #include "normal.h"
+#include "expfam.h"
 #include "logaddexp.h"
 #include <math.h>
 #include <assert.h>

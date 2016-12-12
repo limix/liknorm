@@ -2,7 +2,7 @@
 #define LOGADDEXP_H
 
 #include "compiler.h"
-#inclide <math.h>
+#include <math.h>
 
 /* Implements log(e^x + e^y).
  */
@@ -20,4 +20,4 @@ static inline double logaddexp(double x, double y) {
   return tmp;
 }
 
-#endif LOGADDEXP_H
+#endif
