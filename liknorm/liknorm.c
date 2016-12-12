@@ -123,13 +123,20 @@ void liknorm_set_poisson(LikNormMachine *machine, double k) {
   m->ef.upper_bound = +DBL_MAX;
 }
 
-// void liknorm_set_poisson(LikNormMachine *machine, double k) {
-//   set_expfam(machine, POISSON, k, 1, -logfactorial(k),
-//              "poisson");
-// }
-// void liknorm_set_exponential(LikNormMachine *machine, double x) {
-//   set_expfam(machine, EXPONENTIAL, x, 1, 0, "exponential");
-// }
+void liknorm_set_exponential(LikNormMachine *machine, double x) {
+  LikNormMachine *m = machine;
+  m->ef.name = liknorm_exponential;
+  m->ef.y = x;
+  m->ef.aphi = 1;
+  m->ef.log_aphi = 0;
+  m->ef.c = 0;
+  m->ef.lp = exponential_log_partition;
+  m->ef.lpfd = exponential_log_partition_fderivative;
+  m->ef.lpd = exponential_log_partition_derivatives;
+  m->ef.lower_bound = -DBL_MAX;
+  m->ef.upper_bound = -DBL_EPSILON;
+}
+
 // void liknorm_set_gamma(LikNormMachine *machine, double x, double a) {
 //   set_expfam(machine, GAMMA, x, 1 / a, 0, "gamma");
 // }
