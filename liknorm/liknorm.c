@@ -47,15 +47,15 @@ void liknorm_integrate(LikNormMachine *machine, double *log_zeroth,
     diff[i] = -exp(logA2[i] - logA1[i]);
   }
 
-  // double *u = machine->u;
-  // double *v = machine->v;
-  // double *mlog_zeroth = machine->log_zeroth;
-  // for (int i = 0; i < machine->size; ++i) {
-  //   integrate_step(left + step * i, step, ef, normal, mlog_zeroth++, u++, v++,
-  //                  A0++, logA1++, logA2++, diff++);
-  // }
-  //
-  // combine_steps(machine, log_zeroth, mean, variance);
+  double *u = machine->u;
+  double *v = machine->v;
+  double *mlog_zeroth = machine->log_zeroth;
+  for (int i = 0; i < machine->size; ++i) {
+    integrate_step(left + step * i, step, ef, normal, mlog_zeroth++, u++, v++,
+                   A0++, logA1++, logA2++, diff++);
+  }
+
+  combine_steps(machine, log_zeroth, mean, variance);
   //
   // *log_zeroth += machine->ef.c;
   // *log_zeroth -= log((2 * M_PI) / normal->tau) / 2;

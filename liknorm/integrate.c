@@ -1,11 +1,11 @@
+#include "expfam.h"
 #include "integrate.h"
+#include "logaddexp.h"
 #include "machine.h"
 #include "normal.h"
-#include "expfam.h"
-#include "logaddexp.h"
+#include <assert.h>
 #include <float.h>
 #include <math.h>
-#include <assert.h>
 
 void integrate_step(double si, double step, ExpFam *ef, Normal *normal,
                     double *log_zeroth, double *u, double *v, double *A0,
@@ -108,4 +108,53 @@ void integrate_step(double si, double step, ExpFam *ef, Normal *normal,
 
   assert(isfinite(htau) && htau >= 0);
   assert(*v >= 0);
+}
+
+void combine_steps(LikNormMachine *machine, double *log_zeroth, double *mean,
+                   double *variance) {
+
+  LikNormMachine *m = machine;
+
+  double max_log_zeroth = m->log_zeroth[0];
+  for (int i = 1; i < m->size; ++i)
+    max_log_zeroth = fmax(m->log_zeroth[i], max_log_zeroth);
+
+  (*log_zeroth) = logaddexp_array(m->log_zeroth, m->size, max_log_zeroth);
+
+  for (int i = 0; i < m->size; ++i) {
+    m->diff[i] = exp(m->log_zeroth[i] - *log_zeroth);
+    if (!isfinite(m->diff[i])) {
+      printf("m->log_zeroth[i] *log_zeroth: %g %g\n", m->log_zeroth[i],
+             *log_zeroth);
+    }
+    assert(isfinite(m->diff[i]));
+  }
+
+  int left = -1;
+
+  while (m->diff[++left] == 0)
+    ;
+
+  int right = m->size;
+
+  while (m->diff[--right] == 0)
+    ;
+  ++right;
+
+  assert(left < right);
+
+  *mean = 0;
+  *variance = 0;
+
+  for (int i = left; i < right; ++i) {
+    assert(isfinite(m->u[i]));
+    assert(isfinite(m->v[i]));
+    *mean += m->u[i] * m->diff[i];
+    *variance += m->v[i] * m->diff[i];
+  }
+
+  *variance = *variance - (*mean) * (*mean);
+
+  assert(isfinite(*variance));
+  assert(isfinite(*mean));
 }
