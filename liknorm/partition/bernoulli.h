@@ -3,6 +3,10 @@
 
 #include "binomial.h"
 
+static inline double bernoulli_log_partition(const double theta) {
+  return binomial_log_partition(theta);
+}
+
 static inline double bernoulli_log_partition_fderivative(const double theta) {
   return binomial_log_partition_fderivative(theta);
 }

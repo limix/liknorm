@@ -98,7 +98,7 @@ void liknorm_set_binomial(LikNormMachine *machine, double k, double n) {
   m->ef.c = logbinom(k, n);
   m->ef.lp = binomial_log_partition;
   m->ef.lpfd = binomial_log_partition_fderivative;
-  m->ef.lpd = binomial_log_partition_derivatives
+  m->ef.lpd = binomial_log_partition_derivatives;
   m->ef.lower_bound = -DBL_MAX;
   m->ef.upper_bound = +DBL_MAX;
 }
