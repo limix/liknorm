@@ -9,7 +9,7 @@ int main() {
 
   liknorm_set_prior(machine, tau, eta);
 
-  double k = 301;
+  double k = 320;
   double n = 321;
   liknorm_set_binomial(machine, k, n);
 

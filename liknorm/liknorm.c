@@ -56,10 +56,11 @@ void liknorm_integrate(LikNormMachine *machine, double *log_zeroth,
   }
 
   combine_steps(machine, log_zeroth, mean, variance);
-  //
-  // *log_zeroth += machine->ef.c;
-  // *log_zeroth -= log((2 * M_PI) / normal->tau) / 2;
-  // *log_zeroth -= (normal->eta * normal->eta) / (2 * normal->tau);
+
+  static const double pi = 3.14159265358979323846;
+  *log_zeroth += machine->ef.c;
+  *log_zeroth -= log((2 * pi) / normal->tau) / 2;
+  *log_zeroth -= (normal->eta * normal->eta) / (2 * normal->tau);
 }
 
 
