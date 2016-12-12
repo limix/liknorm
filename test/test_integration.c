@@ -98,14 +98,35 @@ Line* read_table()
 
 int test_it(LikNormMachine *machine, Line *l, double *elapsed)
 {
-  if (strcmp(l->likname, "binomial") != 0 || strcmp(l->likname, "bernoulli") != 0 || strcmp(l->likname, "poisson") != 0 || strcmp(l->likname, "exponential") != 0 || strcmp(l->likname, "gamma") != 0)
-    return 0;
+  //  && strcmp(l->likname, "exponential") != 0 && strcmp(l->likname, "gamma") != 0 != 0 && strcmp(l->likname, "poisson") != 0
+  // if (strcmp(l->likname, "binomial") != 0 && strcmp(l->likname, "bernoulli") != 0 && strcmp(l->likname, "geometric"))
+  //   return 0;
 
-  liknorm_set_binomial(machine, l->y / l->aphi, 1/l->aphi);
+  // if (strcmp(l->likname, "binomial") != 0 && strcmp(l->likname, "bernoulli") != 0 && strcmp(l->likname, "poisson") != 0 && strcmp(l->likname, "exponential") != 0 && strcmp(l->likname, "gamma") != 0 && strcmp(l->likname, "geometric") != 0)
+  //   return 0;
+
+  if (strcmp(l->likname, "bernoulli") == 0)
+    liknorm_set_bernoulli(machine, l->y);
+
+  if (strcmp(l->likname, "poisson") == 0)
+    liknorm_set_poisson(machine, l->y);
+
+  if (strcmp(l->likname, "binomial") == 0)
+    liknorm_set_binomial(machine, l->y / l->aphi, 1/l->aphi);
+
+  if (strcmp(l->likname, "gamma") == 0)
+    liknorm_set_gamma(machine, l->y, 1/l->aphi);
+
+  if (strcmp(l->likname, "exponential") == 0)
+    liknorm_set_exponential(machine, l->y);
+
+  if (strcmp(l->likname, "geometric") == 0)
+    liknorm_set_geometric(machine, l->y);
+
   liknorm_set_prior(machine, 1 / l->normal_variance,
                     l->normal_mean / l->normal_variance);
-  double log_zeroth, mean, variance;
 
+  double log_zeroth, mean, variance;
   liknorm_integrate(machine, &log_zeroth, &mean, &variance);
 
   double eps = 1e-4;
@@ -115,6 +136,7 @@ int test_it(LikNormMachine *machine, Line *l, double *elapsed)
 
   if (!ok)
   {
+    printf("name: %s", l->likname);
     printf("mean variance %g %g l->mean l->variance %g %g\n",
            mean,
            variance,

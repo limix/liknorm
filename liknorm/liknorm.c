@@ -119,7 +119,7 @@ void liknorm_set_poisson(LikNormMachine *machine, double k) {
   m->ef.lp = poisson_log_partition;
   m->ef.lpfd = poisson_log_partition_fderivative;
   m->ef.lpd = poisson_log_partition_derivatives;
-  m->ef.lower_bound = +DBL_EPSILON;
+  m->ef.lower_bound = -DBL_MAX;
   m->ef.upper_bound = +DBL_MAX;
 }
 
