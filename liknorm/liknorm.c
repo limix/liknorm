@@ -137,12 +137,33 @@ void liknorm_set_exponential(LikNormMachine *machine, double x) {
   m->ef.upper_bound = -DBL_EPSILON;
 }
 
-// void liknorm_set_gamma(LikNormMachine *machine, double x, double a) {
-//   set_expfam(machine, GAMMA, x, 1 / a, 0, "gamma");
-// }
-// void liknorm_set_geometric(LikNormMachine *machine, double x) {
-//   set_expfam(machine, GEOMETRIC, x, 1, 0, "geometric");
-// }
+void liknorm_set_gamma(LikNormMachine *machine, double x, double a) {
+  LikNormMachine *m = machine;
+  m->ef.name = liknorm_gamma;
+  m->ef.y = x;
+  m->ef.aphi = 1/a;
+  m->ef.log_aphi = -log(a);
+  m->ef.c = 0;
+  m->ef.lp = gamma_log_partition;
+  m->ef.lpfd = gamma_log_partition_fderivative;
+  m->ef.lpd = gamma_log_partition_derivatives;
+  m->ef.lower_bound = -DBL_MAX;
+  m->ef.upper_bound = -DBL_EPSILON;
+}
+
+void liknorm_set_geometric(LikNormMachine *machine, double x) {
+  LikNormMachine *m = machine;
+  m->ef.name = liknorm_geometric;
+  m->ef.y = x;
+  m->ef.aphi = 1;
+  m->ef.log_aphi = 0;
+  m->ef.c = 0;
+  m->ef.lp = geometric_log_partition;
+  m->ef.lpfd = geometric_log_partition_fderivative;
+  m->ef.lpd = geometric_log_partition_derivatives;
+  m->ef.lower_bound = -DBL_MAX;
+  m->ef.upper_bound = -DBL_EPSILON;
+}
 
 void liknorm_set_prior(LikNormMachine *machine, double tau, double eta) {
   const double tau_min = 2 * sqrt(DBL_EPSILON);
