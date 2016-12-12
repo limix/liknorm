@@ -1,1 +1,1 @@
-add_library (partition binomial.c)
+add_library (partition binomial.c exponential.c geometric.c gamma.c poisson.h)
