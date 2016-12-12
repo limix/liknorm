@@ -3,6 +3,7 @@
 
 typedef struct ExpFam ExpFam;
 typedef struct Normal Normal;
+typedef struct LikNormMachine LikNormMachine;
 
 void integrate_step(double si, double step, ExpFam *ef, Normal *normal,
                     double *log_zeroth, double *u, double *v, double *A0,
