@@ -1,6 +1,8 @@
 #include "interval.h"
 #include "expfam.h"
 #include "normal.h"
+#include "gfunc.h"
+#include "optimizer/optimizer.h"
 #include <math.h>
 #include <assert.h>
 
