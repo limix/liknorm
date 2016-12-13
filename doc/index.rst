@@ -1,7 +1,3 @@
-.. toctree::
-  :caption: Table of Contents
-  :name: mastertoc
-
 =======================
 Liknorm's documentation
 =======================
