@@ -9,7 +9,7 @@ before_script:
 script:
 - mkdir dist && pushd dist && cmake .. && popd
 - mv dist liknorm-`cat VERSION`
-- tar czf liknorm-`cat VERSION` liknorm-`cat VERSION`.tar.gz
+- tar czf liknorm-`cat VERSION`.tar.gz liknorm-`cat VERSION`
 after_failure:
 - rm -rf * && cmake .. && make && make test ARGS="-V"
 notifications:
