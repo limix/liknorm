@@ -36,17 +36,16 @@ Line* read_table()
 
   if (stream == 0) return 0;
 
-  const size_t lsize = 65536;
-  char line[lsize];
+  char line[65536];
 
   Line *l    = 0;
   Line *root = 0;
   Line *last = root;
   char *token;
 
-  fgets(line, lsize, stream);
+  fgets(line, 65536, stream);
 
-  while (fgets(line, lsize, stream))
+  while (fgets(line, 65536, stream))
   {
     l = malloc(sizeof(Line));
 
