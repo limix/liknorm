@@ -10,6 +10,16 @@ Estimates
 
 via deterministic numerical integration.
 
+$g(\cdot)$ is a link function and $\theta$ determines the exponential-family
+distribution of interest:
+
+- Bernoulli
+- Binomial
+- Poisson
+- Exponential
+- Gamma
+- Geometric
+
 .. c:function:: LikNormMachine* liknorm_create_machine(int size)
 
   Create a Machine instance capable of doing numerical integration.
