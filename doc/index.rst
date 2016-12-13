@@ -30,6 +30,13 @@ In the project folder::
   cd build
   cmake ..
   make
+
+It should create the library::
+
+  liknorm/libliknorm.[extension]
+
+And if you want to test it::
+
   make test
 
 ---------------------
