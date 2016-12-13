@@ -60,6 +60,15 @@ Functions description
   :return: Machine instance to perform integration.
   :rtype: LikNormMachine*
 
+.. c:function:: void liknorm_integrate(LikNormMachine *machine, double *log_zeroth, double *mean, double *variance)
+
+  Perform numerical integration.
+
+  :param LikNormMachine* machine: Machine to perform integration.
+  :param double* log_zeroth: Zeroth moment.
+  :param double* log_mean: First moment of the normalized distribution.
+  :param double* log_variance: Variance of the normalized distribution.
+
 .. c:function:: void liknorm_destroy_machine(LikNormMachine *machine)
 
   Destroy a Machine instance.
