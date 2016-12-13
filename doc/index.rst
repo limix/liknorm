@@ -22,9 +22,9 @@ exponential-family distribution of interest:
 - Gamma :c:func:`liknorm_set_gamma`
 - Geometric :c:func:`liknorm_set_geometric`
 
-----------------
-How to build it?
-----------------
+--------
+Build it
+--------
 
 In the project folder, type
 
@@ -47,12 +47,15 @@ And if you want to test it:
 
   make test
 
------
-Usage
------
+-------------
+Usage example
+-------------
+
+Suppose you have the file
 
 .. code-block:: c
 
+  /* example.c */
   #include "liknorm/liknorm.h"
 
   #include <stdio.h>
@@ -79,12 +82,14 @@ Usage
     liknorm_destroy_machine(machine);
   }
 
+Compiling, linking, and running it via
+
 .. code-block:: bash
 
   cc libliknorm.a example.c -o example
   ./example
 
-Should print::
+should print::
 
   -2.049961
   -2.038184
