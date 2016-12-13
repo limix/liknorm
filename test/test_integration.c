@@ -88,7 +88,6 @@ Line* read_table()
 
 int test_it(LikNormMachine *machine, Line *l, double *elapsed)
 {
-  printf("Testing for: %s\n", l->likname);
   if (strcmp(l->likname, "bernoulli") == 0)
     liknorm_set_bernoulli(machine, l->y);
 

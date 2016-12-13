@@ -92,8 +92,6 @@ void find_interval(ExpFam *ef, Normal *normal, double *left, double *right) {
 
   assert(a <= xmax && xmax <= b);
 
-  printf("Found a: %f\n", a);
-  printf("Found b: %f\n", b);
   shrink_interval(ef, normal, &a, xmax, &b, fxmax);
 
   *left = a;
