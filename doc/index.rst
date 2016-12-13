@@ -13,12 +13,24 @@ via deterministic numerical integration.
 :math:`g(\cdot)` is a link function and :math:`\theta` determines the
 exponential-family distribution of interest:
 
-- Bernoulli: :c:func:`liknorm_set_bernoulli`
-- Binomial
-- Poisson
-- Exponential
-- Gamma
-- Geometric
+- Bernoulli :c:func:`liknorm_set_bernoulli`
+- Binomial :c:func:`liknorm_set_binomial`
+- Poisson :c:func:`liknorm_set_poisson`
+- Exponential :c:func:`liknorm_set_poisson`
+- Gamma :c:func:`liknorm_set_gamma`
+- Geometric :c:func:`liknorm_set_geometric`
+
+----------------
+How to build it?
+----------------
+
+In the project folder::
+
+  mkdir build
+  cd build
+  cmake ..
+  make
+  make test
 
 ---------------------
 Functions description
