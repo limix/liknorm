@@ -35,7 +35,7 @@ In the project folder, type
   cmake ..
   make
 
-It should create the library:
+It should create the library
 
 .. code-block:: bash
 
