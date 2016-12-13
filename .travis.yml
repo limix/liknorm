@@ -23,4 +23,5 @@ deploy:
     secure: j2PKwhQ0pr0PyrNlU9tbWRF/BQ7pMPi9SccZsBKcv9rfTBnx5rk0cxZbooBex1ry1mNBaO9Dyq8hRtvRMPAa6uJEv7rS31YThATwkLUdzHFPGEMr5VJTAQXdOgUO2fc5HiaH/fZkh51z7gesOOgUs/nwYQl/moIl/r/zdqSMnkybhs02m2GI/zrBj9ad/Rp5HVsGps/QSIB5jzuHiWLiEXYR0Jnfrqg8CnBxDF9KsFnTJN3EaQ9ImQFvpb5BuARVeNxh1Wz8N/TNq8wawipX8kuzvwVGbEdiw8CsbaFMk1fHRPMFwyE18IKcp5vHLvLn6QtxcFCmCVIBnG/z3FhFsuM/0QdAJLKTqB019JwDpPOtUCKPEINRO9s5AOxu7pUFKfJENZZIsi+I5+KR6tCV8YkNYJyr/jh4z+AuNTmg7lPInh8N1O3fk3mHxlDWaUS+prWynbY4+Jt8J7fmh0ipBMrzs0lh/XzyLAOCPT/nTwgG1lfqvniIIkhw8iLegrl7YCUS1dv0SjbW4kfs/GCLTRI92ht4zXy7MmceFUVmEosiL9NRFt/lPffigNnrLvST0Em8wIh9LF7c8x+fQd16z3gu0VHhIpaut96rorIeWAKBIQjS+MlMMt+PuHoOGacgngYhaqY2VWPNpx8nu2tvqFcpUL4MznqxDkAxWKicz7w=
   file: liknorm-`cat VERSION`.tar.gz
   on:
+    tags: true
     repo: glimix/liknorm
