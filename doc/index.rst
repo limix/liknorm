@@ -10,6 +10,8 @@ Estimates
 
 via deterministic numerical integration.
 
+The values :math:`l` and :math:`r` are necessarily the lower and upper bound
+of the likelihood domain. (The user is not allowed to set it.)
 :math:`g(\cdot)` is a link function and :math:`\theta` determines the
 exponential-family distribution of interest:
 
