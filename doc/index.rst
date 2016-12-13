@@ -2,7 +2,15 @@
 Liknorm's documentation
 =======================
 
-.. c:function:: LikNormMachine* liknorm_create_machine(int size);
+.. c:function:: LikNormMachine* liknorm_create_machine(int size)
 
-  doc bla bla
-  gaga
+  :param int size: Number of integration points. `500` points should be
+                   enough.
+  :return: Machine instance to perform integration.
+  :rtype: LikNormMachine
+
+.. c:function:: void liknorm_destroy_machine(LikNormMachine *machine)
+
+  :param LikNormMachine machine: Machine to be destroyed. Always call it before
+                                 exiting your program, otherwise it will
+                                 leak memory.
