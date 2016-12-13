@@ -13,7 +13,3 @@ add_subdirectory(test)
 enable_testing()
 add_test(NAME TestLinking COMMAND test_linking)
 add_test(NAME TestIntegration COMMAND test_integration)
-
-install (TARGETS liknorm
-         ARCHIVE DESTINATION lib
-         LIBRARY DESTINATION lib)
