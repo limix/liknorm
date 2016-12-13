@@ -31,5 +31,5 @@ Liknorm's documentation
   Set the parameters of Normal prior.
 
   :param LikNormMachine machine: Machine to perform integration.
-  :param double tau: `0` or `1` indicating a Bernoulli outcome.
+  :param double tau: ``0`` or `1` indicating a Bernoulli outcome.
   :param double eta: `0` or `1` indicating a Bernoulli outcome.
