@@ -1,10 +1,6 @@
 cmake_minimum_required (VERSION 3.2.2)
 
-project(liknorm C)
-
-set (liknorm_VERSION_MAJOR 1)
-set (liknorm_VERSION_MINOR 2)
-set (liknorm_VERSION_PATH 0)
+project(Liknorm C)
 
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_BUILD_TYPE Release)
@@ -16,6 +12,17 @@ endif()
 include_directories(.)
 
 add_subdirectory(liknorm)
+
+add_library(liknorm SHARED liknorm_objs)
+
+set_target_properties(liknorm PROPERTIES PUBLIC_HEADER "liknorm.h")
+
+install (TARGETS liknorm
+         ARCHIVE DESTINATION lib
+         LIBRARY DESTINATION lib
+         PUBLIC_HEADER DESTINATION include/liknorm)
+
+
 add_subdirectory(test)
 
 enable_testing()
