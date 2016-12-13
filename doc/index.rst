@@ -47,6 +47,32 @@ And if you want to test it:
 
   make test
 
+-----
+Usage
+-----
+
+.. code-block:: c
+
+  #include "liknorm/liknorm.h"
+
+  int main()
+  {
+    double log_zeroth, mean, variance;
+    double prior_var = 2.5;
+    double prior_mean = -2.0;
+    double nsuccesses = 2;
+    double ntrials = 15;
+
+    LikNormMachine *machine = liknorm_create_machine(500);
+
+    liknorm_set_binomial(machine, nsuccesses, ntrials);
+    liknorm_set_prior(machine, 1 / prior_var, prior_mean / prior_var);
+
+    liknorm_integrate(machine, &log_zeroth, &mean, &variance);
+
+    liknorm_destroy_machine(machine);
+  }
+
 ---------------------
 Functions description
 ---------------------
