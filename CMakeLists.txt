@@ -29,6 +29,7 @@ set_target_properties(liknorm
 install(TARGETS liknorm
         ARCHIVE DESTINATION lib
         LIBRARY DESTINATION lib
+        POSITION_INDEPENDENT_CODE ON
         PUBLIC_HEADER DESTINATION include/liknorm)
 
 install(TARGETS liknorm_static
