@@ -10,8 +10,8 @@ Estimates
 
 via deterministic numerical integration.
 
-$g(\cdot)$ is a link function and $\theta$ determines the exponential-family
-distribution of interest:
+:math:`g(\cdot)` is a link function and :math:`\theta` determines the
+exponential-family distribution of interest:
 
 - Bernoulli
 - Binomial
@@ -47,6 +47,43 @@ Functions description
 
   :param LikNormMachine* machine: Machine to perform integration.
   :param double k: ``0`` or ``1`` indicating a Bernoulli outcome.
+
+.. c:function:: void liknorm_set_binomial(LikNormMachine *machine, double k, double n)
+
+  Set a Binomial likelihood.
+
+  :param LikNormMachine* machine: Machine to perform integration.
+  :param double k: Number of successes.
+  :param double n: Number of trials.
+
+.. c:function:: void liknorm_set_poisson(LikNormMachine *machine, double k)
+
+  Set a Poisson likelihood.
+
+  :param LikNormMachine* machine: Machine to perform integration.
+  :param double k: Number of successes.
+
+.. c:function:: void liknorm_set_exponential(LikNormMachine *machine, double x)
+
+  Set a Exponential likelihood.
+
+  :param LikNormMachine* machine: Machine to perform integration.
+  :param double x: Time span.
+
+.. c:function:: void liknorm_set_gamma(LikNormMachine *machine, double x, double a)
+
+  Set a Gamma likelihood.
+
+  :param LikNormMachine* machine: Machine to perform integration.
+  :param double x: Positive outcome.
+  :param double a: Shape parameter.
+
+.. c:function:: void liknorm_set_geometric(LikNormMachine *machine, double x)
+
+  Set a Geometric likelihood.
+
+  :param LikNormMachine* machine: Machine to perform integration.
+  :param double x: Number of trials to success.
 
 .. c:function:: void liknorm_set_prior(LikNormMachine *machine, double tau, double eta)
 
