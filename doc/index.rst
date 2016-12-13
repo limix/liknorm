@@ -13,7 +13,7 @@ via deterministic numerical integration.
 :math:`g(\cdot)` is a link function and :math:`\theta` determines the
 exponential-family distribution of interest:
 
-- Bernoulli
+- Bernoulli: :c:func:`liknorm_set_bernoulli`
 - Binomial
 - Poisson
 - Exponential
