@@ -25,3 +25,5 @@ deploy:
   on:
     tags: true
     repo: glimix/liknorm
+    branch: release
+    condition: "$CC = clang"
