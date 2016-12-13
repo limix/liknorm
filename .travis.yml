@@ -5,9 +5,9 @@ compiler:
 - clang
 - gcc
 before_script:
-- mkdir build && cd build && cmake .. && make && make test
+- mkdir build && pushd build && cmake .. && make && make test && popd
 script:
-- mkdir dist && cd dist && cmake .. && cd ..
+- mkdir dist && pushd dist && cmake .. && popd
 - mv dist liknorm-`cat VERSION`
 - tar czf liknorm-`cat VERSION` liknorm-`cat VERSION`.tar.gz
 after_failure:
