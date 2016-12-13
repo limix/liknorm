@@ -26,7 +26,9 @@ exponential-family distribution of interest:
 How to build it?
 ----------------
 
-In the project folder, type:
+In the project folder, type
+
+.. code-block:: bash
 
   mkdir build
   cd build
@@ -35,9 +37,13 @@ In the project folder, type:
 
 It should create the library:
 
+.. code-block:: bash
+
   liknorm/libliknorm.[extension]
 
 And if you want to test it::
+
+.. code-block:: bash
 
   make test
 
