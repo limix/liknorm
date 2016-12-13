@@ -14,3 +14,8 @@ Liknorm's documentation
   :param LikNormMachine machine: Machine to be destroyed. Always call it before
                                  exiting your program, otherwise it will
                                  leak memory.
+
+.. c:function:: void liknorm_set_bernoulli(LikNormMachine *machine, double k)
+
+  :param LikNormMachine machine: Machine to perform integration.
+  :param double k: `0` or `1` indicating a Bernoulli outcome.
