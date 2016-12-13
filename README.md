@@ -5,7 +5,7 @@ exponential-family likelihood with a Normal distribution.
 
 ## Install
 
-You can install it
+You can install it via
 [conda](http://conda.pydata.org/docs/index.html)
 
 ```bash
