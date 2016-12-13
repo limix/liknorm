@@ -13,9 +13,9 @@ include_directories(.)
 
 add_subdirectory(liknorm)
 
-add_library(liknorm SHARED $<TARGET_OBJECTS:liknorm_objs>)
+add_library(liknorm SHARED $<TARGET_OBJECTS:liknorm_objs> $<TARGET_OBJECTS:optimizer_objs> $<TARGET_OBJECTS:partition_objs>)
 
-set_target_properties(liknorm PROPERTIES PUBLIC_HEADER "liknorm.h")
+set_target_properties(liknorm PROPERTIES PUBLIC_HEADER "liknorm/liknorm.h")
 
 install (TARGETS liknorm
          ARCHIVE DESTINATION lib
