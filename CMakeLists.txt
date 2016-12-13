@@ -13,7 +13,7 @@ include_directories(.)
 
 add_subdirectory(liknorm)
 
-add_library(liknorm SHARED liknorm_objs)
+add_library(liknorm SHARED $<TARGET_OBJECTS:liknorm_objs>)
 
 set_target_properties(liknorm PROPERTIES PUBLIC_HEADER "liknorm.h")
 
