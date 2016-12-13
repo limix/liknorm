@@ -53,7 +53,8 @@ void integrate_step(double si, double step, ExpFam *ef, Normal *normal,
 
   /* log(pi)/2 */
   static const double lpi2 = 0.572364942924700081938738094323;
-  *log_zeroth = (a + (heta * heta) / 2) / htau + lpi2 + log(M_SQRT2) -
+  static const double lnsqrt2 = 0.346573590279972698624533222755;
+  *log_zeroth = (a + (heta * heta) / 2) / htau + lpi2 + lnsqrt2 -
                 log_htau / 2 + lcdf_diff;
 
   assert(isfinite(*log_zeroth));

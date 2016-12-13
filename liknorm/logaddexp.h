@@ -8,9 +8,10 @@
  */
 static inline double logaddexp(double x, double y) {
   double tmp = x - y;
+  static const double ln2 = 0.693147180559945309417;
 
   if (UNLIKELY(x == y))
-    return x + M_LN2;
+    return x + ln2;
 
   if (tmp > 0)
     return x + log1p(exp(-tmp));
