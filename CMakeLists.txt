@@ -24,12 +24,12 @@ add_library(liknorm_static STATIC $<TARGET_OBJECTS:liknorm_objs>
 set_target_properties(liknorm
   PROPERTIES
     VERSION ${LIKNORM_VERSION}
+    POSITION_INDEPENDENT_CODE ON
     PUBLIC_HEADER "liknorm/liknorm.h")
 
 install(TARGETS liknorm
         ARCHIVE DESTINATION lib
         LIBRARY DESTINATION lib
-        POSITION_INDEPENDENT_CODE ON
         PUBLIC_HEADER DESTINATION include/liknorm)
 
 install(TARGETS liknorm_static
