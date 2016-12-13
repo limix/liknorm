@@ -24,14 +24,14 @@ exponential-family distribution of interest:
 How to build it?
 ----------------
 
-In the project folder::
+In the project folder, type:
 
   mkdir build
   cd build
   cmake ..
   make
 
-It should create the library::
+It should create the library:
 
   liknorm/libliknorm.[extension]
 
