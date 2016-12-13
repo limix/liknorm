@@ -20,6 +20,10 @@ distribution of interest:
 - Gamma
 - Geometric
 
+---------------------
+Functions description
+---------------------
+
 .. c:function:: LikNormMachine* liknorm_create_machine(int size)
 
   Create a Machine instance capable of doing numerical integration.
