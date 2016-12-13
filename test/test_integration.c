@@ -4,23 +4,18 @@
 #include <stdlib.h>
 #include <string.h>
 
-char* getfield(char *line, int num)
+char *strdump(const char *str)
 {
-  line = strdup(line);
-  char *tok;
-
-  for (tok = strtok(line, ",");
-       tok && *tok;
-       tok = strtok(NULL, ",\n"))
+  size_t i;
+  for (i = 0; ; ++i)
   {
-    if (!--num)
-    {
-      free(line);
-      return strdup(tok);
-    }
+    if (str[i] == '\0')
+      break;
   }
-  free(line);
-  return NULL;
+  ++i;
+  char *rstr = malloc(sizeof(char) * i);
+  memcpy(rstr, str, i);
+  return rstr;
 }
 
 typedef struct Line
@@ -41,44 +36,40 @@ Line* read_table()
 
   if (stream == 0) return 0;
 
-  char line[65536];
+  size_t lsize = 65536;
+  char line[lsize];
 
   Line *l    = 0;
   Line *root = 0;
   Line *last = root;
-  char *tmp;
+  char *token;
 
-  fgets(line, 65536, stream);
+  fgets(line, lsize, stream);
 
-  while (fgets(line, 65536, stream))
+  while (fgets(line, lsize, stream))
   {
     l = malloc(sizeof(Line));
 
-    tmp            = getfield(line, 1);
-    l->normal_mean = atof(tmp);
-    free(tmp);
+    token = strtok(line, ",");
+    l->normal_mean = atof(token);
 
-    tmp                = getfield(line, 2);
-    l->normal_variance = atof(tmp);
-    free(tmp);
+    token = strtok(NULL, ",");
+    l->normal_variance = atof(token);
 
-    l->likname = strdup(getfield(line, 3));
+    token = strtok(NULL, ",");
+    l->likname = strdump(token);
 
-    tmp  = getfield(line, 4);
-    l->y = atof(tmp);
-    free(tmp);
+    token = strtok(NULL, ",");
+    l->y = atof(token);
 
-    tmp     = getfield(line, 5);
-    l->aphi = atof(tmp);
-    free(tmp);
+    token = strtok(NULL, ",");
+    l->aphi = atof(token);
 
-    tmp     = getfield(line, 6);
-    l->mean = atof(tmp);
-    free(tmp);
+    token = strtok(NULL, ",");
+    l->mean = atof(token);
 
-    tmp         = getfield(line, 7);
-    l->variance = atof(tmp);
-    free(tmp);
+    token = strtok(NULL, ",");
+    l->variance = atof(token);
 
     if (root == 0)
     {
