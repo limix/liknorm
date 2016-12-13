@@ -2,8 +2,6 @@
   :caption: Table of Contents
   :name: mastertoc
 
-  index
-
 =======================
 Liknorm's documentation
 =======================
