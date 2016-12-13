@@ -16,7 +16,7 @@ exponential-family distribution of interest:
 - Bernoulli :c:func:`liknorm_set_bernoulli`
 - Binomial :c:func:`liknorm_set_binomial`
 - Poisson :c:func:`liknorm_set_poisson`
-- Exponential :c:func:`liknorm_set_poisson`
+- Exponential :c:func:`liknorm_set_exponential`
 - Gamma :c:func:`liknorm_set_gamma`
 - Geometric :c:func:`liknorm_set_geometric`
 
