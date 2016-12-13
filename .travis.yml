@@ -1,7 +1,12 @@
 dist: trusty
 sudo: false
 language: c
+compiler:
+  - clang
+  - gcc
 script:
   - mkdir build && cd build && cmake .. && make && make test
 after_failure:
   - rm -rf * && cmake .. && make && make test ARGS="-V"
+notifications:
+  email: false
