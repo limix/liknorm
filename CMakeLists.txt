@@ -4,6 +4,7 @@ project(Liknorm C)
 
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_BUILD_TYPE Release)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
   add_definitions(-D_CRT_SECURE_NO_WARNINGS)
@@ -24,7 +25,6 @@ add_library(liknorm_static STATIC $<TARGET_OBJECTS:liknorm_objs>
 set_target_properties(liknorm
   PROPERTIES
     VERSION ${LIKNORM_VERSION}
-    POSITION_INDEPENDENT_CODE ON
     PUBLIC_HEADER "liknorm/liknorm.h")
 
 install(TARGETS liknorm
