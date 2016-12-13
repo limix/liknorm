@@ -1,5 +1,7 @@
 # liknorm
 
+[![Documentation Status](https://readthedocs.org/projects/liknorm/badge/?style=flat-square&version=latest)](http://liknorm.readthedocs.io/en/latest/?badge=latest)
+
 C library for computing moments of the product of an
 exponential-family likelihood with a Normal distribution.
 
