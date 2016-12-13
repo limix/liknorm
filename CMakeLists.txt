@@ -5,6 +5,10 @@ project(liknorm C)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_BUILD_TYPE Release)
 
+if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+  add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+endif()
+
 include_directories(.)
 
 add_subdirectory(liknorm)
