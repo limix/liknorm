@@ -9,13 +9,18 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
   add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 endif()
 
+file(STRINGS "VERSION" LIKNORM_VERSION)
+
 include_directories(.)
 
 add_subdirectory(liknorm)
 
 add_library(liknorm SHARED $<TARGET_OBJECTS:liknorm_objs> $<TARGET_OBJECTS:optimizer_objs> $<TARGET_OBJECTS:partition_objs>)
 
-set_target_properties(liknorm PROPERTIES PUBLIC_HEADER "liknorm/liknorm.h")
+set_target_properties(liknorm
+  PROPERTIES
+    VERSION ${LIKNORM_VERSION}
+    PUBLIC_HEADER "liknorm/liknorm.h")
 
 install (TARGETS liknorm
          ARCHIVE DESTINATION lib
