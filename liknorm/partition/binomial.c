@@ -22,6 +22,6 @@ void binomial_log_partition_derivatives(const double theta, double *b0,
   } else {
     *b0 = 0;
     *logb1 = theta;
-    *logb2 = -theta - 2 * log1p_;
+    *logb2 = theta;
   }
 }

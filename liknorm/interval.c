@@ -10,7 +10,7 @@
 static const double times_std = 7;
 static const double reps = 1e-5;
 static const double aeps = 1e-5;
-static const double maxiter = 100;
+static const int maxiter = 100;
 
 static inline void find_first_interval(ExpFam *ef, Normal *normal, double *a,
                                        double *b) {
