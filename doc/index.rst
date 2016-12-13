@@ -2,6 +2,14 @@
 Liknorm's documentation
 =======================
 
+Estimates
+
+.. math::
+
+  \int ExpFam(\theta, g(x)) \mathcal{N} (x | \mu, \sigma^2)
+
+via deterministic numerical integration.
+
 .. c:function:: LikNormMachine* liknorm_create_machine(int size)
 
   Create a Machine instance capable of doing numerical integration.
@@ -32,4 +40,4 @@ Liknorm's documentation
 
   :param LikNormMachine* machine: Machine to perform integration.
   :param double tau: It equals to :math:`\sigma^{-2}`.
-  :param double eta: It equals to :math:`\mu / \sigma^2`.
+  :param double eta: It equals to :math:`\mu \sigma^{-2}`.
