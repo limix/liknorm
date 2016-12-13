@@ -55,6 +55,8 @@ Usage
 
   #include "liknorm/liknorm.h"
 
+  #include <stdio.h>
+
   int main()
   {
     double log_zeroth, mean, variance;
@@ -70,8 +72,23 @@ Usage
 
     liknorm_integrate(machine, &log_zeroth, &mean, &variance);
 
+    printf("%f\n", log_zeroth);
+    printf("%f\n", mean);
+    printf("%f\n", variance);
+
     liknorm_destroy_machine(machine);
   }
+
+.. code-block:: bash
+
+  cc libliknorm.a example.c -o example
+  ./example
+
+Should print::
+
+  -2.049961
+  -2.038184
+  0.524308
 
 ---------------------
 Functions description
