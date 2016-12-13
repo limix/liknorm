@@ -36,7 +36,7 @@ Line* read_table()
 
   if (stream == 0) return 0;
 
-  size_t lsize = 65536;
+  const size_t lsize = 65536;
   char line[lsize];
 
   Line *l    = 0;
