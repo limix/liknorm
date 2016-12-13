@@ -1,4 +1,1 @@
-add_library (liknorm normal.c liknorm.c interval.c gfunc.c integrate.c)
-add_subdirectory(optimizer)
-add_subdirectory(partition)
-target_link_libraries (liknorm LINK_PUBLIC optimizer partition)
+add_library (liknorm normal.c liknorm.c interval.c gfunc.c integrate.c optimizer/bracket.c optimizer/brent.c optimizer/zero.c optimizer/binomial.c optimizer/exponential.c optimizer/geometric.c optimizer/gamma.c optimizer/poisson.c)
