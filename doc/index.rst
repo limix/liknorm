@@ -28,8 +28,8 @@ Liknorm's documentation
 
 .. c:function:: void liknorm_set_prior(LikNormMachine *machine, double tau, double eta)
 
-  Set the parameters of Normal prior.
+  Set the natural parameters of Normal prior.
 
   :param LikNormMachine machine: Machine to perform integration.
-  :param double tau: It equals to :math:`\mu \sigma^2`.
-  :param double eta: It equals to :math:`\sigma^{-2}`.
+  :param double tau: It equals to :math:`\sigma^{-2}`.
+  :param double eta: It equals to :math:`\mu / \sigma^2`.
