@@ -41,7 +41,7 @@ It should create the library:
 
   liknorm/libliknorm.[extension]
 
-And if you want to test it::
+And if you want to test it:
 
 .. code-block:: bash
 
