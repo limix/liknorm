@@ -6,7 +6,7 @@ Estimates
 
 .. math::
 
-  \int ExpFam(\theta, g(x)) \mathcal{N} (x | \mu, \sigma^2)
+  \int_{l}^r \text{ExpFam}(\theta, g(x)) \mathcal{N} (x | \mu, \sigma^2) \mathrm d x
 
 via deterministic numerical integration.
 
