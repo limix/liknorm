@@ -1,3 +1,9 @@
+import os
+
+folder = os.path.dirname(os.path.abspath(__file__))
+with open(os.path.join(folder, '../VERSION')) as f:
+    version = f.read().strip()
+
 extensions = [
     'sphinx.ext.mathjax',
     'sphinx.ext.viewcode'
@@ -8,8 +14,8 @@ master_doc = 'index'
 project = 'liknorm'
 copyright = '2016, Danilo Horta'
 author = 'Danilo Horta'
-version = '1.2.0dev0'
-release = '1.2.0dev0'
+open("")
+release = version
 language = None
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 pygments_style = 'sphinx'
