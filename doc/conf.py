@@ -14,7 +14,6 @@ master_doc = 'index'
 project = 'liknorm'
 copyright = '2016, Danilo Horta'
 author = 'Danilo Horta'
-open("")
 release = version
 language = None
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
