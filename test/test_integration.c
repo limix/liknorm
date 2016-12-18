@@ -43,7 +43,9 @@ Line* read_table()
   Line *last = root;
   char *token;
 
-  fgets(line, 65536, stream);
+  char *str = fgets(line, 65536, stream);
+  if (str == NULL)
+    exit(1);
 
   while (fgets(line, 65536, stream))
   {
