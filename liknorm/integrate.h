@@ -10,6 +10,6 @@ void integrate_step(double si, double step, ExpFam *ef, Normal *normal,
                     double *logA1, double *logA2, double *diff);
 
 void combine_steps(LikNormMachine *machine, double *log_zeroth, double *mean,
-                   double *variance);
+                   double *variance, double *left, double *right);
 
 #endif

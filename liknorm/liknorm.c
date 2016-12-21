@@ -1,7 +1,7 @@
+#include "integrate.h"
 #include "interval.h"
 #include "liknorm.h"
 #include "machine.h"
-#include "integrate.h"
 #include "partition/partition.h"
 #include <assert.h>
 #include <float.h>
@@ -23,22 +23,20 @@ LikNormMachine *liknorm_create_machine(int size) {
   return machine;
 }
 
-void liknorm_integrate(LikNormMachine *machine, double *log_zeroth,
-                       double *mean, double *variance) {
-  double left, right;
+void _liknorm_integrate(LikNormMachine *machine, double *log_zeroth,
+                        double *mean, double *variance, double *left,
+                        double *right) {
   ExpFam *ef = &(machine->ef);
   Normal *normal = &(machine->normal);
-  find_interval(ef, normal, &left, &right);
-  assert(ef->lower_bound <= left && right <= ef->upper_bound);
 
-  double step = (right - left) / machine->size;
+  double step = (*right - *left) / machine->size;
   double *A0 = machine->A0;
   double *logA1 = machine->logA1;
   double *logA2 = machine->logA2;
   double *diff = machine->diff;
 
   for (int i = 0; i < machine->size; ++i)
-    (*ef->lpd)(left + step * i + step / 2, A0 + i, logA1 + i, logA2 + i);
+    (*ef->lpd)(*left + step * i + step / 2, A0 + i, logA1 + i, logA2 + i);
 
   for (int i = 0; i < machine->size; ++i) {
     A0[i] /= ef->aphi;
@@ -51,18 +49,36 @@ void liknorm_integrate(LikNormMachine *machine, double *log_zeroth,
   double *v = machine->v;
   double *mlog_zeroth = machine->log_zeroth;
   for (int i = 0; i < machine->size; ++i) {
-    integrate_step(left + step * i, step, ef, normal, mlog_zeroth++, u++, v++,
+    integrate_step(*left + step * i, step, ef, normal, mlog_zeroth++, u++, v++,
                    A0++, logA1++, logA2++, diff++);
+    // printf("machine->log_zeroth[i]: %.30e\n", machine->log_zeroth[i]);
   }
 
-  combine_steps(machine, log_zeroth, mean, variance);
+  combine_steps(machine, log_zeroth, mean, variance, left, right);
 
   static const double pi = 3.14159265358979323846;
   *log_zeroth += machine->ef.c;
   *log_zeroth -= log((2 * pi) / normal->tau) / 2;
   *log_zeroth -= (normal->eta * normal->eta) / (2 * normal->tau);
 }
+void liknorm_integrate(LikNormMachine *machine, double *log_zeroth,
+                       double *mean, double *variance) {
 
+  double left, right;
+  ExpFam *ef = &(machine->ef);
+  Normal *normal = &(machine->normal);
+  find_interval(ef, normal, &left, &right);
+  assert(ef->lower_bound <= left && right <= ef->upper_bound);
+
+  double ileft;
+  double iright;
+
+  do {
+    ileft = left;
+    iright = right;
+    _liknorm_integrate(machine, log_zeroth, mean, variance, &left, &right);
+  } while ((right - left) / (iright - ileft) < 0.9);
+}
 
 void liknorm_destroy_machine(LikNormMachine *machine) {
   free(machine->log_zeroth);
@@ -141,7 +157,7 @@ void liknorm_set_gamma(LikNormMachine *machine, double x, double a) {
   LikNormMachine *m = machine;
   m->ef.name = liknorm_gamma;
   m->ef.y = x;
-  m->ef.aphi = 1/a;
+  m->ef.aphi = 1 / a;
   m->ef.log_aphi = -log(a);
   m->ef.c = 0;
   m->ef.lp = gamma_log_partition;

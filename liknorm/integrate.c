@@ -54,8 +54,8 @@ void integrate_step(double si, double step, ExpFam *ef, Normal *normal,
   /* log(pi)/2 */
   static const double lpi2 = 0.572364942924700081938738094323;
   static const double lnsqrt2 = 0.346573590279972698624533222755;
-  *log_zeroth = (a + (heta * heta) / 2) / htau + lpi2 + lnsqrt2 -
-                log_htau / 2 + lcdf_diff;
+  *log_zeroth = (a + (heta * heta) / 2) / htau + lpi2 + lnsqrt2 - log_htau / 2 +
+                lcdf_diff;
 
   assert(isfinite(*log_zeroth));
 
@@ -112,7 +112,7 @@ void integrate_step(double si, double step, ExpFam *ef, Normal *normal,
 }
 
 void combine_steps(LikNormMachine *machine, double *log_zeroth, double *mean,
-                   double *variance) {
+                   double *variance, double *left, double *right) {
 
   LikNormMachine *m = machine;
 
@@ -127,23 +127,23 @@ void combine_steps(LikNormMachine *machine, double *log_zeroth, double *mean,
     assert(isfinite(m->diff[i]));
   }
 
-  int left = -1;
+  int ileft = -1;
 
-  while (m->diff[++left] == 0)
+  while (m->diff[++ileft] == 0)
     ;
 
-  int right = m->size;
+  int iright = m->size;
 
-  while (m->diff[--right] == 0)
+  while (m->diff[--iright] == 0)
     ;
-  ++right;
+  ++iright;
 
-  assert(left < right);
+  assert(ileft < iright);
 
   *mean = 0;
   *variance = 0;
 
-  for (int i = left; i < right; ++i) {
+  for (int i = ileft; i < iright; ++i) {
     assert(isfinite(m->u[i]));
     assert(isfinite(m->v[i]));
     *mean += m->u[i] * m->diff[i];
@@ -154,4 +154,10 @@ void combine_steps(LikNormMachine *machine, double *log_zeroth, double *mean,
 
   assert(isfinite(*variance));
   assert(isfinite(*mean));
+
+  *variance = fmax(*variance, DBL_EPSILON);
+
+  double step = (*right - *left) / machine->size;
+  *left += ileft * step;
+  *right -= (m->size - iright - 1) * step;
 }
