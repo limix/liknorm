@@ -51,12 +51,12 @@ void shrink_interval(ExpFam *ef, Normal *normal, double *a, double xmax,
 
   assert(fa <= fxmax && fb <= fxmax);
 
-  if (fa - fxmax < log(DBL_TRUE_MIN)) {
+  if (fxmax - fa < log(DBL_TRUE_MIN)) {
     void *args_[] = {&g_function_func_base, &fxmax, args};
     *a = zero(*a, xmax, 1e-5, &g_function_root, args_);
   }
 
-  if (fb - fxmax < log(DBL_TRUE_MIN)) {
+  if (fxmax - fb < log(DBL_TRUE_MIN)) {
     void *args_[] = {&g_function_func_base, &fxmax, args};
     *b = zero(*b, xmax, 1e-5, &g_function_root, args_);
   }
