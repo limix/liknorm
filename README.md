@@ -18,10 +18,13 @@ conda install -c conda-forge liknorm
 or by cloning this repository and building it
 
 ```bash
+git clone https://github.com/glimix/liknorm.git
+cd liknorm
 mkdir build
 cd build
 cmake ..
 make
+sudo make install
 ```
 
 Refer to [documentation](http://liknorm.readthedocs.io/en/latest/)

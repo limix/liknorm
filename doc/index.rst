@@ -22,30 +22,28 @@ exponential-family distribution of interest:
 - Gamma :c:func:`liknorm_set_gamma`
 - Geometric :c:func:`liknorm_set_geometric`
 
---------
-Build it
---------
+-------
+Install
+-------
 
-In the project folder, type
+You can install it via
+[conda](http://conda.pydata.org/docs/index.html)
 
 .. code-block:: bash
 
+  conda install -c conda-forge liknorm
+
+or by cloning this repository and building it
+
+.. code-block:: bash
+
+  git clone https://github.com/glimix/liknorm.git
+  cd liknorm
   mkdir build
   cd build
   cmake ..
   make
-
-It should create the library
-
-.. code-block:: bash
-
-  liknorm/libliknorm.[extension]
-
-And if you want to test it:
-
-.. code-block:: bash
-
-  make test
+  sudo make install
 
 -------------
 Usage example
