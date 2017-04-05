@@ -32,7 +32,7 @@ for more information.
 
 ## Authors
 
-* **Danilo Horta** - [https://github.com/catavallejos](https://github.com/catavallejos)
+* **Danilo Horta** - [https://github.com/Horta](https://github.com/Horta)
 
 ## License
 
