@@ -2,7 +2,7 @@ cmake_minimum_required (VERSION 2.6.4)
 
 project(Liknorm C)
 
-set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_STANDARD 99)
 set(CMAKE_BUILD_TYPE Release)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
@@ -25,12 +25,6 @@ add_library(liknorm_static STATIC liknorm/normal.c liknorm/liknorm.c liknorm/int
             liknorm/integrate.c liknorm/optimizer/bracket.c liknorm/optimizer/brent.c liknorm/optimizer/zero.c
             liknorm/partition/binomial.c liknorm/partition/exponential.c liknorm/partition/geometric.c
             liknorm/partition/gamma.c liknorm/partition/poisson.c)
-
-# add_library(liknorm SHARED $<TARGET_OBJECTS:liknorm_objs>
-#             $<TARGET_OBJECTS:optimizer_objs> $<TARGET_OBJECTS:partition_objs>)
-#
-# add_library(liknorm_static STATIC $<TARGET_OBJECTS:liknorm_objs>
-#             $<TARGET_OBJECTS:optimizer_objs> $<TARGET_OBJECTS:partition_objs>)
 
 set_target_properties(liknorm
   PROPERTIES
