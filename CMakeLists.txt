@@ -16,11 +16,21 @@ include_directories(.)
 
 add_subdirectory(liknorm)
 
-add_library(liknorm SHARED $<TARGET_OBJECTS:liknorm_objs>
-            $<TARGET_OBJECTS:optimizer_objs> $<TARGET_OBJECTS:partition_objs>)
+add_library(liknorm SHARED liknorm/normal.c liknorm/liknorm.c liknorm/interval.c liknorm/gfunc.c
+            liknorm/integrate.c liknorm/optimizer/bracket.c liknorm/optimizer/brent.c liknorm/optimizer/zero.c
+            liknorm/partition/binomial.c liknorm/partition/exponential.c liknorm/partition/geometric.c
+            liknorm/partition/gamma.c liknorm/partition/poisson.c)
 
-add_library(liknorm_static STATIC $<TARGET_OBJECTS:liknorm_objs>
-            $<TARGET_OBJECTS:optimizer_objs> $<TARGET_OBJECTS:partition_objs>)
+add_library(liknorm_static STATIC liknorm/normal.c liknorm/liknorm.c liknorm/interval.c liknorm/gfunc.c
+            liknorm/integrate.c liknorm/optimizer/bracket.c liknorm/optimizer/brent.c liknorm/optimizer/zero.c
+            liknorm/partition/binomial.c liknorm/partition/exponential.c liknorm/partition/geometric.c
+            liknorm/partition/gamma.c liknorm/partition/poisson.c)
+
+# add_library(liknorm SHARED $<TARGET_OBJECTS:liknorm_objs>
+#             $<TARGET_OBJECTS:optimizer_objs> $<TARGET_OBJECTS:partition_objs>)
+#
+# add_library(liknorm_static STATIC $<TARGET_OBJECTS:liknorm_objs>
+#             $<TARGET_OBJECTS:optimizer_objs> $<TARGET_OBJECTS:partition_objs>)
 
 set_target_properties(liknorm
   PROPERTIES
