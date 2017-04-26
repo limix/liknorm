@@ -21,4 +21,4 @@ else()
   target_link_libraries (test_specific LINK_PUBLIC liknorm m)
 endif()
 
-file(COPY table.csv DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+configure_file(table.csv ${CMAKE_CURRENT_BINARY_DIR}/DESTINATION COPYONLY)
