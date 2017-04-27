@@ -44,6 +44,6 @@ install(TARGETS liknorm_static
 add_subdirectory(test)
 
 enable_testing()
-add_test(NAME TestLinking COMMAND test_linking)
-add_test(NAME TestIntegration COMMAND test_integration)
-add_test(NAME TestSpecific COMMAND test_specific)
+add_test(TestLinking test/test_linking)
+add_test(TestIntegration test/test_integration)
+add_test(TestSpecific test/test_specific)
