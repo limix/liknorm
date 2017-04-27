@@ -4,7 +4,7 @@
 #include "normal.h"
 #include "expfam.h"
 
-typedef struct
+struct LikNormMachine
 {
   double *log_zeroth; // log(mom0)
   double *u; // mom1/mom0
@@ -16,6 +16,6 @@ typedef struct
   int     size; // size of the above arrays
   ExpFam ef;
   Normal normal;
-} LikNormMachine;
+};
 
 #endif

@@ -1,7 +1,7 @@
 #ifndef LIKNORM_H
 #define LIKNORM_H
 
-#include "machine.h"
+typedef struct LikNormMachine LikNormMachine;
 
 LikNormMachine* liknorm_create_machine(int size);
 void liknorm_integrate(LikNormMachine *machine,
