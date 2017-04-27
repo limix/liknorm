@@ -2,7 +2,7 @@ cmake_minimum_required (VERSION 2.6.4)
 
 project(Liknorm C)
 
-set(CMAKE_C_STANDARD 99)
+set(CMAKE_C_FLAGS "-std=c99")
 set(CMAKE_BUILD_TYPE Release)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 

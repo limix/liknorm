@@ -28,6 +28,7 @@ void _liknorm_integrate(LikNormMachine *machine, double *log_zeroth,
                         double *right) {
   ExpFam *ef = &(machine->ef);
   Normal *normal = &(machine->normal);
+  int i;
 
   double step = (*right - *left) / machine->size;
   double *A0 = machine->A0;
@@ -35,10 +36,10 @@ void _liknorm_integrate(LikNormMachine *machine, double *log_zeroth,
   double *logA2 = machine->logA2;
   double *diff = machine->diff;
 
-  for (int i = 0; i < machine->size; ++i)
+  for (i = 0; i < machine->size; ++i)
     (*ef->lpd)(*left + step * i + step / 2, A0 + i, logA1 + i, logA2 + i);
 
-  for (int i = 0; i < machine->size; ++i) {
+  for (i = 0; i < machine->size; ++i) {
     A0[i] /= ef->aphi;
     logA1[i] -= ef->log_aphi;
     logA2[i] -= ef->log_aphi;
@@ -48,7 +49,7 @@ void _liknorm_integrate(LikNormMachine *machine, double *log_zeroth,
   double *u = machine->u;
   double *v = machine->v;
   double *mlog_zeroth = machine->log_zeroth;
-  for (int i = 0; i < machine->size; ++i) {
+  for (i = 0; i < machine->size; ++i) {
     integrate_step(*left + step * i, step, ef, normal, mlog_zeroth++, u++, v++,
                    A0++, logA1++, logA2++, diff++);
     // printf("machine->log_zeroth[i]: %.30e\n", machine->log_zeroth[i]);

@@ -23,8 +23,9 @@ static inline double logaddexp(double x, double y) {
 
 static inline double logaddexp_array(double *x, int n, double xmax) {
   double total = 0;
+  int i;
 
-  for (int i = 0; i < n; ++i)
+  for (i = 0; i < n; ++i)
     total += exp(x[i] - xmax);
 
   return xmax + log(total);

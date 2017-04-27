@@ -12,6 +12,10 @@ static const double reps = 1e-5;
 static const double aeps = 1e-5;
 static const int maxiter = 100;
 
+#ifndef DBL_TRUE_MIN
+#define DBL_TRUE_MIN 4.9406564584124654E-324
+#endif
+
 static inline void find_first_interval(ExpFam *ef, Normal *normal, double *a,
                                        double *b) {
   double std = sqrt(1 / normal->tau);

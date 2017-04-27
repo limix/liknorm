@@ -115,14 +115,15 @@ void combine_steps(LikNormMachine *machine, double *log_zeroth, double *mean,
                    double *variance, double *left, double *right) {
 
   LikNormMachine *m = machine;
+  int i;
 
   double max_log_zeroth = m->log_zeroth[0];
-  for (int i = 1; i < m->size; ++i)
+  for (i = 1; i < m->size; ++i)
     max_log_zeroth = fmax(m->log_zeroth[i], max_log_zeroth);
 
   (*log_zeroth) = logaddexp_array(m->log_zeroth, m->size, max_log_zeroth);
 
-  for (int i = 0; i < m->size; ++i) {
+  for (i = 0; i < m->size; ++i) {
     m->diff[i] = exp(m->log_zeroth[i] - *log_zeroth);
     assert(isfinite(m->diff[i]));
   }
@@ -143,7 +144,7 @@ void combine_steps(LikNormMachine *machine, double *log_zeroth, double *mean,
   *mean = 0;
   *variance = 0;
 
-  for (int i = ileft; i < iright; ++i) {
+  for (i = ileft; i < iright; ++i) {
     assert(isfinite(m->u[i]));
     assert(isfinite(m->v[i]));
     *mean += m->u[i] * m->diff[i];
