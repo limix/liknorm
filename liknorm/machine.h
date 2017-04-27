@@ -4,7 +4,7 @@
 #include "normal.h"
 #include "expfam.h"
 
-struct LikNormMachine
+typedef struct
 {
   double *log_zeroth; // log(mom0)
   double *u; // mom1/mom0
@@ -14,8 +14,8 @@ struct LikNormMachine
   double *logA2; // array for log(A''(x))
   double *diff; // temporary array
   int     size; // size of the above arrays
-  struct ExpFam ef;
-  struct Normal normal;
-};
+  ExpFam ef;
+  Normal normal;
+} LikNormMachine;
 
 #endif

@@ -1,7 +1,7 @@
 #ifndef NORMAL_H
 #define NORMAL_H
 
-typedef struct Normal {
+typedef struct {
   double eta;
   double log_tau;
   double tau;
