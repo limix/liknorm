@@ -2,11 +2,16 @@ cmake_minimum_required (VERSION 2.6.4)
 
 project(Liknorm C)
 
-set(CMAKE_C_FLAGS "-std=c99")
+if(NOT ${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+  set(CMAKE_C_FLAGS "-std=c99")
+endif()
+
+
 set(CMAKE_BUILD_TYPE Release)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+    set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
   add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 endif()
 
@@ -31,9 +36,19 @@ set_target_properties(liknorm
     VERSION ${LIKNORM_VERSION}
     PUBLIC_HEADER "liknorm/liknorm.h")
 
+if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+  include(GenerateExportHeader)
+  generate_export_header(liknorm
+      BASE_NAME liknorm
+      EXPORT_MACRO_NAME LIKNORM_EXPORTS
+      EXPORT_FILE_NAME liknorm_EXPORTS.h
+      STATIC_DEFINE SHARED_EXPORTS_BUILT_AS_STATIC)
+endif()
+
 install(TARGETS liknorm
         ARCHIVE DESTINATION lib
         LIBRARY DESTINATION lib
+        RUNTIME DESTINATION lib
         PUBLIC_HEADER DESTINATION include/liknorm)
 
 install(TARGETS liknorm_static
