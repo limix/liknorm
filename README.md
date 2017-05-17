@@ -1,7 +1,7 @@
 # liknorm
 
-[![Travis](https://img.shields.io/travis/limix/liknorm.svg?style=flat-square)](https://travis-ci.org/glimix/liknorm)
-[![Documentation Status](https://readthedocs.org/projects/liknorm/badge/?style=flat-square&version=latest)](http://liknorm.readthedocs.io/en/latest/?badge=latest)
+[![Travis](https://img.shields.io/travis/limix/liknorm.svg?style=flat-square)](https://travis-ci.org/limix/liknorm)
+[![Documentation Status](https://readthedocs.org/projects/liknorm/badge/?version=latest&style=flat-square)](http://liknorm.readthedocs.io)
 
 C library for computing moments of the product of an
 exponential-family likelihood with a Normal distribution.
