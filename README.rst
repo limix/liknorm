@@ -2,7 +2,7 @@
 liknorm
 =======
 
-|Build-Status| |Codacy-Grade| |Doc-Status|
+|Build-Status| |Win-Build-Status| |Codacy-Grade| |Doc-Status|
 
 C library for computing moments of the product of an
 exponential-family likelihood with a Normal distribution.
@@ -40,6 +40,9 @@ for details.
 
 .. |Build-Status| image:: https://travis-ci.org/limix/liknorm.svg?branch=master
     :target: https://travis-ci.org/limix/liknorm
+
+.. |Win-Build-Status| image:: https://ci.appveyor.com/api/projects/status/kb4b4rcsm4t60bg5/branch/master?svg=true
+    :target: https://ci.appveyor.com/project/Horta/liknorm/branch/master
 
 .. |Codacy-Grade| image:: https://api.codacy.com/project/badge/Grade/689b555393364226863c3a237f801650
     :target: https://www.codacy.com/app/danilo.horta/liknorm?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=limix/liknorm&amp;utm_campaign=Badge_Grade
