@@ -4,11 +4,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-char *strdump(const char *str)
-{
+char *strdump(const char *str) {
   size_t i;
-  for (i = 0; ; ++i)
-  {
+  for (i = 0;; ++i) {
     if (str[i] == '\0')
       break;
   }
@@ -18,27 +16,26 @@ char *strdump(const char *str)
   return rstr;
 }
 
-typedef struct Line
-{
-  double       normal_mean;
-  double       normal_variance;
-  char        *likname;
-  double       y;
-  double       aphi;
-  double       mean;
-  double       variance;
+typedef struct Line {
+  double normal_mean;
+  double normal_variance;
+  char *likname;
+  double y;
+  double aphi;
+  double mean;
+  double variance;
   struct Line *next;
 } Line;
 
-Line* read_table()
-{
+Line *read_table() {
   FILE *stream = fopen("test/table.csv", "r");
 
-  if (stream == 0) return 0;
+  if (stream == 0)
+    return 0;
 
   char line[65536];
 
-  Line *l    = 0;
+  Line *l = 0;
   Line *root = 0;
   Line *last = root;
   char *token;
@@ -47,8 +44,7 @@ Line* read_table()
   if (str == NULL)
     exit(1);
 
-  while (fgets(line, 65536, stream))
-  {
+  while (fgets(line, 65536, stream)) {
     l = malloc(sizeof(Line));
 
     token = strtok(line, ",");
@@ -72,23 +68,23 @@ Line* read_table()
     token = strtok(NULL, ",");
     l->variance = atof(token);
 
-    if (root == 0)
-    {
+    if (root == 0) {
       root = l;
       last = root;
     } else {
       last->next = l;
-      last       = l;
+      last = l;
     }
 
     last->next = 0;
   }
 
+  fclose(stream);
+
   return root;
 }
 
-int test_it(LikNormMachine *machine, Line *l, double *elapsed)
-{
+int test_it(LikNormMachine *machine, Line *l, double *elapsed) {
   if (strcmp(l->likname, "bernoulli") == 0)
     liknorm_set_bernoulli(machine, l->y);
 
@@ -96,10 +92,10 @@ int test_it(LikNormMachine *machine, Line *l, double *elapsed)
     liknorm_set_poisson(machine, l->y);
 
   if (strcmp(l->likname, "binomial") == 0)
-    liknorm_set_binomial(machine, l->y / l->aphi, 1/l->aphi);
+    liknorm_set_binomial(machine, l->y / l->aphi, 1 / l->aphi);
 
   if (strcmp(l->likname, "gamma") == 0)
-    liknorm_set_gamma(machine, l->y, 1/l->aphi);
+    liknorm_set_gamma(machine, l->y, 1 / l->aphi);
 
   if (strcmp(l->likname, "exponential") == 0)
     liknorm_set_exponential(machine, l->y);
@@ -118,38 +114,34 @@ int test_it(LikNormMachine *machine, Line *l, double *elapsed)
   int ok = fabs(mean - l->mean) < eps && fabs(variance - l->variance) < eps;
   ok = ok && isfinite(mean) && isfinite(variance);
 
-  if (!ok)
-  {
+  if (!ok) {
     printf("Test failed:\n");
     printf("name: %s\n", l->likname);
-    printf("mean variance %g %g l->mean l->variance %g %g\n",
-           mean,
-           variance,
-           l->mean,
-           l->variance);
+    printf("mean variance %g %g l->mean l->variance %g %g\n", mean, variance,
+           l->mean, l->variance);
   }
 
-  if (!ok) return 1;
+  if (!ok)
+    return 1;
 
   return 0;
 }
 
-int main()
-{
-  Line  *root = read_table();
-  Line  *l    = root;
-  int    e;
+int main() {
+  Line *root = read_table();
+  Line *l = root;
+  int e;
   double elapsed = 0;
 
   LikNormMachine *machine = liknorm_create_machine(350);
 
   int i = 0;
 
-  while (l != 0)
-  {
+  while (l != 0) {
     e = test_it(machine, l, &elapsed);
 
-    if (e != 0) return 1;
+    if (e != 0)
+      return 1;
 
     l = l->next;
     i++;

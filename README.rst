@@ -34,8 +34,8 @@ Authors
 License
 -------
 
-This project is licensed under the MIT License - see the `License file`_ file
-for details.
+This project is licensed under the MIT License - see the `license file`_ for
+details.
 
 
 .. |Build-Status| image:: https://travis-ci.org/limix/liknorm.svg?branch=master
@@ -52,7 +52,7 @@ for details.
 
 .. _conda: http://conda.pydata.org/docs/index.html
 
-.. _License file: https://raw.githubusercontent.com/limix/liknorm/master/LICENSE.txt
+.. _license file: https://raw.githubusercontent.com/limix/liknorm/master/LICENSE.txt
 
 .. _Danilo Horta: https://github.com/horta
 
