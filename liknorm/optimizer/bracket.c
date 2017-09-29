@@ -12,17 +12,18 @@ static inline void swap(double *a, double *b) {
 void find_bracket(func_base *f, void *args, double a, double b, double lower,
                   double upper, double *left, double *right, double *fleft,
                   double *fright) {
-  assert(a < b);
   double fa, fb, fc;
   double c = b;
+  double limit;
+  double step;
+  int sign;
+
+  assert(a < b);
   b = (a + c) / 2;
 
   fa = (*f)(a, args);
   fb = (*f)(b, args);
   fc = (*f)(c, args);
-
-  double limit;
-  int sign;
 
   if (fa > fc) {
     swap(&a, &c);
@@ -34,7 +35,7 @@ void find_bracket(func_base *f, void *args, double a, double b, double lower,
     sign = +1;
   }
 
-  double step = c - a;
+  step = c - a;
 
   while (fc >= fb && sign * (limit - c) > 0) {
     b = c;

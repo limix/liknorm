@@ -48,18 +48,22 @@ void find_minimum(double *x0, double *fx0, func_base *f, void *args, double a,
   // http://people.sc.fsu.edu/~jburkardt/c_src/brent/brent.c
 
   const double gr = 0.381966011250105208496563591324957087636;
-
-  assert(a <= b);
-  *x0 = a + gr * (b - a);
-  double x1 = *x0;
-  double x2 = x1;
-  int niters = -1;
-  double d = 0.0;
-  double e = 0.0;
-  *fx0 = (*f)(*x0, args);
-  double fx1 = *fx0;
-  double fx2 = fx1;
+  double x1, x2;
+  int niters;
+  double d, e;
+  double fx1, fx2;
   double m, tol, tol2, r, q, p, u, fu;
+
+  *x0 = a + gr * (b - a);
+  x1 = *x0;
+  x2 = x1;
+  niters = -1;
+  d = 0.0;
+  e = 0.0;
+  *fx0 = (*f)(*x0, args);
+  fx1 = *fx0;
+  fx2 = fx1;
+  m, tol, tol2, r, q, p, u, fu;
 
   for (; niters < maxiter; ++niters) {
     m = (a + b) / 2;

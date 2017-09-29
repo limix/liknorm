@@ -29,18 +29,17 @@ typedef struct Line {
 
 Line *read_table() {
   FILE *stream = fopen("test/table.csv", "r");
-
-  if (stream == 0)
-    return 0;
-
   char line[65536];
 
   Line *l = 0;
   Line *root = 0;
   Line *last = root;
   char *token;
-
   char *str = fgets(line, 65536, stream);
+
+  if (stream == 0)
+    return 0;
+
   if (str == NULL)
     exit(1);
 
@@ -85,6 +84,10 @@ Line *read_table() {
 }
 
 int test_it(LikNormMachine *machine, Line *l, double *elapsed) {
+  double log_zeroth, mean, variance;
+  double eps = 1e-4;
+  int ok;
+
   if (strcmp(l->likname, "bernoulli") == 0)
     liknorm_set_bernoulli(machine, l->y);
 
@@ -106,12 +109,9 @@ int test_it(LikNormMachine *machine, Line *l, double *elapsed) {
   liknorm_set_prior(machine, 1 / l->normal_variance,
                     l->normal_mean / l->normal_variance);
 
-  double log_zeroth, mean, variance;
   liknorm_integrate(machine, &log_zeroth, &mean, &variance);
 
-  double eps = 1e-4;
-
-  int ok = fabs(mean - l->mean) < eps && fabs(variance - l->variance) < eps;
+  ok = fabs(mean - l->mean) < eps && fabs(variance - l->variance) < eps;
   ok = ok && isfinite(mean) && isfinite(variance);
 
   if (!ok) {
