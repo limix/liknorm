@@ -25,6 +25,8 @@ inline double fmax(double left, double right) {
 inline double fmin(double left, double right) {
   return (left < right) ? left : right;
 }
+
+#define lgamma hcephes_gamma
 #endif
 #endif
 
