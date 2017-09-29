@@ -38,6 +38,7 @@ if(REQUIRES_HCEPHES)
                         If you have it installed, please, define
                         HCEPHES_LIBRARYDIR and HCEPHES_INCLUDEDIR
                         appropriately to fix it.")
+    endif()
     include_directories( ${HCEPHES_INCLUDE_DIRS} )
 endif()
 

@@ -1,4 +1,5 @@
 #include "binomial.h"
+#include "compiler.h"
 
 #include <float.h>
 #include <math.h>
