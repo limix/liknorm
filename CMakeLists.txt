@@ -16,6 +16,7 @@ endif ()
 set(CMAKE_MACOSX_RPATH 1)
 set(CMAKE_BUILD_TYPE Release)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
   set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
@@ -25,6 +26,14 @@ endif()
 
 file(STRINGS "VERSION" LIKNORM_VERSION)
 
+find_package( HCEPHES REQUIRED )
+if(NOT HCEPHES_FOUND)
+    message(STATUS "Could not find hcephes library. If you have it installed,
+                    please, define HCEPHES_LIBRARYDIR and HCEPHES_INCLUDEDIR
+                    appropriately to fix it.")
+endif()
+
+include_directories( ${HCEPHES_INCLUDE_DIRS} )
 include_directories( include/ )
 include_directories( liknorm/ )
 include_directories(.)
@@ -45,9 +54,11 @@ file(GLOB PARTITION_SRC
 
 add_library(liknorm
     SHARED ${LIKNORM_SRC} ${OPTIMIZER_SRC} ${PARTITION_SRC})
+target_link_libraries( liknorm ${HCEPHES_LIBRARIES} )
 
 add_library(liknorm_static
     STATIC ${LIKNORM_SRC} ${OPTIMIZER_SRC} ${PARTITION_SRC})
+target_link_libraries( liknorm ${HCEPHES_LIBRARIES} )
 
 set_target_properties(liknorm
   PROPERTIES

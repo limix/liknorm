@@ -14,4 +14,9 @@
 #endif
 #endif
 
+#if _MSC_VER <= 1500
+#include "hcephes/hcephes.h"
+#define log1p hcephes_log1p
+#endif
+
 #endif
