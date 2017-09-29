@@ -35,10 +35,12 @@ Line *read_table() {
   Line *root = 0;
   Line *last = root;
   char *token;
-  char *str = fgets(line, 65536, stream);
+  char *str;
 
   if (stream == 0)
     return 0;
+
+  str = fgets(line, 65536, stream);
 
   if (str == NULL)
     exit(1);

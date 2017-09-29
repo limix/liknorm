@@ -63,7 +63,6 @@ void find_minimum(double *x0, double *fx0, func_base *f, void *args, double a,
   *fx0 = (*f)(*x0, args);
   fx1 = *fx0;
   fx2 = fx1;
-  m, tol, tol2, r, q, p, u, fu;
 
   for (; niters < maxiter; ++niters) {
     m = (a + b) / 2;

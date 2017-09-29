@@ -17,8 +17,8 @@ int main() {
 
   liknorm_integrate(machine, &log_zeroth, &mean, &variance);
 
-  ok = fabs(mean - 677.860089021189651248278096318245) < eps &&
-       fabs(variance - 2.220446049250313080847263336182e-16) < eps;
+  ok = fabs(mean - 0.78159506985534710211) < eps &&
+       fabs(variance - 0.00002868685045742669) < eps;
   ok = ok && isfinite(mean) && isfinite(variance);
 
   liknorm_destroy_machine(machine);
