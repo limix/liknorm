@@ -4,14 +4,22 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifdef _MSC_VER
+#if (_MSC_VER <= 1500)
+#define isnan(x) _isnan(x)
+#define isfinite(x) _finite(x)
+#endif
+#endif
+
 char *strdump(const char *str) {
   size_t i;
+  char *rstr;
   for (i = 0;; ++i) {
     if (str[i] == '\0')
       break;
   }
   ++i;
-  char *rstr = malloc(sizeof(char) * i);
+  rstr = malloc(sizeof(char) * i);
   memcpy(rstr, str, i);
   return rstr;
 }
