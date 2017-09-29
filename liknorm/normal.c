@@ -180,7 +180,7 @@ double logcdf(const double a) {
   /* the precomputed division we use to adjust the denominator */
   double denom_cons = 1.0 / (a * a);
   long sign = 1, i = 0;
-  static const double pi = 3.14159265358979323846;
+  const double pi = 3.14159265358979323846;
 
   if (a > 6)
     return -cdf(-a); /* log(1+x) \approx x */

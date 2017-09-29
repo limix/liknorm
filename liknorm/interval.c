@@ -21,6 +21,7 @@ static inline void find_first_interval(ExpFam *ef, Normal *normal, double *a,
                                        double *b) {
   double std = sqrt(1 / normal->tau);
   double mu = normal->eta / normal->tau;
+  double smallest_step;
 
   /* initial reasonable interval */
   *a = mu - times_std * std;
@@ -29,7 +30,7 @@ static inline void find_first_interval(ExpFam *ef, Normal *normal, double *a,
   *a = fmax(*a, ef->lower_bound);
   *b = fmin(*b, ef->upper_bound);
 
-  const double smallest_step = fmax(fabs(*a), fabs(*b)) * reps + aeps;
+  smallest_step = fmax(fabs(*a), fabs(*b)) * reps + aeps;
 
   if (*b - *a < smallest_step) {
     if (*a - ef->lower_bound >= *b - ef->lower_bound)
@@ -53,16 +54,15 @@ void shrink_interval(ExpFam *ef, Normal *normal, double *a, double xmax,
   void *args[] = {ef, normal};
   double fa = g_function_func_base(*a, args);
   double fb = g_function_func_base(*b, args);
+  void *args_[] = {&g_function_func_base, &fxmax, args};
 
   assert(fa <= fxmax && fb <= fxmax);
 
   if (fxmax - fa < log(DBL_TRUE_MIN)) {
-    void *args_[] = {&g_function_func_base, &fxmax, args};
     *a = zero(*a, xmax, 1e-5, &g_function_root, args_);
   }
 
   if (fxmax - fb < log(DBL_TRUE_MIN)) {
-    void *args_[] = {&g_function_func_base, &fxmax, args};
     *b = zero(*b, xmax, 1e-5, &g_function_root, args_);
   }
 
@@ -72,9 +72,11 @@ void shrink_interval(ExpFam *ef, Normal *normal, double *a, double xmax,
 void find_interval(ExpFam *ef, Normal *normal, double *left, double *right) {
 
   double a, b;
-  find_first_interval(ef, normal, &a, &b);
+  double xmax, fxmax;
   void *args[] = {ef, normal};
   double fleft, fright;
+
+  find_first_interval(ef, normal, &a, &b);
   find_bracket(&g_function_func_base, args, a, b, ef->lower_bound,
                ef->upper_bound, left, right, &fleft, &fright);
 
@@ -86,8 +88,6 @@ void find_interval(ExpFam *ef, Normal *normal, double *left, double *right) {
 
   a = fmin(a, *left);
   b = fmax(b, *right);
-
-  double xmax, fxmax;
 
   find_maximum(&xmax, &fxmax, &g_function_func_base, args, a, b, reps, aeps,
                maxiter);
