@@ -1,3 +1,4 @@
+#include "compiler.h"
 #include "exponential.h"
 
 #include <assert.h>

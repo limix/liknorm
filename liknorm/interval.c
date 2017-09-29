@@ -1,3 +1,4 @@
+#include "compiler.h"
 #include "expfam.h"
 #include "gfunc.h"
 #include "interval.h"

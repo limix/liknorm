@@ -1,3 +1,4 @@
+#include "compiler.h"
 #include "gamma.h"
 
 #include <assert.h>

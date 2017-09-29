@@ -1,3 +1,4 @@
+#include "compiler.h"
 #include "integrate.h"
 #include "interval.h"
 #include "liknorm/liknorm.h"

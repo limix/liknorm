@@ -1,4 +1,5 @@
 #include "bracket.h"
+#include "compiler.h"
 #include <assert.h>
 #include <math.h>
 

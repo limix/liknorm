@@ -18,6 +18,13 @@
 #if _MSC_VER <= 1500
 #include "hcephes/hcephes.h"
 #define log1p hcephes_log1p
+inline double fmax(double left, double right) {
+  return (left > right) ? left : right;
+}
+
+inline double fmin(double left, double right) {
+  return (left < right) ? left : right;
+}
 #endif
 #endif
 
