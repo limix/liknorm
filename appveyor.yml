@@ -1,6 +1,7 @@
 build: off
 platform: x64
 image:
+    - Visual Studio 2013
     - Visual Studio 2015
     - Visual Studio 2017
 environment:
@@ -12,6 +13,7 @@ install:
     - SET ADDITIONALPARAM=/p:LibraryPath="C:\Program Files\Microsoft SDKs\Windows\v7.1\lib\x64;c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\lib\amd64;C:\Program Files (x86)\Microsoft Visual Studio 10.0\;C:\Program Files (x86)\Microsoft Visual Studio 10.0\lib\amd64;"
 
 build_script:
+    - if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2013" ( call "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall.bat" x64 )
     - if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2015" ( call "C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /x64 )
     - if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2015" ( call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x64 )
     - if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2017" ( call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars64.bat" )
