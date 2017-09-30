@@ -4,6 +4,13 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifdef _MSC_VER
+#if (_MSC_VER <= 1500)
+#define isnan(x) _isnan(x)
+#define isfinite(x) _finite(x)
+#endif
+#endif
+
 int main() {
   LikNormMachine *machine = liknorm_create_machine(500);
   double log_zeroth, mean, variance;
