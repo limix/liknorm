@@ -27,7 +27,7 @@ inline double fmin(double left, double right) {
   return (left < right) ? left : right;
 }
 
-#define lgamma hcephes_gamma
+#define lgamma hcephes_lgam
 #define isnan(x) _isnan(x)
 #define isfinite(x) _finite(x)
 #endif
