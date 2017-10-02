@@ -1,12 +1,14 @@
 include_directories (${TEST_SOURCE_DIR}/src)
 
+
 set(LLIBS liknorm)
-if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-    if(MSVC90)
-        set(LLIBS ${LLIBS} hcephes)
-    endif()
-else()
+if(NOT ${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     set(LLIBS ${LLIBS} m)
+endif()
+
+if(REQUIRES_HCEPHES)
+    include_directories(${HCEPHES_INCLUDE_DIRS})
+    set(LLIBS ${LLIBS} ${HCEPHES_LIBRARIES})
 endif()
 
 add_executable (test_empty test_empty.c)
