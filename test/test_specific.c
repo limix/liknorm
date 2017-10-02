@@ -6,6 +6,7 @@
 
 #ifdef _MSC_VER
 #if (_MSC_VER <= 1500)
+#include <float.h>
 #define isnan(x) _isnan(x)
 #define isfinite(x) _finite(x)
 #endif

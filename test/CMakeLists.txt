@@ -1,5 +1,12 @@
 include_directories (${TEST_SOURCE_DIR}/src)
 
+add_executable (test_empty test_empty.c)
+if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+  target_link_libraries (test_empty liknorm)
+else()
+  target_link_libraries (test_empty liknorm m)
+endif()
+
 add_executable (test_linking test_linking.c)
 if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
   target_link_libraries (test_linking liknorm)

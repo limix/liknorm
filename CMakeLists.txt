@@ -91,6 +91,7 @@ install(TARGETS liknorm_static
 add_subdirectory(test)
 
 enable_testing()
+add_test(test_empty test/test_empty)
 add_test(test_linking test/test_linking)
 add_test(test_integration test/test_integration)
 add_test(test_specific test/test_specific)
