@@ -1,8 +1,11 @@
 #!/bin/bash
 
-VERSION=1.3.9
+URL=https://raw.githubusercontent.com/limix/liknorm/master/VERSION
+VERSION=$(curl -s $URL)
 
 echo "[_/_] Library(liknorm==$VERSION)"
+
+rm /tmp/liknorm.XXXX.log >/dev/null 2>&1 || true
 
 logfile=$(mktemp /tmp/liknorm.XXXX.log)
 exec 3>"$logfile"
