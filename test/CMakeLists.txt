@@ -8,6 +8,6 @@ limix_add_test(test_specific ${PROJECT_NAME} "test_specific.c")
 list(APPEND DATA_FILES data/table.csv)
 
 foreach(DATA_FILE ${DATA_FILES})
-    set(ORIGIN "data/${DATA_FILE}")
+    set(ORIGIN "${DATA_FILE}")
     file(COPY ${ORIGIN} DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/data")
 endforeach()
