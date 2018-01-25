@@ -1,4 +1,4 @@
-#include "liknorm/liknorm.h"
+#include "liknorm.h"
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -37,7 +37,7 @@ typedef struct Line {
 } Line;
 
 Line *read_table() {
-  FILE *stream = fopen("test/table.csv", "r");
+  FILE *stream = fopen("data/table.csv", "r");
   char line[65536];
 
   Line *l = 0;

@@ -1,26 +1,13 @@
-include_directories (${TEST_SOURCE_DIR}/src)
+include_directories("${TEST_SOURCE_DIR}/src")
 
+limix_add_test(test_empty ${PROJECT_NAME} "test_empty.c")
+limix_add_test(test_linking ${PROJECT_NAME} "test_linking.c")
+limix_add_test(test_integration ${PROJECT_NAME} "test_integration.c")
+limix_add_test(test_specific ${PROJECT_NAME} "test_specific.c")
 
-set(LLIBS liknorm)
-if(NOT ${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-    set(LLIBS ${LLIBS} m)
-endif()
+list(APPEND DATA_FILES data/table.csv)
 
-if(REQUIRES_HCEPHES)
-    include_directories(${HCEPHES_INCLUDE_DIRS})
-    set(LLIBS ${LLIBS} ${HCEPHES_LIBRARIES})
-endif()
-
-add_executable (test_empty test_empty.c)
-target_link_libraries (test_empty ${LLIBS})
-
-add_executable (test_linking test_linking.c)
-target_link_libraries (test_linking ${LLIBS})
-
-add_executable (test_integration test_integration.c)
-target_link_libraries (test_integration ${LLIBS})
-
-add_executable (test_specific test_specific.c)
-target_link_libraries (test_specific ${LLIBS})
-
-configure_file(table.csv ${CMAKE_CURRENT_BINARY_DIR}/DESTINATION COPYONLY)
+foreach(DATA_FILE ${DATA_FILES})
+    set(ORIGIN "data/${DATA_FILE}")
+    file(COPY ${ORIGIN} DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/data")
+endforeach()

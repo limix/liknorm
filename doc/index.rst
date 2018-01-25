@@ -54,7 +54,7 @@ Suppose you have the file
 .. code-block:: c
 
   /* example.c */
-  #include "liknorm/liknorm.h"
+  #include "liknorm.h"
 
   #include <stdio.h>
 

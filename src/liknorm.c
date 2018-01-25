@@ -1,7 +1,7 @@
 #include "compiler.h"
 #include "integrate.h"
 #include "interval.h"
-#include "liknorm/liknorm.h"
+#include "liknorm.h"
 #include "machine.h"
 #include "partition/partition.h"
 #include <assert.h>
