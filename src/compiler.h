@@ -16,7 +16,7 @@
 
 #if defined(_MSC_VER)
 #if _MSC_VER <= 1500
-#include "hcephes/hcephes.h"
+#include "hcephes.h"
 #include <float.h>
 #define log1p hcephes_log1p
 inline double fmax(double left, double right) {

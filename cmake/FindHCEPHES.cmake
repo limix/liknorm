@@ -15,7 +15,7 @@ endif()
 
 find_path(
     HCEPHES_INCLUDE_DIR
-    NAMES hcephes/hcephes.h
+    NAMES hcephes.h
     HINTS ${_hcephes_INCLUDE_SEARCH_DIRS}
 )
 
