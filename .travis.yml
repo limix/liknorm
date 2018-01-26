@@ -33,3 +33,10 @@ notifications:
     - danilo.horta@gmail.com
     on_success: change
     on_failure: always
+deploy:
+  provider: releases
+  api_key:
+    secure: sj//i8IkhVHZHwWhI21mctXCkmYDdxM5IckdPf5Ot0jY5yLWj7wjUdZ8NGUxTq61qRfO4bs2vbI7T4jvOLi+Pm9rlzizvcyC0LTF6+M5UQFvGIKTqLXAzm/beEPmUdOlhTZwxyRiDLDsewzvOuvD9KC9f++yauHdsCuVmeku4Pr8lkpvI7yYAh89ZtAy29DqZt6VDc5ZFAJmkwbqEOw9FzjfH3q3rlH4DOPjbJhV+LGQUosuw+DsjlfIf+hQZAU1iIy6hNorSwa5hkwClODPr0gq+MEd9fZCFJe3f9Gk22eSkfd9Avwh/K2ejvTWWkaLOczyoaikGM3UWBbHSJ4bTW7u1RVZd7H3bYIS8P2h547Vyqr0s5mFyWkbzBiHODwVDbymd5A1EPFD/dYEQkksRewi8s3gOGyCRzNb0SyZapdA+uiK2+nMqe6VrS5yILWqvYdfI8I5zF9mVFbp9pT93fWsHjX3FMA+aEzjEGq+Or10tIVUgvrYI3v9tbTownHTpI7ry2/X4+PJmCLC2v5DqmRjsGU1ajO9Lg1cR86eWWYKKpGeoHlEita1VaOJFndF3+HawdanAU98ZOqL+NNG+wVPbJprnQBBhbQGxofkk4F3GIPVhdhb88Zf/4Scu7MwoeirCUJYeZr0NbVaojw7ihCUZiIXB5FQ1QnZ0gT9I7Q=
+  on:
+    repo: limix/liknorm
+    branch: master
