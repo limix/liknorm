@@ -1,6 +1,6 @@
 # liknorm
 
-[![Travis](https://img.shields.io/travis/limix/liknorm.svg?style=flat-square&label=linux%20%2F%20macos%20build)](https://travis-ci.org/limix/liknorm) [![AppVeyor](https://img.shields.io/appveyor/ci/Horta/liknorm.svg?style=flat-square&label=windows%20build)](https://ci.appveyor.com/project/Horta/liknorm)
+[![Travis](https://img.shields.io/travis/limix/liknorm.svg?style=flat-square&label=linux%20%2F%20macos%20build)](https://travis-ci.org/limix/liknorm) [![AppVeyor](https://img.shields.io/appveyor/ci/Horta/liknorm.svg?style=flat-square&label=windows%20build)](https://ci.appveyor.com/project/Horta/liknorm) [![Read the Docs (version)](https://img.shields.io/readthedocs/liknorm/stable.svg?style=flat-square)](http://liknorm.readthedocs.io/)
 
 C library for computing moments of the product of an
 exponential-family likelihood with a Normal distribution.
