@@ -1,59 +1,36 @@
+# liknorm
 
-liknorm
-=======
-
-|Build-Status| |Win-Build-Status| |Codacy-Grade| |Doc-Status|
+[![Travis](https://img.shields.io/travis/limix/liknorm.svg?style=flat-square&label=linux%20%2F%20macos%20build)](https://travis-ci.org/limix/liknorm) [![AppVeyor](https://img.shields.io/appveyor/ci/Horta/liknorm.svg?style=flat-square&label=windows%20build)](https://ci.appveyor.com/project/Horta/liknorm)
 
 C library for computing moments of the product of an
 exponential-family likelihood with a Normal distribution.
 
-Install
--------
+## Install
 
-You can install it via conda_
+You can install it via [conda](https://conda.io)
 
-.. code:: bash
+```bash
+conda install -c conda-forge liknorm
+```
 
-    conda install -c conda-forge liknorm
+Alternatively, one can compile and install it.
+First, make sure you have [hcephes](https://github.com/limix/hcephes) installed.
+Then, from Linux or MacOS systems, enter
 
-A second installation option would be to download the latest source and to
-build it by yourself.
-On Linux or macOS systems it can be as simple as
+```bash
+bash <(curl -fsSL https://raw.githubusercontent.com/limix/liknorm/master/install)
+```
 
-.. code:: bash
+from terminal. From Windows, enter
 
-    bash <(curl -fsSL https://raw.githubusercontent.com/limix/liknorm/master/install)
+```dos
+powershell -Command "(New-Object Net.WebClient).DownloadFile('https://raw.githubusercontent.com/limix/liknorm/master/install.bat', 'install.bat')" && install.bat
+```
 
-Refer to documentation_ for more information.
+## Authors
 
-Authors
--------
+- [Danilo Horta](https://github.com/horta)
 
-* `Danilo Horta`_
+## License
 
-License
--------
-
-This project is licensed under the MIT License - see the `license file`_ for
-details.
-
-
-.. |Build-Status| image:: https://travis-ci.org/limix/liknorm.svg?branch=master
-    :target: https://travis-ci.org/limix/liknorm
-
-.. |Win-Build-Status| image:: https://ci.appveyor.com/api/projects/status/kb4b4rcsm4t60bg5/branch/master?svg=true
-    :target: https://ci.appveyor.com/project/Horta/liknorm/branch/master
-
-.. |Codacy-Grade| image:: https://api.codacy.com/project/badge/Grade/689b555393364226863c3a237f801650
-    :target: https://www.codacy.com/app/danilo.horta/liknorm?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=limix/liknorm&amp;utm_campaign=Badge_Grade
-
-.. |Doc-Status| image:: https://readthedocs.org/projects/liknorm/badge/?style=flat-square&version=stable
-    :target: https://liknorm.readthedocs.io/
-
-.. _conda: http://conda.pydata.org/docs/index.html
-
-.. _license file: https://raw.githubusercontent.com/limix/liknorm/master/LICENSE.txt
-
-.. _Danilo Horta: https://github.com/horta
-
-.. _documentation: http://liknorm.readthedocs.io/
+This project is licensed under the MIT License - see the [license file](https://raw.githubusercontent.com/limix/liknorm/master/LICENSE.md) for details.
