@@ -40,3 +40,4 @@ deploy:
   on:
     repo: limix/liknorm
     branch: master
+    tags: true
