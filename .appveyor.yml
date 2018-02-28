@@ -22,6 +22,7 @@ build_script:
         -DCMAKE_INSTALL_PREFIX=%APPVEYOR_BUILD_FOLDER%
     - cmake --build . --config Release --target install
     - ctest -V --output-on-failure -C Release
+    - appveyor DownloadFile https://raw.githubusercontent.com/limix/hcephes/master/install.bat && install.bat
 
 test_script:
     - if NOT exist %APPVEYOR_BUILD_FOLDER%\lib\liknorm.lib exit 1
