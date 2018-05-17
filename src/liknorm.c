@@ -1,3 +1,4 @@
+#include "hcephes.h"
 #include "compiler.h"
 #include "integrate.h"
 #include "interval.h"
@@ -66,6 +67,26 @@ void _liknorm_integrate(LikNormMachine *machine, double *log_zeroth,
   *log_zeroth -= log((2 * pi) / normal->tau) / 2;
   *log_zeroth -= (normal->eta * normal->eta) / (2 * normal->tau);
 }
+
+void liknorm_integrate_bernoulli_probit(double y, double tau, double eta,
+                                        double *log_zeroth,
+                                        double *mean, double *variance)
+{
+  double c, b, denom, logpdfc, logcdfc, logdiff;
+  double tau1 = tau + 1;
+  double d = sqrt(tau) / sqrt(tau1);
+  c = (sqrt(tau) * y * eta / sqrt(tau + 1)) / tau;
+  logcdfc = logcdf(c);
+  logpdfc = logpdf(c);
+  *log_zeroth = logcdfc;
+  logdiff = exp(logpdfc - logcdfc);
+  b = logdiff + c;
+  denom = 1 - b * logdiff / (tau + 1);
+  *variance = denom / tau;
+  *mean = (eta + y * logdiff * d) / (1 - b * logdiff / tau1);
+  *mean = *mean * (*variance);
+}
+
 void liknorm_integrate(LikNormMachine *machine, double *log_zeroth,
                        double *mean, double *variance) {
 
@@ -74,6 +95,11 @@ void liknorm_integrate(LikNormMachine *machine, double *log_zeroth,
   Normal *normal = &(machine->normal);
   double ileft;
   double iright;
+
+  if (ef->name == liknorm_bernoulli_probit) {
+      liknorm_integrate_bernoulli_probit(ef->y, normal->tau, normal->eta, log_zeroth, mean, variance);
+      return;
+  }
 
   find_interval(ef, normal, &left, &right);
   assert(ef->lower_bound <= left && right <= ef->upper_bound);
@@ -108,6 +134,12 @@ void liknorm_set_bernoulli(LikNormMachine *machine, double k) {
   m->ef.lpd = bernoulli_log_partition_derivatives;
   m->ef.lower_bound = -DBL_MAX;
   m->ef.upper_bound = +DBL_MAX;
+}
+
+void liknorm_set_bernoulli_probit(LikNormMachine *machine, double k) {
+  LikNormMachine *m = machine;
+  m->ef.name = liknorm_bernoulli_probit;
+  m->ef.y = k;
 }
 
 double logbinom(double k, double n) {

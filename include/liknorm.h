@@ -11,6 +11,7 @@ void liknorm_integrate(LikNormMachine *machine,
 void liknorm_destroy_machine(LikNormMachine *machine);
 
 void liknorm_set_bernoulli(LikNormMachine *machine, double k);
+void liknorm_set_bernoulli_probit(LikNormMachine *machine, double k);
 void liknorm_set_binomial(LikNormMachine *machine, double k, double n);
 void liknorm_set_poisson(LikNormMachine *machine, double k);
 void liknorm_set_exponential(LikNormMachine *machine, double x);

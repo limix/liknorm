@@ -102,6 +102,9 @@ int test_it(LikNormMachine *machine, Line *l, double *elapsed) {
   if (strcmp(l->likname, "bernoulli") == 0)
     liknorm_set_bernoulli(machine, l->y);
 
+  if (strcmp(l->likname, "bernoulli_probit") == 0)
+    liknorm_set_bernoulli_probit(machine, l->y);
+
   if (strcmp(l->likname, "poisson") == 0)
     liknorm_set_poisson(machine, l->y);
 
