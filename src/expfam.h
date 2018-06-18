@@ -9,26 +9,26 @@ typedef void log_partition_derivatives(const double theta, double *b0,
 typedef double log_partition_fderivative(const double theta);
 
 enum lik_name {
-  liknorm_bernoulli,
-  liknorm_binomial,
-  liknorm_poisson,
-  liknorm_exponential,
-  liknorm_gamma,
-  liknorm_geometric,
-  liknorm_bernoulli_probit
+    liknorm_bernoulli,
+    liknorm_binomial,
+    liknorm_poisson,
+    liknorm_exponential,
+    liknorm_gamma,
+    liknorm_geometric,
+    liknorm_probit,
 };
 
 typedef struct {
-  double y;
-  double aphi;
-  double log_aphi;
-  double c;
-  log_partition *lp;
-  log_partition_fderivative *lpfd;
-  log_partition_derivatives *lpd;
-  double lower_bound;
-  double upper_bound;
-  enum lik_name name;
+    double y;
+    double aphi;
+    double log_aphi;
+    double c;
+    log_partition *lp;
+    log_partition_fderivative *lpfd;
+    log_partition_derivatives *lpd;
+    double lower_bound;
+    double upper_bound;
+    enum lik_name name;
 } ExpFam;
 
 #endif

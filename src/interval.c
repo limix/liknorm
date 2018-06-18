@@ -1,7 +1,7 @@
+#include "interval.h"
 #include "compiler.h"
 #include "expfam.h"
 #include "gfunc.h"
-#include "interval.h"
 #include "normal.h"
 #include "optimizer/optimizer.h"
 #include <assert.h>
@@ -19,86 +19,86 @@ static const int maxiter = 100;
 
 static inline void find_first_interval(ExpFam *ef, Normal *normal, double *a,
                                        double *b) {
-  double std = sqrt(1 / normal->tau);
-  double mu = normal->eta / normal->tau;
-  double smallest_step;
+    double std = sqrt(1 / normal->tau);
+    double mu = normal->eta / normal->tau;
+    double smallest_step;
 
-  /* initial reasonable interval */
-  *a = mu - times_std * std;
-  *b = mu + times_std * std;
+    /* initial reasonable interval */
+    *a = mu - times_std * std;
+    *b = mu + times_std * std;
 
-  *a = fmax(*a, ef->lower_bound);
-  *b = fmin(*b, ef->upper_bound);
+    *a = fmax(*a, ef->lower_bound);
+    *b = fmin(*b, ef->upper_bound);
 
-  smallest_step = fmax(fabs(*a), fabs(*b)) * reps + aeps;
+    smallest_step = fmax(fabs(*a), fabs(*b)) * reps + aeps;
 
-  if (*b - *a < smallest_step) {
-    if (*a - ef->lower_bound >= *b - ef->lower_bound)
-      *a -= smallest_step;
-    else
-      *b += smallest_step;
-  }
-  assert(*b - *a >= smallest_step);
+    if (*b - *a < smallest_step) {
+        if (*a - ef->lower_bound >= *b - ef->lower_bound)
+            *a -= smallest_step;
+        else
+            *b += smallest_step;
+    }
+    assert(*b - *a >= smallest_step);
 }
 
 double g_function_root(double x, void *args) {
-  void **args_ = args;
-  func_base *fb = (func_base *)args_[0];
-  double *fxmax = args_[1];
+    void **args_ = args;
+    func_base *fb = (func_base *)args_[0];
+    double *fxmax = args_[1];
 
-  return *fxmax - (*fb)(x, args_[2]) + log(DBL_TRUE_MIN);
+    return *fxmax - (*fb)(x, args_[2]) + log(DBL_TRUE_MIN);
 }
 
 void shrink_interval(ExpFam *ef, Normal *normal, double *a, double xmax,
                      double *b, double fxmax) {
-  void *args[] = {ef, normal};
-  double fa = g_function_func_base(*a, args);
-  double fb = g_function_func_base(*b, args);
-  void *args_[] = {&g_function_func_base, &fxmax, args};
+    void *args[] = {ef, normal};
+    double fa = g_function_func_base(*a, args);
+    double fb = g_function_func_base(*b, args);
+    void *args_[] = {&g_function_func_base, &fxmax, args};
 
-  assert(fa <= fxmax && fb <= fxmax);
+    assert(fa <= fxmax && fb <= fxmax);
 
-  if (fxmax - fa < log(DBL_TRUE_MIN)) {
-    *a = zero(*a, xmax, 1e-5, &g_function_root, args_);
-  }
+    if (fxmax - fa < log(DBL_TRUE_MIN)) {
+        *a = zero(*a, xmax, 1e-5, &g_function_root, args_);
+    }
 
-  if (fxmax - fb < log(DBL_TRUE_MIN)) {
-    *b = zero(*b, xmax, 1e-5, &g_function_root, args_);
-  }
+    if (fxmax - fb < log(DBL_TRUE_MIN)) {
+        *b = zero(*b, xmax, 1e-5, &g_function_root, args_);
+    }
 
-  assert(*a <= *b);
+    assert(*a <= *b);
 }
 
 void find_interval(ExpFam *ef, Normal *normal, double *left, double *right) {
 
-  double a, b;
-  double xmax, fxmax;
-  void *args[] = {ef, normal};
-  double fleft, fright;
+    double a, b;
+    double xmax, fxmax;
+    void *args[] = {ef, normal};
+    double fleft, fright;
 
-  find_first_interval(ef, normal, &a, &b);
-  find_bracket(&g_function_func_base, args, a, b, ef->lower_bound,
-               ef->upper_bound, left, right, &fleft, &fright);
+    find_first_interval(ef, normal, &a, &b);
+    find_bracket(&g_function_func_base, args, a, b, ef->lower_bound,
+                 ef->upper_bound, left, right, &fleft, &fright);
 
-  assert(*left < *right);
-  assert(ef->lower_bound <= *left);
-  assert(*right <= ef->upper_bound);
-  assert(isfinite(*left) && isfinite(*right));
-  assert(isfinite(fleft) && isfinite(fright));
+    assert(*left < *right);
+    assert(ef->lower_bound <= *left);
+    assert(*right <= ef->upper_bound);
+    assert(isfinite(*left) && isfinite(*right));
+    assert(isfinite(fleft) && isfinite(fright));
 
-  a = fmin(a, *left);
-  b = fmax(b, *right);
+    a = fmin(a, *left);
+    b = fmax(b, *right);
 
-  find_maximum(&xmax, &fxmax, &g_function_func_base, args, a, b, reps, aeps,
-               maxiter);
+    find_maximum(&xmax, &fxmax, &g_function_func_base, args, a, b, reps, aeps,
+                 maxiter);
 
-  assert(isfinite(xmax));
-  assert(isfinite(fxmax));
+    assert(isfinite(xmax));
+    assert(isfinite(fxmax));
 
-  assert(a <= xmax && xmax <= b);
+    assert(a <= xmax && xmax <= b);
 
-  shrink_interval(ef, normal, &a, xmax, &b, fxmax);
+    shrink_interval(ef, normal, &a, xmax, &b, fxmax);
 
-  *left = a;
-  *right = b;
+    *left = a;
+    *right = b;
 }

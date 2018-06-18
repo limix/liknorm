@@ -20,11 +20,11 @@
 #include <float.h>
 #define log1p hcephes_log1p
 inline double fmax(double left, double right) {
-  return (left > right) ? left : right;
+    return (left > right) ? left : right;
 }
 
 inline double fmin(double left, double right) {
-  return (left < right) ? left : right;
+    return (left < right) ? left : right;
 }
 
 #define lgamma hcephes_lgam
