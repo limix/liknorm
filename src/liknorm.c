@@ -75,7 +75,7 @@ void liknorm_integrate_probit(double y, double tau, double eta,
     double tau1 = tau + 1;
     double d = sqrt(tau) / sqrt(tau1);
     y = 2 * y - 1;
-    c = (sqrt(tau) * y * eta / sqrt(tau + 1)) / tau;
+    c = (sqrt(tau) * y * eta / sqrt(tau1)) / tau;
     logcdfc = logcdf(c);
     logpdfc = logpdf(c);
     *log_zeroth = logcdfc;

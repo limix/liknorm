@@ -151,6 +151,8 @@ int main() {
 
     int i = 0;
 
+    if (root == 0)
+        return 1;
     while (l != 0) {
         e = test_it(machine, l, &elapsed);
 

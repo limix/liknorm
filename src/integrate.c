@@ -3,9 +3,11 @@
 #include "logaddexp.h"
 #include "machine.h"
 #include "normal.h"
+#include "sign.h"
 #include <assert.h>
 #include <float.h>
 #include <math.h>
+#include <stdio.h>
 
 #define LPI2 0.572364942924700081938738094323
 #define LNSQRT2 0.346573590279972698624533222755
@@ -14,91 +16,56 @@ void integrate_step(double si, double step, ExpFam *ef, Normal *normal,
                     double *log_zeroth, double *u, double *v, double *A0,
                     double *logA1, double *logA2, double *diff) {
 
-    double log_htau = logaddexp(normal->log_tau, *logA2);
-    double htau = exp(log_htau);
-    double htau_sqrt = sqrt(htau);
+    const double log_htau = logaddexp(normal->log_tau, *logA2);
+    const double htau = exp(log_htau);
+    const double htau_sqrt = sqrt(htau);
 
-    double tstep = step * htau;
-    double tsi = si * htau;
-    double tsii = tsi + tstep;
+    const double tstep = step * htau;
+    const double tsi = si * htau;
+    const double tsii = tsi + tstep;
 
-    double tmi = (tsi + tsii) / 2;
-    double tmidiff = *diff * tmi;
+    const double tmi = (tsi + tsii) / 2;
+    const double tmidiff = *diff * tmi;
 
     double a = -(*A0) * htau;
     double b = ef->y / ef->aphi + normal->eta;
 
-    double beta;
-    double alpha;
-
     double lcdf_a, lcdf_b, lsf_a, lsf_b;
-    double lcdf_diff;
-    double logpbeta;
-    double logpalpha;
-    double logp, logp_sign;
-
-    double D;
-
-    double tsxx;
-    double tsyy;
-
-    double tsx;
-    double tsy;
 
     double C;
     int Csign;
 
-    double nominator;
+    double s = -copysign(1, htau + tmidiff);
 
-    double htau2;
+    b += s * exp(*logA1 + log(fabs(htau + tmidiff)) - log(htau));
+    s = copysign(1, 2 * htau + tmidiff);
+    a += s * tmi * exp(*logA1 + log(fabs(2 * htau + tmidiff)) - log(2 * htau));
 
-    int sign = htau + tmidiff > 0 ? -1 : +1;
+    const double beta = (tsii - b) / htau_sqrt;
+    const double alpha = (tsi - b) / htau_sqrt;
 
-    b += sign * exp(*logA1 + log(fabs(htau + tmidiff)) - log(htau));
-    sign = 2 * htau + tmidiff > 0 ? +1 : -1;
-    a += sign * tmi *
-         exp(*logA1 + log(fabs(2 * htau + tmidiff)) - log(2 * htau));
-    assert(isfinite(b));
-
-    assert(isfinite(a));
-    assert(isfinite(b));
-
-    beta = (tsii - b) / htau_sqrt;
-    alpha = (tsi - b) / htau_sqrt;
-
-    if (alpha + beta >= 0) {
-        lsf_a = logcdf(-alpha);
-        lsf_b = logcdf(-beta);
-        lcdf_diff = lsf_a + log1p(-exp(-lsf_a + lsf_b));
-    } else {
-        lcdf_a = logcdf(alpha);
-        lcdf_b = logcdf(beta);
-        lcdf_diff = lcdf_b + log1p(-exp(-lcdf_b + lcdf_a));
-    }
+    const double lcdf_diff =
+        logsubexp(logcdf((alpha < -beta) * (beta + alpha) - alpha),
+                  logcdf((alpha < -beta) * (beta + alpha) - beta));
 
     *log_zeroth =
         (a + (b * b) / 2) / htau + LPI2 + LNSQRT2 - log_htau / 2 + lcdf_diff;
 
-    assert(isfinite(*log_zeroth));
+    const double logpbeta = logpdf(beta);
+    const double logpalpha = logpdf(alpha);
+    const double logp_sign = copysign(1, logpbeta - logpalpha);
 
-    logpbeta = logpdf(beta);
-    logpalpha = logpdf(alpha);
+    const double logp =
+        logsubexp((logpbeta > logpalpha) * (logpbeta - logpalpha) + logpalpha,
+                  (logpbeta > logpalpha) * (logpalpha - logpbeta) + logpbeta);
 
-    if (logpbeta > logpalpha) {
-        logp = logpbeta + log1p(-exp(-logpbeta + logpalpha));
-        logp_sign = 1;
-    } else {
-        logp = logpalpha + log1p(-exp(-logpalpha + logpbeta));
-        logp_sign = -1;
-    }
+    const double D = logp_sign * exp(logp - lcdf_diff);
 
-    D = logp_sign * exp(logp - lcdf_diff);
+    const double tsxx = log(fabs(b + tsi)) + logp;
+    const double tsyy = log(tstep) + logpbeta;
 
-    tsxx = log(fabs(b + tsi)) + logp;
-    tsyy = log(tstep) + logpbeta;
-
-    tsx = logp_sign * (b + tsi);
-    tsy = tstep;
+    const double tsx = logp_sign * (b + tsi);
+    const double tsy = tstep;
 
     if (tsxx > tsyy) {
         if (tsx >= 0) {
@@ -115,15 +82,14 @@ void integrate_step(double si, double step, ExpFam *ef, Normal *normal,
 
     C = Csign * exp(C - lcdf_diff);
 
-    nominator = fmax(b * b + htau - htau_sqrt * C, DBL_EPSILON);
+    const double nominator = fmax(b * b + htau - htau_sqrt * C, DBL_EPSILON);
 
-    htau2 = htau * htau;
+    const double htau2 = htau * htau;
     assert(htau2 > 0);
     *v = nominator / htau2;
 
     *u = (htau * (b - htau_sqrt * D)) / htau2;
 
-    assert(isfinite(htau) && htau >= 0);
     assert(*v >= 0);
 }
 
@@ -142,7 +108,6 @@ void combine_steps(LikNormMachine *machine, double *log_zeroth, double *mean,
 
     for (i = 0; i < m->size; ++i) {
         m->diff[i] = exp(m->log_zeroth[i] - *log_zeroth);
-        assert(isfinite(m->diff[i]));
     }
 
     ileft = -1;
@@ -162,16 +127,11 @@ void combine_steps(LikNormMachine *machine, double *log_zeroth, double *mean,
     *variance = 0;
 
     for (i = ileft; i < iright; ++i) {
-        assert(isfinite(m->u[i]));
-        assert(isfinite(m->v[i]));
         *mean += m->u[i] * m->diff[i];
         *variance += m->v[i] * m->diff[i];
     }
 
     *variance = *variance - (*mean) * (*mean);
-
-    assert(isfinite(*variance));
-    assert(isfinite(*mean));
 
     *variance = fmax(*variance, DBL_EPSILON);
 

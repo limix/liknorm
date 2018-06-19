@@ -15,7 +15,7 @@ enum lik_name {
     liknorm_exponential,
     liknorm_gamma,
     liknorm_geometric,
-    liknorm_probit,
+    liknorm_probit
 };
 
 typedef struct {

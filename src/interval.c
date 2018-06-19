@@ -80,12 +80,6 @@ void find_interval(ExpFam *ef, Normal *normal, double *left, double *right) {
     find_bracket(&g_function_func_base, args, a, b, ef->lower_bound,
                  ef->upper_bound, left, right, &fleft, &fright);
 
-    assert(*left < *right);
-    assert(ef->lower_bound <= *left);
-    assert(*right <= ef->upper_bound);
-    assert(isfinite(*left) && isfinite(*right));
-    assert(isfinite(fleft) && isfinite(fright));
-
     a = fmin(a, *left);
     b = fmax(b, *right);
 
