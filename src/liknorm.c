@@ -28,7 +28,7 @@ struct LikNormMachine *liknorm_create_machine(int size) {
 void _liknorm_integrate(struct LikNormMachine *machine, double *log_zeroth,
                         double *mean, double *variance, double *left,
                         double *right) {
-    ExpFam *ef = &(machine->ef);
+    struct ExpFam *ef = &(machine->ef);
     struct Normal *normal = &(machine->normal);
     int i;
 
@@ -91,7 +91,7 @@ void liknorm_integrate(struct LikNormMachine *machine, double *log_zeroth,
                        double *mean, double *variance) {
 
     double left, right;
-    ExpFam *ef = &(machine->ef);
+    struct ExpFam *ef = &(machine->ef);
     struct Normal *normal = &(machine->normal);
     double ileft;
     double iright;
