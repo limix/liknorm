@@ -4,6 +4,6 @@
 #include "expfam.h"
 #include "normal.h"
 
-void find_interval(ExpFam *ef, Normal *normal, double *left, double *right);
+void find_interval(ExpFam *ef, struct Normal *normal, double *left, double *right);
 
 #endif

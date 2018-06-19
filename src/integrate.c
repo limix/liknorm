@@ -3,7 +3,6 @@
 #include "logaddexp.h"
 #include "machine.h"
 #include "normal.h"
-#include "sign.h"
 #include <assert.h>
 #include <float.h>
 #include <math.h>
@@ -12,9 +11,10 @@
 #define LPI2 0.572364942924700081938738094323
 #define LNSQRT2 0.346573590279972698624533222755
 
-void integrate_step(double si, double step, ExpFam *ef, Normal *normal,
-                    double *log_zeroth, double *u, double *v, double *A0,
-                    double *logA1, double *logA2, double *diff) {
+void integrate_step(double si, double step, struct ExpFam *ef,
+                    struct Normal *normal, double *log_zeroth, double *u,
+                    double *v, double *A0, double *logA1, double *logA2,
+                    double *diff) {
 
     const double log_htau = logaddexp(normal->log_tau, *logA2);
     const double htau = exp(log_htau);
@@ -88,10 +88,11 @@ void integrate_step(double si, double step, ExpFam *ef, Normal *normal,
     *u = (htau * (b - htau_sqrt * D)) / htau2;
 }
 
-void combine_steps(LikNormMachine *machine, double *log_zeroth, double *mean,
-                   double *variance, double *left, double *right) {
+void combine_steps(struct LikNormMachine *machine, double *log_zeroth,
+                   double *mean, double *variance, double *left,
+                   double *right) {
 
-    LikNormMachine *m = machine;
+    struct LikNormMachine *m = machine;
     int i, ileft, iright;
     double step;
 

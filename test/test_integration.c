@@ -93,7 +93,7 @@ Line *read_table() {
     return root;
 }
 
-int test_it(LikNormMachine *machine, Line *l, double *elapsed) {
+int test_it(struct LikNormMachine *machine, Line *l, double *elapsed) {
     double log_zeroth, mean, variance;
     double eps = 1e-4;
     int ok;
@@ -145,7 +145,7 @@ int main() {
     Line *l = root;
     double elapsed = 0;
 
-    LikNormMachine *machine = liknorm_create_machine(350);
+    struct LikNormMachine *machine = liknorm_create_machine(350);
 
     if (root == 0)
         return 1;

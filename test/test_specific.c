@@ -13,7 +13,7 @@
 #endif
 
 int main() {
-    LikNormMachine *machine = liknorm_create_machine(500);
+    struct LikNormMachine *machine = liknorm_create_machine(500);
     double log_zeroth, mean, variance;
     double eps = 1e-4;
     int ok;

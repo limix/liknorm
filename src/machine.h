@@ -14,7 +14,7 @@ struct LikNormMachine {
     double *diff;       // temporary array
     int size;           // size of the above arrays
     ExpFam ef;
-    Normal normal;
+    struct Normal normal;
 };
 
 #endif

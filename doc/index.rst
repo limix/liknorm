@@ -66,7 +66,7 @@ Suppose you have the file
     double nsuccesses = 2;
     double ntrials = 15;
 
-    LikNormMachine *machine = liknorm_create_machine(500);
+    struct LikNormMachine *machine = liknorm_create_machine(500);
 
     liknorm_set_binomial(machine, nsuccesses, ntrials);
     liknorm_set_prior(machine, 1 / prior_var, prior_mean / prior_var);
@@ -97,80 +97,80 @@ should print::
 Functions description
 ---------------------
 
-.. c:function:: LikNormMachine* liknorm_create_machine(int size)
+.. c:function:: struct LikNormMachine* liknorm_create_machine(int size)
 
   Create a Machine instance capable of doing numerical integration.
 
   :param int size: Number of integration points. ``500`` points should be
                    enough. ``300`` is usually fine too.
   :return: Machine instance to perform integration.
-  :rtype: LikNormMachine*
+  :rtype: struct LikNormMachine*
 
-.. c:function:: void liknorm_integrate(LikNormMachine *machine, double *log_zeroth, double *mean, double *variance)
+.. c:function:: void liknorm_integrate(struct LikNormMachine *machine, double *log_zeroth, double *mean, double *variance)
 
   Perform numerical integration.
 
-  :param LikNormMachine* machine: Machine to perform integration.
+  :param struct LikNormMachine* machine: Machine to perform integration.
   :param double* log_zeroth: Zeroth moment.
   :param double* log_mean: First moment of the normalized distribution.
   :param double* log_variance: Variance of the normalized distribution.
 
-.. c:function:: void liknorm_destroy_machine(LikNormMachine *machine)
+.. c:function:: void liknorm_destroy_machine(struct LikNormMachine *machine)
 
   Destroy a Machine instance.
 
-  :param LikNormMachine* machine: Machine to be destroyed. Always call it before
+  :param struct LikNormMachine* machine: Machine to be destroyed. Always call it before
                                  exiting your program, otherwise it will
                                  leak memory.
 
-.. c:function:: void liknorm_set_bernoulli(LikNormMachine *machine, double k)
+.. c:function:: void liknorm_set_bernoulli(struct LikNormMachine *machine, double k)
 
   Set a Bernoulli likelihood.
 
-  :param LikNormMachine* machine: Machine to perform integration.
+  :param struct LikNormMachine* machine: Machine to perform integration.
   :param double k: ``0`` or ``1`` indicating a Bernoulli outcome.
 
-.. c:function:: void liknorm_set_binomial(LikNormMachine *machine, double k, double n)
+.. c:function:: void liknorm_set_binomial(struct LikNormMachine *machine, double k, double n)
 
   Set a Binomial likelihood.
 
-  :param LikNormMachine* machine: Machine to perform integration.
+  :param struct LikNormMachine* machine: Machine to perform integration.
   :param double k: Number of successes.
   :param double n: Number of trials.
 
-.. c:function:: void liknorm_set_poisson(LikNormMachine *machine, double k)
+.. c:function:: void liknorm_set_poisson(struct LikNormMachine *machine, double k)
 
   Set a Poisson likelihood.
 
-  :param LikNormMachine* machine: Machine to perform integration.
+  :param struct LikNormMachine* machine: Machine to perform integration.
   :param double k: Number of successes.
 
-.. c:function:: void liknorm_set_exponential(LikNormMachine *machine, double x)
+.. c:function:: void liknorm_set_exponential(struct LikNormMachine *machine, double x)
 
   Set a Exponential likelihood.
 
-  :param LikNormMachine* machine: Machine to perform integration.
+  :param struct LikNormMachine* machine: Machine to perform integration.
   :param double x: Time span.
 
-.. c:function:: void liknorm_set_gamma(LikNormMachine *machine, double x, double a)
+.. c:function:: void liknorm_set_gamma(struct LikNormMachine *machine, double x, double a)
 
   Set a Gamma likelihood.
 
-  :param LikNormMachine* machine: Machine to perform integration.
+  :param struct LikNormMachine* machine: Machine to perform integration.
   :param double x: Positive outcome.
   :param double a: Shape parameter.
 
-.. c:function:: void liknorm_set_geometric(LikNormMachine *machine, double x)
+.. c:function:: void liknorm_set_geometric(struct LikNormMachine *machine, double x)
 
   Set a Geometric likelihood.
 
-  :param LikNormMachine* machine: Machine to perform integration.
+  :param struct LikNormMachine* machine: Machine to perform integration.
   :param double x: Number of trials to success.
 
-.. c:function:: void liknorm_set_prior(LikNormMachine *machine, double tau, double eta)
+.. c:function:: void liknorm_set_prior(struct LikNormMachine *machine, double tau, double eta)
 
   Set the natural parameters of Normal prior.
 
-  :param LikNormMachine* machine: Machine to perform integration.
+  :param struct LikNormMachine* machine: Machine to perform integration.
   :param double tau: It equals to :math:`\sigma^{-2}`.
   :param double eta: It equals to :math:`\mu \sigma^{-2}`.

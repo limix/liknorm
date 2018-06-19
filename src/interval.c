@@ -17,8 +17,8 @@ static const int maxiter = 100;
 #define DBL_TRUE_MIN 4.9406564584124654E-324
 #endif
 
-static inline void find_first_interval(ExpFam *ef, Normal *normal, double *a,
-                                       double *b) {
+static inline void find_first_interval(struct ExpFam *ef, struct Normal *normal,
+                                       double *a, double *b) {
     double std = sqrt(1 / normal->tau);
     double mu = normal->eta / normal->tau;
     double smallest_step;
@@ -48,8 +48,8 @@ double g_function_root(double x, void *args) {
     return *fxmax - (*fb)(x, args_[2]) + log(DBL_TRUE_MIN);
 }
 
-void shrink_interval(ExpFam *ef, Normal *normal, double *a, double xmax,
-                     double *b, double fxmax) {
+void shrink_interval(struct ExpFam *ef, struct Normal *normal, double *a,
+                     double xmax, double *b, double fxmax) {
     void *args[] = {ef, normal};
     double fa = g_function_func_base(*a, args);
     double fb = g_function_func_base(*b, args);
@@ -64,7 +64,8 @@ void shrink_interval(ExpFam *ef, Normal *normal, double *a, double xmax,
     }
 }
 
-void find_interval(ExpFam *ef, Normal *normal, double *left, double *right) {
+void find_interval(struct ExpFam *ef, struct Normal *normal, double *left,
+                   double *right) {
 
     double a, b;
     double xmax, fxmax;

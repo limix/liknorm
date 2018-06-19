@@ -1,11 +1,11 @@
 #ifndef NORMAL_H
 #define NORMAL_H
 
-typedef struct {
+struct Normal {
     double eta;
     double log_tau;
     double tau;
-} Normal;
+};
 
 /* Cumulative distribution function of the Normal distribution.
  */
