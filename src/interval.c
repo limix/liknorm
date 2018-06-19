@@ -38,7 +38,6 @@ static inline void find_first_interval(ExpFam *ef, Normal *normal, double *a,
         else
             *b += smallest_step;
     }
-    assert(*b - *a >= smallest_step);
 }
 
 double g_function_root(double x, void *args) {
@@ -56,8 +55,6 @@ void shrink_interval(ExpFam *ef, Normal *normal, double *a, double xmax,
     double fb = g_function_func_base(*b, args);
     void *args_[] = {&g_function_func_base, &fxmax, args};
 
-    assert(fa <= fxmax && fb <= fxmax);
-
     if (fxmax - fa < log(DBL_TRUE_MIN)) {
         *a = zero(*a, xmax, 1e-5, &g_function_root, args_);
     }
@@ -65,8 +62,6 @@ void shrink_interval(ExpFam *ef, Normal *normal, double *a, double xmax,
     if (fxmax - fb < log(DBL_TRUE_MIN)) {
         *b = zero(*b, xmax, 1e-5, &g_function_root, args_);
     }
-
-    assert(*a <= *b);
 }
 
 void find_interval(ExpFam *ef, Normal *normal, double *left, double *right) {
@@ -85,11 +80,6 @@ void find_interval(ExpFam *ef, Normal *normal, double *left, double *right) {
 
     find_maximum(&xmax, &fxmax, &g_function_func_base, args, a, b, reps, aeps,
                  maxiter);
-
-    assert(isfinite(xmax));
-    assert(isfinite(fxmax));
-
-    assert(a <= xmax && xmax <= b);
 
     shrink_interval(ef, normal, &a, xmax, &b, fxmax);
 

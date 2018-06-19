@@ -103,7 +103,6 @@ void liknorm_integrate(LikNormMachine *machine, double *log_zeroth,
     }
 
     find_interval(ef, normal, &left, &right);
-    assert(ef->lower_bound <= left && right <= ef->upper_bound);
 
     do {
         ileft = left;

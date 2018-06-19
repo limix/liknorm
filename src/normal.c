@@ -3,18 +3,10 @@
 #include <math.h>
 
 double get_del(double x, double rational) {
-    double xsq = 0.0;
-    double del = 0.0;
-    double result = 0.0;
     const double scale = 16.0;
-
-    xsq = floor(x * scale) / scale;
-    del = (x - xsq) * (x + xsq);
-    del *= 0.5;
-
-    result = exp(-0.5 * xsq * xsq) * exp(-1.0 * del) * rational;
-
-    return result;
+    const double xsq = floor(x * scale) / scale;
+    const double del = (x - xsq) * (x + xsq) * 0.5;
+    return exp(-0.5 * xsq * xsq) * exp(-1.0 * del) * rational;
 }
 
 /*

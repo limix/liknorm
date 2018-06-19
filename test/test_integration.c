@@ -43,7 +43,6 @@ Line *read_table() {
     Line *l = 0;
     Line *root = 0;
     Line *last = root;
-    char *token;
     char *str;
 
     if (stream == 0)
@@ -57,7 +56,7 @@ Line *read_table() {
     while (fgets(line, 65536, stream)) {
         l = malloc(sizeof(Line));
 
-        token = strtok(line, ",");
+        char *token = strtok(line, ",");
         l->normal_mean = atof(token);
 
         token = strtok(NULL, ",");
@@ -144,23 +143,19 @@ int test_it(LikNormMachine *machine, Line *l, double *elapsed) {
 int main() {
     Line *root = read_table();
     Line *l = root;
-    int e;
     double elapsed = 0;
 
     LikNormMachine *machine = liknorm_create_machine(350);
 
-    int i = 0;
-
     if (root == 0)
         return 1;
     while (l != 0) {
-        e = test_it(machine, l, &elapsed);
+        int e = test_it(machine, l, &elapsed);
 
         if (e != 0)
             return 1;
 
         l = l->next;
-        i++;
     }
 
     liknorm_destroy_machine(machine);

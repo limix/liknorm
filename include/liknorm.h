@@ -4,10 +4,8 @@
 typedef struct LikNormMachine LikNormMachine;
 
 LikNormMachine *liknorm_create_machine(int size);
-void liknorm_integrate(LikNormMachine *machine,
-                       double *log_zeroth,
-                       double *mean,
-                       double *variance);
+void liknorm_integrate(LikNormMachine *machine, double *log_zeroth,
+                       double *mean, double *variance);
 void liknorm_destroy_machine(LikNormMachine *machine);
 
 void liknorm_set_bernoulli(LikNormMachine *machine, double k);

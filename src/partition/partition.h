@@ -3,9 +3,9 @@
 
 #include "bernoulli.h"
 #include "binomial.h"
-#include "poisson.h"
+#include "exponential.h"
 #include "gamma.h"
 #include "geometric.h"
-#include "exponential.h"
+#include "poisson.h"
 
 #endif
