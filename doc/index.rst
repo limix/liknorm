@@ -16,6 +16,7 @@ of the likelihood domain. (The user is not allowed to set it.)
 exponential-family distribution of interest:
 
 - Bernoulli :c:func:`liknorm_set_bernoulli`
+- Bernoulli (Probit) :c:func:`liknorm_set_probit`
 - Binomial :c:func:`liknorm_set_binomial`
 - Poisson :c:func:`liknorm_set_poisson`
 - Exponential :c:func:`liknorm_set_exponential`
@@ -26,8 +27,7 @@ exponential-family distribution of interest:
 Install
 -------
 
-You can install it via
-[conda](http://conda.pydata.org/docs/index.html)
+You can install it via conda
 
 .. code-block:: bash
 
@@ -126,6 +126,13 @@ Functions description
 .. c:function:: void liknorm_set_bernoulli(struct LikNormMachine *machine, double k)
 
   Set a Bernoulli likelihood.
+
+  :param struct LikNormMachine* machine: Machine to perform integration.
+  :param double k: ``0`` or ``1`` indicating a Bernoulli outcome.
+
+.. c:function:: void liknorm_set_probit(struct LikNormMachine *machine, double k)
+
+  Set a Bernoulli (Probit) likelihood.
 
   :param struct LikNormMachine* machine: Machine to perform integration.
   :param double k: ``0`` or ``1`` indicating a Bernoulli outcome.
