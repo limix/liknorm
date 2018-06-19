@@ -2,9 +2,9 @@
 #define INTEGRATE_H
 
 #include "expfam.h"
-#include "normal.h"
-#include "machine.h"
 #include "liknorm.h"
+#include "machine.h"
+#include "normal.h"
 
 void integrate_step(double si, double step, ExpFam *ef, Normal *normal,
                     double *log_zeroth, double *u, double *v, double *A0,

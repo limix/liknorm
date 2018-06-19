@@ -30,8 +30,6 @@ void integrate_step(double si, double step, ExpFam *ef, Normal *normal,
     double a = -(*A0) * htau;
     double b = ef->y / ef->aphi + normal->eta;
 
-    double lcdf_a, lcdf_b, lsf_a, lsf_b;
-
     double C;
     int Csign;
 
@@ -85,12 +83,9 @@ void integrate_step(double si, double step, ExpFam *ef, Normal *normal,
     const double nominator = fmax(b * b + htau - htau_sqrt * C, DBL_EPSILON);
 
     const double htau2 = htau * htau;
-    assert(htau2 > 0);
     *v = nominator / htau2;
 
     *u = (htau * (b - htau_sqrt * D)) / htau2;
-
-    assert(*v >= 0);
 }
 
 void combine_steps(LikNormMachine *machine, double *log_zeroth, double *mean,
@@ -120,8 +115,6 @@ void combine_steps(LikNormMachine *machine, double *log_zeroth, double *mean,
     while (m->diff[--iright] == 0)
         ;
     ++iright;
-
-    assert(ileft < iright);
 
     *mean = 0;
     *variance = 0;

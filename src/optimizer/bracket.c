@@ -1,4 +1,4 @@
-#include "bracket.h"
+#include "optimizer/bracket.h"
 #include "compiler.h"
 #include <assert.h>
 #include <math.h>
@@ -18,7 +18,6 @@ void find_bracket(func_base *f, void *args, double a, double b, double lower,
     double step;
     int sign;
 
-    assert(a < b);
     b = (a + c) / 2;
 
     fa = (*f)(a, args);
@@ -58,6 +57,4 @@ void find_bracket(func_base *f, void *args, double a, double b, double lower,
         *fleft = fa;
         *fright = fc;
     }
-
-    assert((fa <= fb && fb >= fc) || (a == lower || c == upper));
 }
