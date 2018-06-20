@@ -14,8 +14,7 @@ conda install -c conda-forge liknorm
 ```
 
 Alternatively, one can compile and install it.
-First, make sure you have [hcephes](https://github.com/limix/hcephes) installed.
-Then, from Linux or MacOS systems, enter
+From Linux or MacOS systems, enter
 
 ```bash
 bash <(curl -fsSL https://raw.githubusercontent.com/limix/liknorm/master/install)

@@ -15,14 +15,11 @@ environment:
 
 build_script:
     - mkdir build.%BDIR% && cd build.%BDIR%
-    - powershell -Command "(New-Object Net.WebClient).DownloadFile('https://raw.githubusercontent.com/limix/hcephes/master/install.bat', 'install.bat')" && install.bat
-    - set PATH=%programfiles%\hcephes\bin;%PATH%
     - cmake .. -G"%PRJ_GEN%"
         -DCMAKE_BUILD_TYPE=Release
         -DCMAKE_INSTALL_PREFIX=%APPVEYOR_BUILD_FOLDER%
     - cmake --build . --config Release --target install
     - ctest -V --output-on-failure -C Release
-    - appveyor DownloadFile https://raw.githubusercontent.com/limix/hcephes/master/install.bat && install.bat
 
 test_script:
     - if NOT exist %APPVEYOR_BUILD_FOLDER%\lib\liknorm.lib exit 1

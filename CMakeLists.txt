@@ -6,9 +6,6 @@ limix_config()
 
 set(CMAKE_C_STANDARD 11)
 
-find_package(HCEPHES REQUIRED)
-include_directories("${HCEPHES_INCLUDE_DIRS}")
-
 limix_process_default_dirs()
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
@@ -18,6 +15,6 @@ else()
 endif()
 
 limix_add_library(${PROJECT_NAME} ${PROJECT_VERSION} "${SOURCES}" "${HEADERS}"
-    "${HCEPHES_LIBRARIES};${LIBS}")
+    "${LIBS}")
 
 add_subdirectory(test)

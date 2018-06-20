@@ -1,6 +1,5 @@
 #include "liknorm.h"
 #include "compiler.h"
-#include "hcephes.h"
 #include "integrate.h"
 #include "interval.h"
 #include "machine.h"
