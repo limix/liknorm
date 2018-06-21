@@ -13,7 +13,9 @@ set /p VERSION=<VERSION && del VERSION
 set FILE=liknorm-%VERSION%.zip
 set DIR=liknorm-%VERSION%
 set URL=https://github.com/limix/liknorm/archive/%VERSION%.zip
-IF "%ARCH%"=="" set ARCH=x64
+
+if NOT [%ARCH%]==[] (set ARCH=%ARCH:"=%)
+if [%ARCH%]==[] (set ARCH=x64) else if [%ARCH%]==[x86] (set ARCH=)
 
 echo [0/4] Library(liknorm==%VERSION%)
 
