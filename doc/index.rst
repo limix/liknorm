@@ -130,12 +130,13 @@ Functions description
   :param struct LikNormMachine* machine: Machine to perform integration.
   :param double k: ``0`` or ``1`` indicating a Bernoulli outcome.
 
-.. c:function:: void liknorm_set_probit(struct LikNormMachine *machine, double k)
+.. c:function:: void liknorm_set_probit(struct LikNormMachine *machine, double k, double scale)
 
   Set a Bernoulli (Probit) likelihood.
 
   :param struct LikNormMachine* machine: Machine to perform integration.
   :param double k: ``0`` or ``1`` indicating a Bernoulli outcome.
+  :param double scale: variance of the Normal distribution corresponding to the link function being used.
 
 .. c:function:: void liknorm_set_binomial(struct LikNormMachine *machine, double k, double n)
 
