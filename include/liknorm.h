@@ -9,7 +9,7 @@ void liknorm_integrate(struct LikNormMachine *machine, double *log_zeroth,
 void liknorm_destroy_machine(struct LikNormMachine *machine);
 
 void liknorm_set_bernoulli(struct LikNormMachine *machine, double k);
-void liknorm_set_probit(struct LikNormMachine *machine, double k);
+void liknorm_set_probit(struct LikNormMachine *machine, double k, double scale);
 void liknorm_set_binomial(struct LikNormMachine *machine, double k, double n);
 void liknorm_set_poisson(struct LikNormMachine *machine, double k);
 void liknorm_set_exponential(struct LikNormMachine *machine, double x);

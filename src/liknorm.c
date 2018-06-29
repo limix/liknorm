@@ -67,22 +67,23 @@ void _liknorm_integrate(struct LikNormMachine *machine, double *log_zeroth,
     *log_zeroth -= (normal->eta * normal->eta) / (2 * normal->tau);
 }
 
-void liknorm_integrate_probit(double y, double tau, double eta,
+void liknorm_integrate_probit(double y, double scale, double tau, double eta,
                               double *log_zeroth, double *mean,
                               double *variance) {
     double c, b, denom, logpdfc, logcdfc, logdiff;
-    double tau1 = tau + 1;
+    double s = sqrt(scale);
+    double tau1 = tau + 1 / scale;
     double d = sqrt(tau) / sqrt(tau1);
     y = 2 * y - 1;
-    c = (sqrt(tau) * y * eta / sqrt(tau1)) / tau;
+    c = (sqrt(tau) * y * eta / sqrt(tau1)) / tau / s;
     logcdfc = logcdf(c);
     logpdfc = logpdf(c);
     *log_zeroth = logcdfc;
     logdiff = exp(logpdfc - logcdfc);
     b = logdiff + c;
-    denom = 1 - b * logdiff / (tau + 1);
+    denom = 1 - b * logdiff / (scale * tau + 1);
     *variance = denom / tau;
-    *mean = (eta + y * logdiff * d) / (1 - b * logdiff / tau1);
+    *mean = (eta + y * logdiff * d / s) / denom;
     *mean = *mean * (*variance);
 }
 
@@ -96,8 +97,8 @@ void liknorm_integrate(struct LikNormMachine *machine, double *log_zeroth,
     double iright;
 
     if (ef->name == liknorm_probit) {
-        liknorm_integrate_probit(ef->y, normal->tau, normal->eta, log_zeroth,
-                                 mean, variance);
+        liknorm_integrate_probit(ef->y, ef->aphi, normal->tau, normal->eta,
+                                 log_zeroth, mean, variance);
         return;
     }
 
@@ -135,10 +136,16 @@ void liknorm_set_bernoulli(struct LikNormMachine *machine, double k) {
     m->ef.upper_bound = +DBL_MAX;
 }
 
-void liknorm_set_probit(struct LikNormMachine *machine, double k) {
+void liknorm_set_probit(struct LikNormMachine *machine, double k,
+                        double scale) {
     struct LikNormMachine *m = machine;
     m->ef.name = liknorm_probit;
     m->ef.y = k;
+    // I'm not certain about the following assignment.
+    // I will use m->ef.aphi to define the variance of
+    // the normal distribution represented by the probit
+    // link function.
+    m->ef.aphi = scale;
 }
 
 double logbinom(double k, double n) {

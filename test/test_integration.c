@@ -102,7 +102,7 @@ int test_it(struct LikNormMachine *machine, Line *l, double *elapsed) {
         liknorm_set_bernoulli(machine, l->y);
 
     if (strcmp(l->likname, "probit") == 0)
-        liknorm_set_probit(machine, l->y);
+        liknorm_set_probit(machine, l->y, l->aphi);
 
     if (strcmp(l->likname, "poisson") == 0)
         liknorm_set_poisson(machine, l->y);
@@ -130,6 +130,8 @@ int test_it(struct LikNormMachine *machine, Line *l, double *elapsed) {
     if (!ok) {
         printf("Test failed:\n");
         printf("name: %s\n", l->likname);
+        printf("aphi: %g\n", l->aphi);
+        printf("log_zeroth: %g\n", log_zeroth);
         printf("mean variance %g %g l->mean l->variance %g %g\n", mean,
                variance, l->mean, l->variance);
     }
