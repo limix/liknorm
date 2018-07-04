@@ -31,10 +31,6 @@ macro(limix_windows_config)
       CMAKE_C_FLAGS
       CMAKE_C_FLAGS_DEBUG
       CMAKE_C_FLAGS_RELEASE)
-
-  foreach(CompilerFlag ${CompilerFlags})
-    string(REPLACE "/MD" "/MT" ${CompilerFlag} "${${CompilerFlag}}")
-  endforeach()
 endmacro(limix_windows_config)
 
 macro(limix_config)
