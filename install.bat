@@ -13,7 +13,7 @@ SETLOCAL ENABLEEXTENSIONS
 IF ERRORLEVEL 1 ECHO Unable to enable extensions
 
 :: Configuration
-set BRANCH=develop
+set BRANCH=master
 set VERSION_URL=https://raw.githubusercontent.com/limix/liknorm/%BRANCH%/VERSION
 call :winget "%VERSION_URL%" >>%LOG_FILE% 2>&1
 set /p VERSION=<VERSION && del VERSION
