@@ -1,3 +1,5 @@
+#define LIKNORM_API_EXPORTS
+
 #include "liknorm.h"
 #include "compiler.h"
 #include "integrate.h"
@@ -9,7 +11,7 @@
 #include <math.h>
 #include <stdlib.h>
 
-struct LikNormMachine *liknorm_create_machine(int size) {
+LIKNORM_API struct LikNormMachine *liknorm_create_machine(int size) {
     struct LikNormMachine *machine = malloc(sizeof(struct LikNormMachine));
 
     machine->size = size;
@@ -86,8 +88,9 @@ void liknorm_integrate_probit(double y, double tau, double eta,
     *mean = *mean * (*variance);
 }
 
-void liknorm_integrate(struct LikNormMachine *machine, double *log_zeroth,
-                       double *mean, double *variance) {
+LIKNORM_API void liknorm_integrate(struct LikNormMachine *machine,
+                                   double *log_zeroth, double *mean,
+                                   double *variance) {
 
     double left, right;
     struct ExpFam *ef = &(machine->ef);
@@ -110,7 +113,7 @@ void liknorm_integrate(struct LikNormMachine *machine, double *log_zeroth,
     } while ((right - left) / (iright - ileft) < 0.9);
 }
 
-void liknorm_destroy_machine(struct LikNormMachine *machine) {
+LIKNORM_API void liknorm_destroy_machine(struct LikNormMachine *machine) {
     free(machine->log_zeroth);
     free(machine->u);
     free(machine->v);
@@ -121,7 +124,8 @@ void liknorm_destroy_machine(struct LikNormMachine *machine) {
     free(machine);
 }
 
-void liknorm_set_bernoulli(struct LikNormMachine *machine, double k) {
+LIKNORM_API void liknorm_set_bernoulli(struct LikNormMachine *machine,
+                                       double k) {
     struct LikNormMachine *m = machine;
     m->ef.name = liknorm_bernoulli;
     m->ef.y = k;
@@ -135,7 +139,7 @@ void liknorm_set_bernoulli(struct LikNormMachine *machine, double k) {
     m->ef.upper_bound = +DBL_MAX;
 }
 
-void liknorm_set_probit(struct LikNormMachine *machine, double k) {
+LIKNORM_API void liknorm_set_probit(struct LikNormMachine *machine, double k) {
     struct LikNormMachine *m = machine;
     m->ef.name = liknorm_probit;
     m->ef.y = k;
@@ -145,7 +149,8 @@ double logbinom(double k, double n) {
     return lgamma(n + 1) - lgamma(k + 1) - lgamma(n - k + 1);
 }
 
-void liknorm_set_binomial(struct LikNormMachine *machine, double k, double n) {
+LIKNORM_API void liknorm_set_binomial(struct LikNormMachine *machine, double k,
+                                      double n) {
     struct LikNormMachine *m = machine;
     m->ef.name = liknorm_binomial;
     m->ef.y = k / n;
@@ -161,7 +166,7 @@ void liknorm_set_binomial(struct LikNormMachine *machine, double k, double n) {
 
 static inline double logfactorial(double k) { return lgamma(k + 1); }
 
-void liknorm_set_poisson(struct LikNormMachine *machine, double k) {
+LIKNORM_API void liknorm_set_poisson(struct LikNormMachine *machine, double k) {
     struct LikNormMachine *m = machine;
     m->ef.name = liknorm_poisson;
     m->ef.y = k;
@@ -175,7 +180,8 @@ void liknorm_set_poisson(struct LikNormMachine *machine, double k) {
     m->ef.upper_bound = +DBL_MAX;
 }
 
-void liknorm_set_exponential(struct LikNormMachine *machine, double x) {
+LIKNORM_API void liknorm_set_exponential(struct LikNormMachine *machine,
+                                         double x) {
     struct LikNormMachine *m = machine;
     m->ef.name = liknorm_exponential;
     m->ef.y = x;
@@ -189,7 +195,8 @@ void liknorm_set_exponential(struct LikNormMachine *machine, double x) {
     m->ef.upper_bound = -DBL_EPSILON;
 }
 
-void liknorm_set_gamma(struct LikNormMachine *machine, double x, double a) {
+LIKNORM_API void liknorm_set_gamma(struct LikNormMachine *machine, double x,
+                                   double a) {
     struct LikNormMachine *m = machine;
     m->ef.name = liknorm_gamma;
     m->ef.y = x;
@@ -203,7 +210,8 @@ void liknorm_set_gamma(struct LikNormMachine *machine, double x, double a) {
     m->ef.upper_bound = -DBL_EPSILON;
 }
 
-void liknorm_set_geometric(struct LikNormMachine *machine, double x) {
+LIKNORM_API void liknorm_set_geometric(struct LikNormMachine *machine,
+                                       double x) {
     struct LikNormMachine *m = machine;
     m->ef.name = liknorm_geometric;
     m->ef.y = x;
@@ -217,7 +225,8 @@ void liknorm_set_geometric(struct LikNormMachine *machine, double x) {
     m->ef.upper_bound = -DBL_EPSILON;
 }
 
-void liknorm_set_prior(struct LikNormMachine *machine, double tau, double eta) {
+LIKNORM_API void liknorm_set_prior(struct LikNormMachine *machine, double tau,
+                                   double eta) {
     const double tau_min = 2 * sqrt(DBL_EPSILON);
     tau = fmax(tau, tau_min);
     machine->normal.eta = eta;
