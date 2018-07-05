@@ -16,6 +16,7 @@ set URL=https://github.com/limix/liknorm/archive/%VERSION%.zip
 
 if NOT [%ARCH%]==[] (set ARCH=%ARCH:"=%)
 if [%ARCH%]==[] (set ARCH=x64) else if [%ARCH%]==[x86] (set ARCH=)
+set "CFLAGS=/MD /GL"
 
 echo [0/4] Library(liknorm==%VERSION%)
 
