@@ -43,7 +43,11 @@ if %ERRORLEVEL% NEQ 0 (echo FAILED. && type %LOG_FILE% && exit /B 1) else (echo 
 
 echo|set /p="[4/4] Compiling and installing... "
 cmake --build . --config Release --target install >>%LOG_FILE% 2>&1
-if %ERRORLEVEL% NEQ 0 (echo FAILED. && type %LOG_FILE% && exit /B 1) else (echo done.)
+if %ERRORLEVEL% NEQ 0 (echo FAILED. && type %LOG_FILE% && exit /B 1)
+if NOT exist %programfiles%\liknorm\lib\liknorm.lib (echo FAILED. && type %LOG_FILE% && exit /B 1)
+if NOT exist %programfiles%\liknorm\bin\liknorm.dll (echo FAILED. && type %LOG_FILE% && exit /B 1)
+if NOT exist %programfiles%\liknorm\lib\liknorm_static.lib (echo FAILED. && type %LOG_FILE% && exit /B 1)
+if NOT exist %programfiles%\liknorm\include\liknorm.h (echo FAILED. && type %LOG_FILE% && exit /B 1) else (echo done.)
 
 cd %ORIGIN% >nul 2>&1
 del /Q %FILE% >nul 2>&1
