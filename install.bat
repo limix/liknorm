@@ -36,25 +36,25 @@ copy /y nul %LOG_FILE% >nul 2>&1
 echo|set /p="[1/4] Downloading... "
 echo Fetching %URL% >>%LOG_FILE% 2>&1
 call :winget "%URL%" >>%LOG_FILE% 2>&1
-if %ERRORLEVEL% NEQ 0 (echo FAILED. && type %LOG_FILE% && popd && exit 1) else (echo done.)
+if %ERRORLEVEL% NEQ 0 (echo FAILED. && type %LOG_FILE% && popd && exit /B 1) else (echo done.)
 
 echo|set /p="[2/4] Extracting... "
 powershell.exe -nologo -noprofile -command "& { Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::ExtractToDirectory('%FILE%', '.'); }"
-if %ERRORLEVEL% NEQ 0 (echo FAILED. && type %LOG_FILE% && popd && exit 1) else (echo done.)
+if %ERRORLEVEL% NEQ 0 (echo FAILED. && type %LOG_FILE% && popd && exit /B 1) else (echo done.)
 
 cd %DIR% && mkdir build && cd build
 
 echo|set /p="[3/4] Configuring... "
 cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_GENERATOR_PLATFORM=%ARCH% -DCMAKE_INSTALL_PREFIX="%programfiles%\liknorm" >>%LOG_FILE% 2>&1
-if %ERRORLEVEL% NEQ 0 (echo FAILED. && type %LOG_FILE% && popd && exit 1) else (echo done.)
+if %ERRORLEVEL% NEQ 0 (echo FAILED. && type %LOG_FILE% && popd && exit /B 1) else (echo done.)
 
 echo|set /p="[4/4] Compiling and installing... "
 cmake --build . --config Release --target install >>%LOG_FILE% 2>&1
-if %ERRORLEVEL% NEQ 0 (echo FAILED. && type %LOG_FILE% && popd && exit 1)
-if NOT exist "%programfiles%\liknorm\lib\liknorm.lib" (echo FAILED. && type %LOG_FILE% && popd && exit 1)
-if NOT exist "%programfiles%\liknorm\bin\liknorm.dll" (echo FAILED. && type %LOG_FILE% && popd && exit 1)
-if NOT exist "%programfiles%\liknorm\lib\liknorm_static.lib" (echo FAILED. && type %LOG_FILE% && popd && exit 1)
-if NOT exist "%programfiles%\liknorm\include\liknorm.h" (echo FAILED. && type %LOG_FILE% && popd && exit 1) else (echo done.)
+if %ERRORLEVEL% NEQ 0 (echo FAILED. && type %LOG_FILE% && popd && exit /B 1)
+if NOT exist "%programfiles%\liknorm\lib\liknorm.lib" (echo FAILED. && type %LOG_FILE% && popd && exit /B 1)
+if NOT exist "%programfiles%\liknorm\bin\liknorm.dll" (echo FAILED. && type %LOG_FILE% && popd && exit /B 1)
+if NOT exist "%programfiles%\liknorm\lib\liknorm_static.lib" (echo FAILED. && type %LOG_FILE% && popd && exit /B 1)
+if NOT exist "%programfiles%\liknorm\include\liknorm.h" (echo FAILED. && type %LOG_FILE% && popd && exit /B 1) else (echo done.)
 
 cd %ORIGIN% >nul 2>&1
 del /q %FILE% >nul 2>&1
