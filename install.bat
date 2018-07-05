@@ -1,7 +1,7 @@
 @echo off
 SETLOCAL
 pushd .
-cd %Temp%
+cd %HOMEPATH%
 
 :: Log file
 SET ORIGIN=%cd%
