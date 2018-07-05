@@ -1,10 +1,13 @@
-@echo off
 SETLOCAL
 
 :: Log file
 SET ORIGIN=%cd%
 call :joinpath "%ORIGIN%" "install.log"
 SET LOG_FILE=%Result%
+
+VERIFY OTHER 2>nul
+SETLOCAL ENABLEEXTENSIONS
+IF ERRORLEVEL 1 ECHO Unable to enable extensions
 
 :: Configuration
 set VERSION_URL=https://raw.githubusercontent.com/limix/liknorm/master/VERSION
@@ -14,10 +17,11 @@ set FILE=liknorm-%VERSION%.zip
 set DIR=liknorm-%VERSION%
 set URL=https://github.com/limix/liknorm/archive/%VERSION%.zip
 
-if NOT [%ARCH%]==[] (set ARCH=%ARCH:"=%)
-if [%ARCH%]==[] (set ARCH=x64) else if [%ARCH%]==[x86] (set ARCH=)
+if DEFINED ARCH set ARCH=%ARCH:"=%
+if NOT DEFINED ARCH (set ARCH=x64) else if [%ARCH%]==[x86] (set ARCH=)
 set "CFLAGS=/MD /GL"
 
+exit /B 0
 echo [0/4] Library(liknorm==%VERSION%)
 
 :: Cleaning up previous mess
@@ -50,8 +54,8 @@ if NOT exist %programfiles%\liknorm\lib\liknorm_static.lib (echo FAILED. && type
 if NOT exist %programfiles%\liknorm\include\liknorm.h (echo FAILED. && type %LOG_FILE% && exit /B 1) else (echo done.)
 
 cd %ORIGIN% >nul 2>&1
-del /Q %FILE% >nul 2>&1
-rd /S /Q %DIR% >nul 2>&1
+del /q %FILE% >nul 2>&1
+rd /s /q %DIR% >nul 2>&1
 
 echo Details can be found at %LOG_FILE%.
 
