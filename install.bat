@@ -1,3 +1,4 @@
+@echo off
 SETLOCAL
 
 :: Log file
@@ -25,9 +26,9 @@ exit /B 0
 echo [0/4] Library(liknorm==%VERSION%)
 
 :: Cleaning up previous mess
-del /Q %FILE% ! >nul 2>&1
-rd /S /Q %DIR% >nul 2>&1
-del /Q %LOG_FILE% ! >nul 2>&1
+del /q %FILE% ! >nul 2>&1
+rd /s /q %DIR% >nul 2>&1
+del /q %LOG_FILE% ! >nul 2>&1
 copy /y nul %LOG_FILE% >nul 2>&1
 
 echo|set /p="[1/4] Downloading... "
