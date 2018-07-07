@@ -1,7 +1,7 @@
 @echo off
 SETLOCAL
 pushd .
-cd %HOMEPATH%
+cd /D %USERPROFILE%
 
 :: Log file
 SET ORIGIN=%cd%
@@ -13,6 +13,7 @@ SETLOCAL ENABLEEXTENSIONS
 IF ERRORLEVEL 1 ECHO Unable to enable extensions
 
 :: Configuration
+set "PREFIX=%programfiles%\liknorm"
 set BRANCH=master
 set VERSION_URL=https://raw.githubusercontent.com/limix/liknorm/%BRANCH%/VERSION
 call :winget "%VERSION_URL%" >>%LOG_FILE% 2>&1
@@ -20,6 +21,15 @@ set /p VERSION=<VERSION && del VERSION
 set FILE=liknorm-%VERSION%.zip
 set DIR=liknorm-%VERSION%
 set URL=https://github.com/limix/liknorm/archive/%VERSION%.zip
+
+if exist "%PREFIX%" (
+  type nul > "%PREFIX%\touch" >>%LOG_FILE% 2>&1
+  if ERRORLEVEL 1 (echo You don't seem to have write permission for the "%PREFIX%" folder && popd && exit /B 1)
+  del /q "%PREFIX%\touch" ! >nul 2>&1
+) else (
+  mkdir "%PREFIX%" >>%LOG_FILE% 2>&1
+  if ERRORLEVEL 1 (echo You don't seem to have permission to create the "%PREFIX%" folder && popd && exit /B 1)
+)
 
 if DEFINED ARCH set ARCH=%ARCH:"=%
 if NOT DEFINED ARCH (set ARCH=x64) else if [%ARCH%]==[x86] (set ARCH=)
@@ -45,7 +55,7 @@ if %ERRORLEVEL% NEQ 0 (echo FAILED. && type %LOG_FILE% && popd && exit /B 1) els
 cd %DIR% && mkdir build && cd build
 
 echo|set /p="[3/4] Configuring... "
-cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_GENERATOR_PLATFORM=%ARCH% -DCMAKE_INSTALL_PREFIX="%programfiles%\liknorm" >>%LOG_FILE% 2>&1
+cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_GENERATOR_PLATFORM=%ARCH% -DCMAKE_INSTALL_PREFIX="%PREFIX%" >>%LOG_FILE% 2>&1
 if %ERRORLEVEL% NEQ 0 (echo FAILED. && type %LOG_FILE% && popd && exit /B 1) else (echo done.)
 
 echo|set /p="[4/4] Compiling and installing... "
