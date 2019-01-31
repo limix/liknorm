@@ -6,6 +6,7 @@
 #include "partition/exponential.h"
 #include "partition/gamma.h"
 #include "partition/geometric.h"
+#include "partition/nbinomial.h"
 #include "partition/poisson.h"
 
 #endif

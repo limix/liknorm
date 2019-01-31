@@ -4,16 +4,26 @@
 #include <float.h>
 #include <math.h>
 
-double nbinomial_log_partition(const double theta) {
-    return theta < log(DBL_MAX) ? log1p(-exp(theta)) : -theta;
+/** Negative binomial log-partition function.
+ *
+ * Definition:
+ *
+ *     b(𝜃) = -rlog(1 - exp(𝜃)).
+ */
+double nbinomial_log_partition(const double theta)
+{
+    // return theta < log(DBL_MAX) ? log1p(-exp(theta)) : -theta;
+    return log1p(-exp(theta));
 }
 
-double nbinomial_log_partition_fderivative(const double theta) {
+double nbinomial_log_partition_fderivative(const double theta)
+{
     return -theta < log(DBL_MAX) ? -log1p(exp(-theta)) : theta;
 }
 
-void nbinomial_log_partition_derivatives(const double theta, double *b0,
-                                         double *logb1, double *logb2) {
+void nbinomial_log_partition_derivatives(const double theta, double *b0, double *logb1,
+                                         double *logb2)
+{
     if (-theta < log(DBL_MAX)) {
         double log1p_ = log1p(exp(-theta));
         *b0 = theta + log1p_;

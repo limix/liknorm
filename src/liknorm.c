@@ -203,12 +203,12 @@ double logbinom(double k, double n)
  * - n is the number of trials
  * - k is the number of successes
  * - y       = k/n
- * - 𝜙       = 1/n
- * - a(𝜙)   = 𝜙 = n
+ * - 𝜙       = n
+ * - a(𝜙)   = 1/𝜙 = 1/n
  * - b(𝜃)    = log(1 + exp(𝜃))
  * - b'(𝜃)   = exp(𝜃) / (1 + exp(𝜃))
  * - b''(𝜃)  = exp(𝜃) / (1+exp(𝜃))²
- * - c(y,𝜙) = binom(𝜙, 𝜙y) = binom(n, k)
+ * - c(y,𝜙) = log(binom(𝜙, 𝜙y)) = log(binom(n, k))
  *
  * The support is therefore y ϵ {0/n, 1/n, ..., n/n}.
  */
@@ -224,6 +224,57 @@ LIKNORM_API void liknorm_set_binomial(struct LikNormMachine *machine, double k,
     m->ef.lp = binomial_log_partition;
     m->ef.lpfd = binomial_log_partition_fderivative;
     m->ef.lpd = binomial_log_partition_derivatives;
+    m->ef.lower_bound = -DBL_MAX;
+    m->ef.upper_bound = +DBL_MAX;
+}
+
+/** Negative binomial distribution.
+ *
+ * We are assume the canonical link function.
+ *
+ * @param k Number of successes.
+ * @param r Number of failures.
+ *
+ *
+ * Notes
+ * -----
+ *
+ * The exponential family functions are:
+ *
+ *     a(𝜙) = 1/𝜙
+ *     b(θ) = -log(1 - exp(θ))
+ *     b'(θ) = exp(θ) / (1 - exp(θ))
+ *     b''(θ) = exp(θ) / (1 - exp(θ))²
+ *     c(y,𝜙) = log(binom(y𝜙 + 𝜙 - 1, y𝜙))
+ *
+ *
+ * y = k/r
+ * 𝜙 = r
+ * If p is the probability of TODO, we have
+ *
+ *     θ = log(1 - p)
+ *
+ * The support is therefore y ϵ {0/n, 1/n, ..., n/n}.
+ * Link functions
+ * --------------
+ *
+ * Let 𝜇 = E[y]. We have
+ *
+ * - canonical(𝜇)     = log(𝜇/(r+𝜇))
+ * - canonical_inv(η) =
+ */
+LIKNORM_API void liknorm_set_nbinomial(struct LikNormMachine *machine, double k,
+                                       double r)
+{
+    struct LikNormMachine *m = machine;
+    m->ef.name = liknorm_binomial;
+    m->ef.y = k;
+    m->ef.a = 1;
+    m->ef.loga = 0;
+    m->ef.c = logbinom(k, k + r - 1);
+    m->ef.lp = nbinomial_log_partition;
+    m->ef.lpfd = nbinomial_log_partition_fderivative;
+    m->ef.lpd = nbinomial_log_partition_derivatives;
     m->ef.lower_bound = -DBL_MAX;
     m->ef.upper_bound = +DBL_MAX;
 }
