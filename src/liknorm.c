@@ -11,7 +11,8 @@
 #include <math.h>
 #include <stdlib.h>
 
-LIKNORM_API struct LikNormMachine *liknorm_create_machine(int size) {
+LIKNORM_API struct LikNormMachine *liknorm_create_machine(int size)
+{
     struct LikNormMachine *machine = malloc(sizeof(struct LikNormMachine));
 
     machine->size = size;
@@ -27,8 +28,8 @@ LIKNORM_API struct LikNormMachine *liknorm_create_machine(int size) {
 }
 
 void _liknorm_integrate(struct LikNormMachine *machine, double *log_zeroth,
-                        double *mean, double *variance, double *left,
-                        double *right) {
+                        double *mean, double *variance, double *left, double *right)
+{
     struct ExpFam *ef = &(machine->ef);
     struct Normal *normal = &(machine->normal);
     int i;
@@ -47,9 +48,9 @@ void _liknorm_integrate(struct LikNormMachine *machine, double *log_zeroth,
         (*ef->lpd)(*left + step * i + step / 2, A0 + i, logA1 + i, logA2 + i);
 
     for (i = 0; i < machine->size; ++i) {
-        A0[i] /= ef->aphi;
-        logA1[i] -= ef->log_aphi;
-        logA2[i] -= ef->log_aphi;
+        A0[i] /= ef->a;
+        logA1[i] -= ef->loga;
+        logA2[i] -= ef->loga;
         diff[i] = -exp(logA2[i] - logA1[i]);
     }
 
@@ -58,8 +59,8 @@ void _liknorm_integrate(struct LikNormMachine *machine, double *log_zeroth,
     mlog_zeroth = machine->log_zeroth;
 
     for (i = 0; i < machine->size; ++i) {
-        integrate_step(*left + step * i, step, ef, normal, mlog_zeroth++, u++,
-                       v++, A0++, logA1++, logA2++, diff++);
+        integrate_step(*left + step * i, step, ef, normal, mlog_zeroth++, u++, v++,
+                       A0++, logA1++, logA2++, diff++);
     }
 
     combine_steps(machine, log_zeroth, mean, variance, left, right);
@@ -69,9 +70,9 @@ void _liknorm_integrate(struct LikNormMachine *machine, double *log_zeroth,
     *log_zeroth -= (normal->eta * normal->eta) / (2 * normal->tau);
 }
 
-void liknorm_integrate_probit(double y, double tau, double eta,
-                              double *log_zeroth, double *mean,
-                              double *variance) {
+void liknorm_integrate_probit(double y, double tau, double eta, double *log_zeroth,
+                              double *mean, double *variance)
+{
     double c, b, denom, logpdfc, logcdfc, logdiff;
     double tau1 = tau + 1;
     double d = sqrt(tau) / sqrt(tau1);
@@ -88,9 +89,9 @@ void liknorm_integrate_probit(double y, double tau, double eta,
     *mean = *mean * (*variance);
 }
 
-LIKNORM_API void liknorm_integrate(struct LikNormMachine *machine,
-                                   double *log_zeroth, double *mean,
-                                   double *variance) {
+LIKNORM_API void liknorm_integrate(struct LikNormMachine *machine, double *log_zeroth,
+                                   double *mean, double *variance)
+{
 
     double left, right;
     struct ExpFam *ef = &(machine->ef);
@@ -99,8 +100,8 @@ LIKNORM_API void liknorm_integrate(struct LikNormMachine *machine,
     double iright;
 
     if (ef->name == liknorm_probit) {
-        liknorm_integrate_probit(ef->y, normal->tau, normal->eta, log_zeroth,
-                                 mean, variance);
+        liknorm_integrate_probit(ef->y, normal->tau, normal->eta, log_zeroth, mean,
+                                 variance);
         return;
     }
 
@@ -113,7 +114,8 @@ LIKNORM_API void liknorm_integrate(struct LikNormMachine *machine,
     } while ((right - left) / (iright - ileft) < 0.9);
 }
 
-LIKNORM_API void liknorm_destroy_machine(struct LikNormMachine *machine) {
+LIKNORM_API void liknorm_destroy_machine(struct LikNormMachine *machine)
+{
     free(machine->log_zeroth);
     free(machine->u);
     free(machine->v);
@@ -124,13 +126,45 @@ LIKNORM_API void liknorm_destroy_machine(struct LikNormMachine *machine) {
     free(machine);
 }
 
-LIKNORM_API void liknorm_set_bernoulli(struct LikNormMachine *machine,
-                                       double k) {
+LIKNORM_API double liknorm_logprod(struct LikNormMachine *machine, double x)
+{
+
+    const double PI = 3.141592653589793238462643383279502884;
+    double a = machine->ef.a;
+    double b = machine->ef.lp(x);
+    double c = machine->ef.c;
+    double y = machine->ef.y;
+    double left = (y * x - b) / a + c;
+    double tau = machine->normal.tau;
+    double eta = machine->normal.eta;
+    double right = -(log(2 * PI) - machine->normal.log_tau) / 2;
+    right += -x * x * tau / 2 + eta * x - eta * eta / (2 * tau);
+    return left + right;
+}
+
+/** Binomial distribution.
+ *
+ * We are assuming the use of the canonical link function in this description.
+ *
+ * Definitons
+ * ----------
+ *
+ * - k is the success (1) of failure (0).
+ * - y       = k
+ * - 𝜙       = 1
+ * - a(𝜙)    = 𝜙 = 1
+ * - b(𝜃)    = log(1 + exp(𝜃))
+ * - c(y,𝜙) = log(binom(𝜙, 𝜙y)) = log(binom(n, k))
+ *
+ * The support is therefore y ϵ {0/n, 1/n, ..., n/n}.
+ */
+LIKNORM_API void liknorm_set_bernoulli(struct LikNormMachine *machine, double k)
+{
     struct LikNormMachine *m = machine;
     m->ef.name = liknorm_bernoulli;
     m->ef.y = k;
-    m->ef.aphi = 1;
-    m->ef.log_aphi = 0;
+    m->ef.a = 1;
+    m->ef.loga = 0;
     m->ef.c = 0;
     m->ef.lp = bernoulli_log_partition;
     m->ef.lpfd = bernoulli_log_partition_fderivative;
@@ -139,23 +173,53 @@ LIKNORM_API void liknorm_set_bernoulli(struct LikNormMachine *machine,
     m->ef.upper_bound = +DBL_MAX;
 }
 
-LIKNORM_API void liknorm_set_probit(struct LikNormMachine *machine, double k) {
+LIKNORM_API void liknorm_set_probit(struct LikNormMachine *machine, double k)
+{
     struct LikNormMachine *m = machine;
     m->ef.name = liknorm_probit;
     m->ef.y = k;
 }
 
-double logbinom(double k, double n) {
+double logbinom(double k, double n)
+{
     return lgamma(n + 1) - lgamma(k + 1) - lgamma(n - k + 1);
 }
 
+/** Binomial distribution.
+ *
+ * We are assuming the use of the canonical link function (logit).
+ *
+ * Link functions
+ * --------------
+ *
+ * Let p = E[y]. We have
+ *
+ * - canonical(p)     = logit(p)    = log(p/(1-p))
+ * - canonical_inv(η) = logistic(η) = 1 / (1 + exp(-η))
+ *
+ * Definitons
+ * ----------
+ *
+ * - n is the number of trials
+ * - k is the number of successes
+ * - y       = k/n
+ * - 𝜙       = 1/n
+ * - a(𝜙)   = 𝜙 = n
+ * - b(𝜃)    = log(1 + exp(𝜃))
+ * - b'(𝜃)   = exp(𝜃) / (1 + exp(𝜃))
+ * - b''(𝜃)  = exp(𝜃) / (1+exp(𝜃))²
+ * - c(y,𝜙) = binom(𝜙, 𝜙y) = binom(n, k)
+ *
+ * The support is therefore y ϵ {0/n, 1/n, ..., n/n}.
+ */
 LIKNORM_API void liknorm_set_binomial(struct LikNormMachine *machine, double k,
-                                      double n) {
+                                      double n)
+{
     struct LikNormMachine *m = machine;
     m->ef.name = liknorm_binomial;
     m->ef.y = k / n;
-    m->ef.aphi = 1 / n;
-    m->ef.log_aphi = -log(n);
+    m->ef.a = 1 / n;
+    m->ef.loga = -log(n);
     m->ef.c = logbinom(k, n);
     m->ef.lp = binomial_log_partition;
     m->ef.lpfd = binomial_log_partition_fderivative;
@@ -166,12 +230,39 @@ LIKNORM_API void liknorm_set_binomial(struct LikNormMachine *machine, double k,
 
 static inline double logfactorial(double k) { return lgamma(k + 1); }
 
-LIKNORM_API void liknorm_set_poisson(struct LikNormMachine *machine, double k) {
+/** Poisson distribution.
+ *
+ * We are assuming the use of the canonical link function.
+ *
+ * Link functions
+ * --------------
+ *
+ * Let λ = E[y]. We have
+ *
+ * - canonical(λ)     = log(λ)
+ * - canonical_inv(η) = exp(η)
+ *
+ * Definitons
+ * ----------
+ *
+ * - k is the number of occurrences
+ * - y        = k
+ * - 𝜙       = 1
+ * - a(𝜙)    = 𝜙 = 1
+ * - b(𝜃)     = exp(𝜃)
+ * - b'(𝜃)    = exp(𝜃)
+ * - b'(𝜃)    = exp(𝜃)
+ * - c(y,𝜙)  = -log(y!) = -log(k!)
+ *
+ * The support is therefore y ϵ {0, 1, 2, ...}.
+ */
+LIKNORM_API void liknorm_set_poisson(struct LikNormMachine *machine, double k)
+{
     struct LikNormMachine *m = machine;
     m->ef.name = liknorm_poisson;
     m->ef.y = k;
-    m->ef.aphi = 1;
-    m->ef.log_aphi = 0;
+    m->ef.a = 1;
+    m->ef.loga = 0;
     m->ef.c = -logfactorial(k);
     m->ef.lp = poisson_log_partition;
     m->ef.lpfd = poisson_log_partition_fderivative;
@@ -180,13 +271,13 @@ LIKNORM_API void liknorm_set_poisson(struct LikNormMachine *machine, double k) {
     m->ef.upper_bound = +DBL_MAX;
 }
 
-LIKNORM_API void liknorm_set_exponential(struct LikNormMachine *machine,
-                                         double x) {
+LIKNORM_API void liknorm_set_exponential(struct LikNormMachine *machine, double x)
+{
     struct LikNormMachine *m = machine;
     m->ef.name = liknorm_exponential;
     m->ef.y = x;
-    m->ef.aphi = 1;
-    m->ef.log_aphi = 0;
+    m->ef.a = 1;
+    m->ef.loga = 0;
     m->ef.c = 0;
     m->ef.lp = exponential_log_partition;
     m->ef.lpfd = exponential_log_partition_fderivative;
@@ -195,13 +286,13 @@ LIKNORM_API void liknorm_set_exponential(struct LikNormMachine *machine,
     m->ef.upper_bound = -DBL_EPSILON;
 }
 
-LIKNORM_API void liknorm_set_gamma(struct LikNormMachine *machine, double x,
-                                   double a) {
+LIKNORM_API void liknorm_set_gamma(struct LikNormMachine *machine, double x, double a)
+{
     struct LikNormMachine *m = machine;
     m->ef.name = liknorm_gamma;
     m->ef.y = x;
-    m->ef.aphi = 1 / a;
-    m->ef.log_aphi = -log(a);
+    m->ef.a = 1 / a;
+    m->ef.loga = -log(a);
     m->ef.c = 0;
     m->ef.lp = gamma_log_partition;
     m->ef.lpfd = gamma_log_partition_fderivative;
@@ -210,13 +301,13 @@ LIKNORM_API void liknorm_set_gamma(struct LikNormMachine *machine, double x,
     m->ef.upper_bound = -DBL_EPSILON;
 }
 
-LIKNORM_API void liknorm_set_geometric(struct LikNormMachine *machine,
-                                       double x) {
+LIKNORM_API void liknorm_set_geometric(struct LikNormMachine *machine, double x)
+{
     struct LikNormMachine *m = machine;
     m->ef.name = liknorm_geometric;
     m->ef.y = x;
-    m->ef.aphi = 1;
-    m->ef.log_aphi = 0;
+    m->ef.a = 1;
+    m->ef.loga = 0;
     m->ef.c = 0;
     m->ef.lp = geometric_log_partition;
     m->ef.lpfd = geometric_log_partition_fderivative;
@@ -226,7 +317,8 @@ LIKNORM_API void liknorm_set_geometric(struct LikNormMachine *machine,
 }
 
 LIKNORM_API void liknorm_set_prior(struct LikNormMachine *machine, double tau,
-                                   double eta) {
+                                   double eta)
+{
     const double tau_min = 2 * sqrt(DBL_EPSILON);
     tau = fmax(tau, tau_min);
     machine->normal.eta = eta;

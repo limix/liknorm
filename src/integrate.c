@@ -11,10 +11,10 @@
 #define LPI2 0.572364942924700081938738094323
 #define LNSQRT2 0.346573590279972698624533222755
 
-void integrate_step(double si, double step, struct ExpFam *ef,
-                    struct Normal *normal, double *log_zeroth, double *u,
-                    double *v, double *A0, double *logA1, double *logA2,
-                    double *diff) {
+void integrate_step(double si, double step, struct ExpFam *ef, struct Normal *normal,
+                    double *log_zeroth, double *u, double *v, double *A0, double *logA1,
+                    double *logA2, double *diff)
+{
 
     const double log_htau = logaddexp(normal->log_tau, *logA2);
     const double htau = exp(log_htau);
@@ -28,7 +28,7 @@ void integrate_step(double si, double step, struct ExpFam *ef,
     const double tmidiff = *diff * tmi;
 
     double a = -(*A0) * htau;
-    double b = ef->y / ef->aphi + normal->eta;
+    double b = ef->y / ef->a + normal->eta;
 
     double C;
     int Csign;
@@ -42,12 +42,10 @@ void integrate_step(double si, double step, struct ExpFam *ef,
     const double beta = (tsii - b) / htau_sqrt;
     const double alpha = (tsi - b) / htau_sqrt;
 
-    const double lcdf_diff =
-        logsubexp(logcdf((alpha < -beta) * (beta + alpha) - alpha),
-                  logcdf((alpha < -beta) * (beta + alpha) - beta));
+    const double lcdf_diff = logsubexp(logcdf((alpha < -beta) * (beta + alpha) - alpha),
+                                       logcdf((alpha < -beta) * (beta + alpha) - beta));
 
-    *log_zeroth =
-        (a + (b * b) / 2) / htau + LPI2 + LNSQRT2 - log_htau / 2 + lcdf_diff;
+    *log_zeroth = (a + (b * b) / 2) / htau + LPI2 + LNSQRT2 - log_htau / 2 + lcdf_diff;
 
     const double logpbeta = logpdf(beta);
     const double logpalpha = logpdf(alpha);
@@ -88,9 +86,9 @@ void integrate_step(double si, double step, struct ExpFam *ef,
     *u = (htau * (b - htau_sqrt * D)) / htau2;
 }
 
-void combine_steps(struct LikNormMachine *machine, double *log_zeroth,
-                   double *mean, double *variance, double *left,
-                   double *right) {
+void combine_steps(struct LikNormMachine *machine, double *log_zeroth, double *mean,
+                   double *variance, double *left, double *right)
+{
 
     struct LikNormMachine *m = machine;
     int i, ileft, iright;

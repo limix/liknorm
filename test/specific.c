@@ -1,3 +1,4 @@
+#include "cass.h"
 #include "liknorm.h"
 #include <math.h>
 #include <stdio.h>
@@ -12,27 +13,26 @@
 #endif
 #endif
 
-int main() {
+int main()
+{
     struct LikNormMachine *machine = liknorm_create_machine(500);
     double log_zeroth, mean, variance;
-    double eps = 1e-4;
-    int ok;
 
-    liknorm_set_binomial(machine, 784, 1421);
-
+    double n = 142100;
+    double k = 78155;
+    liknorm_set_binomial(machine, k, n);
     liknorm_set_prior(machine, 1.108785906137200072407722473145,
                       8.231554676556697813794016838074);
 
     liknorm_integrate(machine, &log_zeroth, &mean, &variance);
 
-    ok = fabs(mean - 0.78159506985534710211) < eps &&
-         fabs(variance - 0.00002868685045742669) < eps;
-    ok = ok && isfinite(mean) && isfinite(variance);
+    printf("%.20f\n%.20f\n%.20f\n", log_zeroth, mean, variance);
+
+    assert_almost_equal(log_zeroth, -40.26009679144215169799);
+    assert_almost_equal(mean, 0.20089983974431713243);
+    assert_almost_equal(variance, 0.00002843348172375942);
 
     liknorm_destroy_machine(machine);
-
-    if (!ok)
-        return 1;
 
     return 0;
 }

@@ -23,6 +23,8 @@ LIKNORM_API void liknorm_integrate(struct LikNormMachine *machine,
                                    double *variance);
 LIKNORM_API void liknorm_destroy_machine(struct LikNormMachine *machine);
 
+LIKNORM_API double liknorm_logprod(struct LikNormMachine *machine, double x);
+
 LIKNORM_API void liknorm_set_bernoulli(struct LikNormMachine *machine,
                                        double k);
 LIKNORM_API void liknorm_set_probit(struct LikNormMachine *machine, double k);
@@ -35,7 +37,6 @@ LIKNORM_API void liknorm_set_gamma(struct LikNormMachine *machine, double x,
                                    double a);
 LIKNORM_API void liknorm_set_geometric(struct LikNormMachine *machine,
                                        double x);
-
 LIKNORM_API void liknorm_set_prior(struct LikNormMachine *machine, double tau,
                                    double eta);
 

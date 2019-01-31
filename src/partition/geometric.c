@@ -1,4 +1,4 @@
-#include "geometric.h"
+#include "partition/geometric.h"
 #include "compiler.h"
 
 #include <float.h>

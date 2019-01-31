@@ -1,4 +1,4 @@
-#include "gamma.h"
+#include "partition/gamma.h"
 #include "compiler.h"
 
 #include <assert.h>

@@ -1,9 +1,10 @@
 include_directories("${TEST_SOURCE_DIR}/src")
 
-limix_add_test(test_empty ${PROJECT_NAME} "test_empty.c")
-limix_add_test(test_linking ${PROJECT_NAME} "test_linking.c")
-limix_add_test(test_integration ${PROJECT_NAME} "test_integration.c")
-limix_add_test(test_specific ${PROJECT_NAME} "test_specific.c")
+limix_add_test(empty ${PROJECT_NAME} "empty.c")
+limix_add_test(linking ${PROJECT_NAME} "linking.c")
+limix_add_test(integration ${PROJECT_NAME} "integration.c")
+limix_add_test(specific ${PROJECT_NAME} "specific.c")
+limix_add_test(logprod ${PROJECT_NAME} "logprod.c")
 
 list(APPEND DATA_FILES data/table.csv)
 

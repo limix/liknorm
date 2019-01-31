@@ -8,13 +8,21 @@ set(CMAKE_C_STANDARD 11)
 
 limix_process_default_dirs()
 
-if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-    set(LIBS "")
-else()
-    set(LIBS "m")
+if (NOT c_restrict IN_LIST CMAKE_C_COMPILE_FEATURES)
+    add_compile_definitions(restrict= )
 endif()
 
+if(NOT MSVC)
+    add_compile_options(-Wall -Wextra -Wno-pedantic -Werror -Wno-missing-field-initializers -Wno-deprecated-declarations)
+endif(NOT MSVC)
+
+# if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+#     set(LIBS "")
+# else()
+#     set(LIBS "m")
+# endif()
+
 limix_add_library(${PROJECT_NAME} ${PROJECT_VERSION} "${SOURCES}" "${HEADERS}"
-    "${LIBS}")
+                  "" "${LIBS}")
 
 add_subdirectory(test)

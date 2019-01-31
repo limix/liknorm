@@ -1,11 +1,11 @@
 #ifndef PARTITION_H
 #define PARTITION_H
 
-#include "bernoulli.h"
-#include "binomial.h"
-#include "exponential.h"
-#include "gamma.h"
-#include "geometric.h"
-#include "poisson.h"
+#include "partition/bernoulli.h"
+#include "partition/binomial.h"
+#include "partition/exponential.h"
+#include "partition/gamma.h"
+#include "partition/geometric.h"
+#include "partition/poisson.h"
 
 #endif
