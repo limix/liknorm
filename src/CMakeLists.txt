@@ -11,6 +11,7 @@ function(define_sources BASE_DIR _SOURCES)
         partition/geometric.c
         partition/exponential.c
         partition/binomial.c
+        partition/nbinomial.c
         partition/poisson.c
         liknorm.c)
 

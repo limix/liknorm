@@ -2,7 +2,8 @@
 #include "liknorm.h"
 #include "stdio.h"
 
-int main() {
+int main()
+{
 
     struct LikNormMachine *machine = liknorm_create_machine(10);
     double y = 5.0;
@@ -11,8 +12,7 @@ int main() {
     liknorm_set_poisson(machine, y);
     liknorm_set_prior(machine, tau, eta);
 
-    assert_almost_equal(liknorm_logprod(machine, 700),
-                        -1.0142320547350045e+304);
+    assert_almost_equal(liknorm_logprod(machine, 700), -1.0142320547350045e+304);
     assert_almost_equal(liknorm_logprod(machine, 50), -5.184705528587072e+21);
     assert_almost_equal(liknorm_logprod(machine, 12.0), -162701.74640927234);
     assert_almost_equal(liknorm_logprod(machine, 0.59), -18.996086183827522);
@@ -38,6 +38,13 @@ int main() {
     assert_almost_equal(liknorm_logprod(machine, -100.0), -1074.2649134326537);
     assert_almost_equal(liknorm_logprod(machine, -500.0), -20314.264913432653);
     assert_almost_equal(liknorm_logprod(machine, -5000.0), -1890514.2649134325);
+
+    k = 3;
+    double r = 5;
+    liknorm_set_prior(machine, 1, 0);
+    liknorm_set_nbinomial(machine, k, r);
+    assert_almost_equal(liknorm_logprod(machine, -0.10536051565782628),
+                        -9.19814790278881);
 
     liknorm_destroy_machine(machine);
 

@@ -2,7 +2,8 @@
 #include <float.h>
 #include <math.h>
 
-double get_del(double x, double rational) {
+double get_del(double x, double rational)
+{
     const double scale = 16.0;
     const double xsq = floor(x * scale) / scale;
     const double del = (x - xsq) * (x + xsq) * 0.5;
@@ -12,7 +13,8 @@ double get_del(double x, double rational) {
 /*
  * Normal cdf for fabs(x) < 0.66291
  */
-double gauss_small(const double x) {
+double gauss_small(const double x)
+{
     unsigned int i;
     double result = 0.0;
     double xsq;
@@ -42,7 +44,8 @@ double gauss_small(const double x) {
 /*
  * Normal cdf for 0.66291 < fabs(x) < sqrt(32).
  */
-double gauss_medium(const double x) {
+double gauss_medium(const double x)
+{
     unsigned int i;
     double temp = 0.0;
     double result = 0.0;
@@ -50,11 +53,10 @@ double gauss_medium(const double x) {
     double xden;
     double absx;
 
-    const double c[9] = {0.39894151208813466764,  8.8831497943883759412,
-                         93.506656132177855979,   597.27027639480026226,
-                         2494.5375852903726711,   6848.1904505362823326,
-                         11602.651437647350124,   9842.7148383839780218,
-                         1.0765576773720192317e-8};
+    const double c[9] = {
+        0.39894151208813466764, 8.8831497943883759412, 93.506656132177855979,
+        597.27027639480026226,  2494.5375852903726711, 6848.1904505362823326,
+        11602.651437647350124,  9842.7148383839780218, 1.0765576773720192317e-8};
     const double d[8] = {22.266688044328115691, 235.38790178262499861,
                          1519.377599407554805,  6485.558298266760755,
                          18615.571640885098091, 34900.952721145977266,
@@ -81,7 +83,8 @@ double gauss_medium(const double x) {
  * Normal cdf for
  * {sqrt(32) < x < GAUSS_XUPPER} union { GAUSS_XLOWER < x < -sqrt(32) }.
  */
-double gauss_large(const double x) {
+double gauss_large(const double x)
+{
     int i;
     double result;
     double xsq;
@@ -118,7 +121,8 @@ double gauss_large(const double x) {
     return result;
 }
 
-double cdf(const double x) {
+double cdf(const double x)
+{
     double result;
     double absx = fabs(x);
 
@@ -159,7 +163,8 @@ double cdf(const double x) {
     return result;
 }
 
-double logcdf(const double a) {
+double logcdf(const double a)
+{
     /* we compute the left hand side of the approx (LHS) in one shot */
     double log_LHS;
     /* variable used to check for convergence */

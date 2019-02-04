@@ -4,12 +4,6 @@
 #include <float.h>
 #include <math.h>
 
-/** Poisson log-partition function.
- *
- * Definition:
- *
- *     b(𝜃) = exp(𝜃)
- */
 double poisson_log_partition(const double theta)
 {
     return exp(fmin(theta, log(DBL_MAX)));

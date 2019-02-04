@@ -126,6 +126,7 @@ LIKNORM_API void liknorm_destroy_machine(struct LikNormMachine *machine)
     free(machine);
 }
 
+#include <stdio.h>
 LIKNORM_API double liknorm_logprod(struct LikNormMachine *machine, double x)
 {
 
@@ -142,22 +143,6 @@ LIKNORM_API double liknorm_logprod(struct LikNormMachine *machine, double x)
     return left + right;
 }
 
-/** Binomial distribution.
- *
- * We are assuming the use of the canonical link function in this description.
- *
- * Definitons
- * ----------
- *
- * - k is the success (1) of failure (0).
- * - y       = k
- * - 𝜙       = 1
- * - a(𝜙)    = 𝜙 = 1
- * - b(𝜃)    = log(1 + exp(𝜃))
- * - c(y,𝜙) = log(binom(𝜙, 𝜙y)) = log(binom(n, k))
- *
- * The support is therefore y ϵ {0/n, 1/n, ..., n/n}.
- */
 LIKNORM_API void liknorm_set_bernoulli(struct LikNormMachine *machine, double k)
 {
     struct LikNormMachine *m = machine;
@@ -185,33 +170,6 @@ double logbinom(double k, double n)
     return lgamma(n + 1) - lgamma(k + 1) - lgamma(n - k + 1);
 }
 
-/** Binomial distribution.
- *
- * We are assuming the use of the canonical link function (logit).
- *
- * Link functions
- * --------------
- *
- * Let p = E[y]. We have
- *
- * - canonical(p)     = logit(p)    = log(p/(1-p))
- * - canonical_inv(η) = logistic(η) = 1 / (1 + exp(-η))
- *
- * Definitons
- * ----------
- *
- * - n is the number of trials
- * - k is the number of successes
- * - y       = k/n
- * - 𝜙       = n
- * - a(𝜙)   = 1/𝜙 = 1/n
- * - b(𝜃)    = log(1 + exp(𝜃))
- * - b'(𝜃)   = exp(𝜃) / (1 + exp(𝜃))
- * - b''(𝜃)  = exp(𝜃) / (1+exp(𝜃))²
- * - c(y,𝜙) = log(binom(𝜙, 𝜙y)) = log(binom(n, k))
- *
- * The support is therefore y ϵ {0/n, 1/n, ..., n/n}.
- */
 LIKNORM_API void liknorm_set_binomial(struct LikNormMachine *machine, double k,
                                       double n)
 {
@@ -228,49 +186,14 @@ LIKNORM_API void liknorm_set_binomial(struct LikNormMachine *machine, double k,
     m->ef.upper_bound = +DBL_MAX;
 }
 
-/** Negative binomial distribution.
- *
- * We are assume the canonical link function.
- *
- * @param k Number of successes.
- * @param r Number of failures.
- *
- *
- * Notes
- * -----
- *
- * The exponential family functions are:
- *
- *     a(𝜙) = 1/𝜙
- *     b(θ) = -log(1 - exp(θ))
- *     b'(θ) = exp(θ) / (1 - exp(θ))
- *     b''(θ) = exp(θ) / (1 - exp(θ))²
- *     c(y,𝜙) = log(binom(y𝜙 + 𝜙 - 1, y𝜙))
- *
- *
- * y = k/r
- * 𝜙 = r
- * If p is the probability of TODO, we have
- *
- *     θ = log(1 - p)
- *
- * The support is therefore y ϵ {0/n, 1/n, ..., n/n}.
- * Link functions
- * --------------
- *
- * Let 𝜇 = E[y]. We have
- *
- * - canonical(𝜇)     = log(𝜇/(r+𝜇))
- * - canonical_inv(η) =
- */
 LIKNORM_API void liknorm_set_nbinomial(struct LikNormMachine *machine, double k,
                                        double r)
 {
     struct LikNormMachine *m = machine;
     m->ef.name = liknorm_binomial;
-    m->ef.y = k;
-    m->ef.a = 1;
-    m->ef.loga = 0;
+    m->ef.y = k / r;
+    m->ef.a = 1 / r;
+    m->ef.loga = -log(r);
     m->ef.c = logbinom(k, k + r - 1);
     m->ef.lp = nbinomial_log_partition;
     m->ef.lpfd = nbinomial_log_partition_fderivative;
@@ -281,32 +204,6 @@ LIKNORM_API void liknorm_set_nbinomial(struct LikNormMachine *machine, double k,
 
 static inline double logfactorial(double k) { return lgamma(k + 1); }
 
-/** Poisson distribution.
- *
- * We are assuming the use of the canonical link function.
- *
- * Link functions
- * --------------
- *
- * Let λ = E[y]. We have
- *
- * - canonical(λ)     = log(λ)
- * - canonical_inv(η) = exp(η)
- *
- * Definitons
- * ----------
- *
- * - k is the number of occurrences
- * - y        = k
- * - 𝜙       = 1
- * - a(𝜙)    = 𝜙 = 1
- * - b(𝜃)     = exp(𝜃)
- * - b'(𝜃)    = exp(𝜃)
- * - b'(𝜃)    = exp(𝜃)
- * - c(y,𝜙)  = -log(y!) = -log(k!)
- *
- * The support is therefore y ϵ {0, 1, 2, ...}.
- */
 LIKNORM_API void liknorm_set_poisson(struct LikNormMachine *machine, double k)
 {
     struct LikNormMachine *m = machine;

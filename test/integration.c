@@ -12,7 +12,8 @@
 #endif
 #endif
 
-char *strdump(const char *str) {
+char *strdump(const char *str)
+{
     size_t i;
     char *rstr;
     for (i = 0;; ++i) {
@@ -25,7 +26,8 @@ char *strdump(const char *str) {
     return rstr;
 }
 
-typedef struct Line {
+typedef struct Line
+{
     double normal_mean;
     double normal_variance;
     char *likname;
@@ -36,7 +38,8 @@ typedef struct Line {
     struct Line *next;
 } Line;
 
-Line *read_table() {
+Line *read_table()
+{
     FILE *stream = fopen("data/table.csv", "r");
     char line[65536];
 
@@ -93,7 +96,8 @@ Line *read_table() {
     return root;
 }
 
-int test_it(struct LikNormMachine *machine, Line *l) {
+int test_it(struct LikNormMachine *machine, Line *l)
+{
     double log_zeroth, mean, variance;
     double eps = 1e-4;
     int ok;
@@ -109,6 +113,9 @@ int test_it(struct LikNormMachine *machine, Line *l) {
 
     if (strcmp(l->likname, "binomial") == 0)
         liknorm_set_binomial(machine, l->y / l->aphi, 1 / l->aphi);
+
+    if (strcmp(l->likname, "nbinomial") == 0)
+        liknorm_set_nbinomial(machine, l->y / l->aphi, 1 / l->aphi);
 
     if (strcmp(l->likname, "gamma") == 0)
         liknorm_set_gamma(machine, l->y, 1 / l->aphi);
@@ -130,8 +137,8 @@ int test_it(struct LikNormMachine *machine, Line *l) {
     if (!ok) {
         printf("Test failed:\n");
         printf("name: %s\n", l->likname);
-        printf("mean variance %g %g l->mean l->variance %g %g\n", mean,
-               variance, l->mean, l->variance);
+        printf("mean variance %g %g l->mean l->variance %g %g\n", mean, variance,
+               l->mean, l->variance);
     }
 
     if (!ok)
@@ -140,7 +147,8 @@ int test_it(struct LikNormMachine *machine, Line *l) {
     return 0;
 }
 
-int main() {
+int main()
+{
     Line *root = read_table();
     Line *l = root;
 

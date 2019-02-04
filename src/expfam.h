@@ -21,43 +21,44 @@ enum lik_name
 
 /** Exponential family of distributions.
  *
- * We adopt the following representation:
+ * We adopt the following representation::
  *
- *     f(y; θ, 𝜙) = exp{(yθ - b(θ))/a(𝜙) + c(y,𝜙)}.
+ *     f(y; θ, 𝜙) = exp{(yθ - b(θ))/a(𝜙) + c(y,𝜙)},
  *
- * Definitions
- * -----------
+ * for which::
  *
- * - y is the random variable.
- * - θ is the canonical parameter
- * - 𝜙 is the nuisance parameter
- * - a(𝜙) TODO
- * - b(θ) is the log-partition function
- * - c(y,𝜙)
+ *     y     : random variable value.
+ *     θ     : canonical parameter.
+ *     𝜙     : nuisance parameter.
+ *     a(𝜙)  :
+ *     b(θ)  : log-partition function.
+ *     c(y,𝜙): normaliser.
  *
- * The mean and variance of y are given by:
+ * The mean and variance are given by::
  *
  *     E[y]   = b'(θ)
  *     Var[y] = b''(θ)a(𝜙)
  *
- * Of fundamental importance is the natural parameter η. Given a link function g(・),
- * the natural relate to the canonical parameters via the y mean:
+ * In order to define a generalised linear mixed model (GLMM) we use the so-called
+ * natural parameter ``η``. Given a link function ``g(.)``, the natural parameter
+ * relates to the canonical parameter as follows::
  *
- *     η = g(E[y]) = g(b'(θ))
+ *     η = g(E[y]) = g(b'(θ)).
  *
- * If g(・) happens to be the canonical link function, we have:
+ * Every member of the exponential family has a canonical link function, which greatly
+ * simplifies the relationship::
  *
  *     η = θ
  */
 struct ExpFam
 {
-    double y;
-    double a;                        /**< a(𝜙) */
-    double loga;                     /**< log(a(𝜙)) */
-    double c;                        /**< c(y,𝜙) */
-    log_partition *lp;               /**< b(θ) */
-    log_partition_fderivative *lpfd; /**< b'(θ) */
-    log_partition_derivatives *lpd;  /**< b''(θ) */
+    double y;                        /**< Random variable value */
+    double a;                        /**< ``a(𝜙)`` */
+    double loga;                     /**< ``log(a(𝜙))`` */
+    double c;                        /**< ``c(y,𝜙)`` */
+    log_partition *lp;               /**< ``b(θ)`` */
+    log_partition_fderivative *lpfd; /**< ``log(b'(θ))`` */
+    log_partition_derivatives *lpd;  /**< ``log(b''(θ))`` */
     double lower_bound;
     double upper_bound;
     enum lik_name name;

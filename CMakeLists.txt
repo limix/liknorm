@@ -6,8 +6,6 @@ limix_config()
 
 set(CMAKE_C_STANDARD 11)
 
-limix_process_default_dirs()
-
 if (NOT c_restrict IN_LIST CMAKE_C_COMPILE_FEATURES)
     add_compile_definitions(restrict= )
 endif()
@@ -22,7 +20,9 @@ endif(NOT MSVC)
 #     set(LIBS "m")
 # endif()
 
+limix_process_default_dirs()
+
 limix_add_library(${PROJECT_NAME} ${PROJECT_VERSION} "${SOURCES}" "${HEADERS}"
-                  "" "${LIBS}")
+    "${PRIVATE_HEADERS}" "${LIBS}")
 
 add_subdirectory(test)

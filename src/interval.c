@@ -18,7 +18,8 @@ static const int maxiter = 100;
 #endif
 
 static inline void find_first_interval(struct ExpFam *ef, struct Normal *normal,
-                                       double *a, double *b) {
+                                       double *a, double *b)
+{
     double std = sqrt(1 / normal->tau);
     double mu = normal->eta / normal->tau;
     double smallest_step;
@@ -40,7 +41,8 @@ static inline void find_first_interval(struct ExpFam *ef, struct Normal *normal,
     }
 }
 
-double g_function_root(double x, void *args) {
+double g_function_root(double x, void *args)
+{
     void **args_ = args;
     func_base *fb = (func_base *)args_[0];
     double *fxmax = args_[1];
@@ -48,8 +50,9 @@ double g_function_root(double x, void *args) {
     return *fxmax - (*fb)(x, args_[2]) + log(DBL_TRUE_MIN);
 }
 
-void shrink_interval(struct ExpFam *ef, struct Normal *normal, double *a,
-                     double xmax, double *b, double fxmax) {
+void shrink_interval(struct ExpFam *ef, struct Normal *normal, double *a, double xmax,
+                     double *b, double fxmax)
+{
     void *args[] = {ef, normal};
     double fa = g_function_func_base(*a, args);
     double fb = g_function_func_base(*b, args);
@@ -65,7 +68,8 @@ void shrink_interval(struct ExpFam *ef, struct Normal *normal, double *a,
 }
 
 void find_interval(struct ExpFam *ef, struct Normal *normal, double *left,
-                   double *right) {
+                   double *right)
+{
 
     double a, b;
     double xmax, fxmax;
@@ -73,14 +77,13 @@ void find_interval(struct ExpFam *ef, struct Normal *normal, double *left,
     double fleft, fright;
 
     find_first_interval(ef, normal, &a, &b);
-    find_bracket(&g_function_func_base, args, a, b, ef->lower_bound,
-                 ef->upper_bound, left, right, &fleft, &fright);
+    find_bracket(&g_function_func_base, args, a, b, ef->lower_bound, ef->upper_bound,
+                 left, right, &fleft, &fright);
 
     a = fmin(a, *left);
     b = fmax(b, *right);
 
-    find_maximum(&xmax, &fxmax, &g_function_func_base, args, a, b, reps, aeps,
-                 maxiter);
+    find_maximum(&xmax, &fxmax, &g_function_func_base, args, a, b, reps, aeps, maxiter);
 
     shrink_interval(ef, normal, &a, xmax, &b, fxmax);
 
