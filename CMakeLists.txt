@@ -14,11 +14,11 @@ if(NOT MSVC)
     add_compile_options(-Wall -Wextra -Wno-pedantic -Werror -Wno-missing-field-initializers -Wno-deprecated-declarations)
 endif(NOT MSVC)
 
-# if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-#     set(LIBS "")
-# else()
-#     set(LIBS "m")
-# endif()
+if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+    set(LIBS "")
+else()
+    set(LIBS "m")
+endif()
 
 limix_process_default_dirs()
 
