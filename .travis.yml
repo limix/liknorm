@@ -1,35 +1,22 @@
+os:
+- linux
+- osx
+dist: trusty
 language: c
 sudo: required
 compiler:
 - clang
 - gcc
-script:
-- mkdir build && pushd build
-- cmake .. -DCMAKE_INSTALL_PREFIX=$TRAVIS_BUILD_DIR -DCMAKE_BUILD_TYPE=Release
-- make && make test && make install
-- popd && rm -rf build
-- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then test -e $TRAVIS_BUILD_DIR/include/liknorm.h;
-  fi
-- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then test -e $TRAVIS_BUILD_DIR/lib/libliknorm.so;
-  fi
-- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then test -e $TRAVIS_BUILD_DIR/lib/libliknorm_static.a;
-  fi
-- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then test -e $TRAVIS_BUILD_DIR/include/liknorm.h;
-  fi
-- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then test -e $TRAVIS_BUILD_DIR/lib/libliknorm.dylib;
-  fi
-- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then test -e $TRAVIS_BUILD_DIR/lib/libliknorm_static.a;
-  fi
+before_script:
 - bash <(curl -fsSL https://raw.githubusercontent.com/limix/liknorm/master/install)
+script:
+- bash <(curl -fsSL https://raw.githubusercontent.com/horta/ci/master/travis-c.sh)
 after_success:
-- mkdir dist && pushd dist && cmake .. -DCMAKE_BUILD_TYPE=Release && popd
-- mv dist liknorm-`cat VERSION`
-- tar czf liknorm-`cat VERSION`.tar.gz liknorm-`cat VERSION`
-- rm -rf dist
+- bash <(curl -fsSL https://raw.githubusercontent.com/horta/ci/master/travis-c-dist.sh)
 notifications:
   email:
     recipients:
-    - danilo.horta@gmail.com
+    - danilo.horta@pm.me
     on_success: never
     on_failure: always
 deploy:
@@ -40,3 +27,6 @@ deploy:
     repo: limix/liknorm
     branch: master
     tags: true
+env:
+  global:
+    - PKG_NAME=liknorm
