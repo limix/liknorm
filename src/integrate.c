@@ -6,7 +6,6 @@
 #include <assert.h>
 #include <float.h>
 #include <math.h>
-#include <stdio.h>
 
 #define LPI2 0.572364942924700081938738094323
 #define LNSQRT2 0.346573590279972698624533222755
@@ -129,5 +128,5 @@ void combine_steps(struct LikNormMachine *machine, double *log_zeroth, double *m
 
     step = (*right - *left) / machine->size;
     *left += ileft * step;
-    *right -= (m->size - iright - 1) * step;
+    *right -= (m->size - iright) * step;
 }

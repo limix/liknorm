@@ -110,6 +110,7 @@ LIKNORM_API void liknorm_integrate(struct LikNormMachine *machine, double *log_z
     do {
         ileft = left;
         iright = right;
+
         _liknorm_integrate(machine, log_zeroth, mean, variance, &left, &right);
     } while ((right - left) / (iright - ileft) < 0.9);
 }
@@ -199,7 +200,7 @@ LIKNORM_API void liknorm_set_nbinomial(struct LikNormMachine *machine, double k,
     m->ef.lpfd = nbinomial_log_partition_fderivative;
     m->ef.lpd = nbinomial_log_partition_derivatives;
     m->ef.lower_bound = -DBL_MAX;
-    m->ef.upper_bound = +DBL_MAX;
+    m->ef.upper_bound = -DBL_EPSILON;
 }
 
 static inline double logfactorial(double k) { return lgamma(k + 1); }

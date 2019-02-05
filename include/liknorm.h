@@ -6,9 +6,9 @@
 /** Minor liknorm version. */
 #define LIKNORM_VERSION_MINOR 5
 /** Minor liknorm version. */
-#define LIKNORM_VERSION_PATCH 0
+#define LIKNORM_VERSION_PATCH 1
 /** Liknorm version. */
-#define LIKNORM_VERSION "1.5.0"
+#define LIKNORM_VERSION "1.5.1"
 
 #ifdef __cplusplus
 extern "C"

@@ -137,8 +137,8 @@ int test_it(struct LikNormMachine *machine, Line *l)
     if (!ok) {
         printf("Test failed:\n");
         printf("name: %s\n", l->likname);
-        printf("mean variance %g %g l->mean l->variance %g %g\n", mean, variance,
-               l->mean, l->variance);
+        printf("mean variance %.14g %.14g l->mean l->variance %.14g %.14g\n", mean,
+               variance, l->mean, l->variance);
     }
 
     if (!ok)

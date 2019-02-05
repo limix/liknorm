@@ -6,7 +6,6 @@
 #include "optimizer/optimizer.h"
 #include <assert.h>
 #include <math.h>
-#include <stdio.h>
 
 static const double times_std = 7;
 static const double reps = 1e-5;
