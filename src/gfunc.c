@@ -2,8 +2,6 @@
 #include "expfam.h"
 #include "hide.h"
 #include "normal.h"
-#include <assert.h>
-#include <math.h>
 
 HIDE double g_function(double x, struct ExpFam *ef, struct Normal *normal)
 {

@@ -1,5 +1,6 @@
 function(liknorm_add_test name)
     add_executable(test_${name} src/${name}.c)
+    target_compile_definitions(test_${name} PRIVATE $<$<BOOL:${WIN32}>:_CRT_SECURE_NO_WARNINGS>)
     target_link_libraries(test_${name} PRIVATE LIKNORM::liknorm)
     add_test(NAME ${name} COMMAND test_${name} -E environment)
 
