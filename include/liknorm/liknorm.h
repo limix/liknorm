@@ -1,7 +1,29 @@
-#ifndef LIKNORM_API_H
-#define LIKNORM_API_H
+#ifndef LIKNORM_LIKNORM_H
+#define LIKNORM_LIKNORM_H
 
-#include "liknorm/platform.h"
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
+#ifdef _WIN32
+#ifdef LIKNORM_EXPORTS
+#define LIKNORM_API __declspec(dllexport)
+#else
+#define LIKNORM_API __declspec(dllimport)
+#endif
+#else
+#define LIKNORM_API
+#endif
+
+/** Major liknorm version. */
+#define LIKNORM_VERSION_MAJOR 1
+/** Minor liknorm version. */
+#define LIKNORM_VERSION_MINOR 5
+/** Minor liknorm version. */
+#define LIKNORM_VERSION_PATCH 2
+/** Liknorm version. */
+#define LIKNORM_VERSION "1.5.2"
 
 struct LikNormMachine;
 
@@ -134,4 +156,8 @@ LIKNORM_API void liknorm_set_geometric(struct LikNormMachine *machine, double x)
 LIKNORM_API void liknorm_set_prior(struct LikNormMachine *machine, double tau,
                                    double eta);
 
-#endif /* LIKNORM_API_H */
+#ifdef __cplusplus
+}
+#endif
+
+#endif

@@ -1,28 +1,82 @@
-cmake_minimum_required(VERSION 3.4 FATAL_ERROR)
-include(cmake/limix.cmake)
-limix_initialise()
-project(${PROJECT_NAME} VERSION ${PROJECT_VERSION} LANGUAGES C)
-limix_config()
+cmake_minimum_required(VERSION 3.5.1 FATAL_ERROR)
+project(liknorm VERSION 1.5.2 LANGUAGES C)
 
-set(CMAKE_C_STANDARD 11)
+# Generate compile_commands.json file
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-if (NOT c_restrict IN_LIST CMAKE_C_COMPILE_FEATURES)
-    add_compile_definitions(restrict= )
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+# Set RPATH only if it's not a system directory
+list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${CMAKE_INSTALL_PREFIX}/lib" isSystemDir)
+if("${isSystemDir}" STREQUAL "-1")
+    set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
 endif()
 
-if(NOT MSVC)
-    add_compile_options(-Wall -Wextra -Wno-pedantic -Werror -Wno-missing-field-initializers -Wno-deprecated-declarations)
-endif(NOT MSVC)
+add_library(liknorm
+    src/gfunc.c
+    src/integrate.c
+    src/interval.c
+    src/liknorm.c
+    src/normal.c
+    src/optimizer/bracket.c
+    src/optimizer/brent.c
+    src/optimizer/zero.c
+    src/partition/binomial.c
+    src/partition/exponential.c
+    src/partition/gamma.c
+    src/partition/geometric.c
+    src/partition/nbinomial.c
+    src/partition/poisson.c
+)
+add_library(LIKNORM::liknorm ALIAS liknorm)
 
-if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-    set(LIBS "")
-else()
-    set(LIBS "m")
-endif()
+find_package(logaddexp REQUIRED)
 
-limix_process_default_dirs()
+target_include_directories(liknorm
+    PUBLIC
+        $<INSTALL_INTERFACE:include>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/src
+)
+target_link_libraries(liknorm PRIVATE LOGADDEXP::logaddexp)
+set_target_properties(liknorm PROPERTIES VERSION ${PROJECT_VERSION})
+set_target_properties(liknorm PROPERTIES SOVERSION ${PROJECT_VERSION_MAJOR})
+target_compile_features(liknorm PRIVATE c_std_11)
+set_target_properties(liknorm PROPERTIES DEFINE_SYMBOL "LIKNORM_EXPORTS")
+target_compile_definitions(liknorm PRIVATE $<$<BOOL:${WIN32}>:_CRT_NONSTDC_NO_DEPRECATE>)
+target_compile_definitions(liknorm PRIVATE $<$<BOOL:${WIN32}>:__extension__>)
+target_link_libraries(liknorm INTERFACE $<$<BOOL:${UNIX}>:m>)
+target_compile_options(liknorm PRIVATE
+    $<$<STREQUAL:${CMAKE_C_COMPILER_ID},MSVC>:/W3 /WX>
+    $<$<NOT:$<STREQUAL:${CMAKE_C_COMPILER_ID},MSVC>>:-Wall -Wextra -pedantic -Wstrict-prototypes
+        -Wshadow -Wconversion -Wmissing-prototypes -Wno-unused-parameter
+        -Wno-empty-translation-unit>
+)
 
-limix_add_library(${PROJECT_NAME} ${PROJECT_VERSION} "${SOURCES}" "${HEADERS}"
-    "${PRIVATE_HEADERS}" "${LIBS}")
+# if (NOT c_restrict IN_LIST CMAKE_C_COMPILE_FEATURES)
+#     add_compile_definitions(restrict= )
+# endif()
 
+install(TARGETS liknorm EXPORT liknorm-targets
+    RUNTIME DESTINATION bin
+    LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION lib
+)
+install(DIRECTORY include/ DESTINATION include)
+install(EXPORT liknorm-targets
+    FILE liknorm-targets.cmake
+    NAMESPACE LIKNORM::
+    DESTINATION lib/cmake/liknorm
+)
+include(CMakePackageConfigHelpers)
+configure_package_config_file(liknorm-config.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/liknorm-config.cmake
+    INSTALL_DESTINATION lib/cmake/liknorm
+    NO_SET_AND_CHECK_MACRO
+)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/liknorm-config.cmake
+    DESTINATION lib/cmake/liknorm
+)
+
+enable_testing()
 add_subdirectory(test)

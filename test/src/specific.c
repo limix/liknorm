@@ -1,5 +1,5 @@
 #include "cass.h"
-#include "liknorm.h"
+#include "liknorm/liknorm.h"
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -28,9 +28,9 @@ int main()
 
     printf("%.20f\n%.20f\n%.20f\n", log_zeroth, mean, variance);
 
-    assert_almost_equal(log_zeroth, -40.26009679144215169799);
-    assert_almost_equal(mean, 0.20089983974431713243);
-    assert_almost_equal(variance, 0.00002843348172375942);
+    cass_close(log_zeroth, -40.26009679144215169799);
+    cass_close(mean, 0.20089983974431713243);
+    cass_close(variance, 0.00002843348172375942);
 
     liknorm_destroy_machine(machine);
 

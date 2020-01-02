@@ -1,4 +1,4 @@
-#include "liknorm.h"
+#include "liknorm/liknorm.h"
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
