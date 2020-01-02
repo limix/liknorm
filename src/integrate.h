@@ -2,7 +2,7 @@
 #define INTEGRATE_H
 
 #include "expfam.h"
-#include "liknorm.h"
+#include "liknorm/liknorm.h"
 #include "machine.h"
 #include "normal.h"
 
