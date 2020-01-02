@@ -14,6 +14,25 @@
 #define LPI2 0.572364942924700081938738094323
 #define LNSQRT2 0.346573590279972698624533222755
 
+/* Implements log(e^x - e^y).
+ *
+ * It assumes that e^x - e^y > 0.
+ */
+static inline double logsubexp(const double x, const double y) {
+    return x + log1p(-exp(y - x));
+}
+
+static inline double logaddexp_array(const double *x, const int n,
+                                     const double xmax) {
+    double total = 0;
+    int i;
+
+    for (i = 0; i < n; ++i)
+        total += exp(x[i] - xmax);
+
+    return xmax + log(total);
+}
+
 HIDE void integrate_step(double si, double step, struct ExpFam *ef,
                          struct Normal *normal, double *log_zeroth, double *u,
                          double *v, double *A0, double *logA1, double *logA2,
