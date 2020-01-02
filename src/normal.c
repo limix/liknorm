@@ -59,7 +59,7 @@ HIDE double liknorm_logcdf(const double a)
     /* includes first term from the RHS summation */
     double right_hand_side = 1;
     /* numerator for RHS summand */
-    double numerator = 1;
+    long numerator = 1;
     /* use reciprocal for denominator to avoid division */
     double denom_factor = 1;
     /* the precomputed division we use to adjust the denominator */
@@ -81,7 +81,7 @@ HIDE double liknorm_logcdf(const double a)
         sign = -sign;
         denom_factor *= denom_cons;
         numerator *= 2 * i - 1;
-        right_hand_side += sign * numerator * denom_factor;
+        right_hand_side += (double)(sign * numerator) * denom_factor;
     }
     return log_LHS + log(right_hand_side);
 }

@@ -49,7 +49,7 @@ target_compile_definitions(liknorm PRIVATE $<$<BOOL:${WIN32}>:__extension__>)
 target_link_libraries(liknorm INTERFACE $<$<BOOL:${UNIX}>:m>)
 target_compile_options(liknorm PRIVATE
     $<$<STREQUAL:${CMAKE_C_COMPILER_ID},MSVC>:/W3 /WX>
-    $<$<NOT:$<STREQUAL:${CMAKE_C_COMPILER_ID},MSVC>>:-Wall -Wextra -pedantic -Wstrict-prototypes
+    $<$<NOT:$<STREQUAL:${CMAKE_C_COMPILER_ID},MSVC>>:-Wall -Wextra -Wstrict-prototypes
         -Wshadow -Wconversion -Wmissing-prototypes -Wno-unused-parameter
         -Wno-empty-translation-unit>
 )
@@ -63,10 +63,6 @@ check_c_source_compiles(
     HAVE_ATTR_FORMAT
 )
 target_compile_definitions(liknorm PRIVATE $<$<BOOL:${HAVE_ATTR_FORMAT}>:HAVE_ATTR_FORMAT>)
-
-# if (NOT c_restrict IN_LIST CMAKE_C_COMPILE_FEATURES)
-#     add_compile_definitions(restrict= )
-# endif()
 
 install(TARGETS liknorm EXPORT liknorm-targets
     RUNTIME DESTINATION bin
