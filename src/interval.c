@@ -8,7 +8,6 @@
 #include "hide.h"
 #include "normal.h"
 #include "optimizer/optimizer.h"
-#include <assert.h>
 #include <math.h>
 
 static const double times_std = 7;
