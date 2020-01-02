@@ -2,7 +2,6 @@
 #define INTERVAL_C
 
 #include "interval.h"
-#include "compiler.h"
 #include "expfam.h"
 #include "gfunc.h"
 #include "hide.h"

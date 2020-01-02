@@ -1,5 +1,4 @@
 #include "optimizer/bracket.h"
-#include "compiler.h"
 #include "hide.h"
 #include <assert.h>
 #include <math.h>

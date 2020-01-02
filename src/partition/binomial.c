@@ -1,5 +1,4 @@
 #include "partition/binomial.h"
-#include "compiler.h"
 #include "hide.h"
 #include <float.h>
 #include <math.h>
