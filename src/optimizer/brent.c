@@ -1,7 +1,9 @@
 #include "brent.h"
+#include "hide.h"
 
-void find_minimum(double *x0, double *fx0, func_base *f, void *args, double a,
-                  double b, double rtol, double atol, int maxiter) {
+HIDE void find_minimum(double *x0, double *fx0, func_base *f, void *args, double a,
+                       double b, double rtol, double atol, int maxiter)
+{
     /*Seeks a local minimum of a function f in a closed interval [a, b] via
        Brent's method.
        Given a function f with a minimum in the interval the a <= b,

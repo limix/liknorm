@@ -26,6 +26,7 @@ add_library(liknorm
     src/partition/geometric.c
     src/partition/nbinomial.c
     src/partition/poisson.c
+    src/report.c
 )
 add_library(LIKNORM::liknorm ALIAS liknorm)
 
@@ -52,6 +53,16 @@ target_compile_options(liknorm PRIVATE
         -Wshadow -Wconversion -Wmissing-prototypes -Wno-unused-parameter
         -Wno-empty-translation-unit>
 )
+
+include(CheckCSourceCompiles)
+check_c_source_compiles(
+    "
+        static void f(char const* err, ...) __attribute__((format(printf, 1, 2)));
+        int main(void) {return 0;}
+    "
+    HAVE_ATTR_FORMAT
+)
+target_compile_definitions(liknorm PRIVATE $<$<BOOL:${HAVE_ATTR_FORMAT}>:HAVE_ATTR_FORMAT>)
 
 # if (NOT c_restrict IN_LIST CMAKE_C_COMPILE_FEATURES)
 #     add_compile_definitions(restrict= )

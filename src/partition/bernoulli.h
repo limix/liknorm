@@ -1,5 +1,5 @@
-#ifndef BERNOULLI_H
-#define BERNOULLI_H
+#ifndef PARTITION_BERNOULLI_H
+#define PARTITION_BERNOULLI_H
 
 #include "partition/binomial.h"
 

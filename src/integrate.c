@@ -1,5 +1,9 @@
+#ifndef INTEGRATE_C
+#define INTEGRATE_C
+
 #include "integrate.h"
 #include "expfam.h"
+#include "hide.h"
 #include "logaddexp.h"
 #include "machine.h"
 #include "normal.h"
@@ -10,9 +14,10 @@
 #define LPI2 0.572364942924700081938738094323
 #define LNSQRT2 0.346573590279972698624533222755
 
-void integrate_step(double si, double step, struct ExpFam *ef, struct Normal *normal,
-                    double *log_zeroth, double *u, double *v, double *A0, double *logA1,
-                    double *logA2, double *diff)
+HIDE void integrate_step(double si, double step, struct ExpFam *ef,
+                         struct Normal *normal, double *log_zeroth, double *u,
+                         double *v, double *A0, double *logA1, double *logA2,
+                         double *diff)
 {
 
     const double log_htau = logaddexp(normal->log_tau, *logA2);
@@ -41,8 +46,8 @@ void integrate_step(double si, double step, struct ExpFam *ef, struct Normal *no
     const double beta = (tsii - b) / htau_sqrt;
     const double alpha = (tsi - b) / htau_sqrt;
 
-    const double lcdf_diff = logsubexp(logcdf((alpha < -beta) * (beta + alpha) - alpha),
-                                       logcdf((alpha < -beta) * (beta + alpha) - beta));
+    const double lcdf_diff = logsubexp(liknorm_logcdf((alpha < -beta) * (beta + alpha) - alpha),
+                                       liknorm_logcdf((alpha < -beta) * (beta + alpha) - beta));
 
     *log_zeroth = (a + (b * b) / 2) / htau + LPI2 + LNSQRT2 - log_htau / 2 + lcdf_diff;
 
@@ -85,8 +90,8 @@ void integrate_step(double si, double step, struct ExpFam *ef, struct Normal *no
     *u = (htau * (b - htau_sqrt * D)) / htau2;
 }
 
-void combine_steps(struct LikNormMachine *machine, double *log_zeroth, double *mean,
-                   double *variance, double *left, double *right)
+HIDE void combine_steps(struct LikNormMachine *machine, double *log_zeroth,
+                        double *mean, double *variance, double *left, double *right)
 {
 
     struct LikNormMachine *m = machine;
@@ -130,3 +135,5 @@ void combine_steps(struct LikNormMachine *machine, double *log_zeroth, double *m
     *left += ileft * step;
     *right -= (m->size - iright) * step;
 }
+
+#endif

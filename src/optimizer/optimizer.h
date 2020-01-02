@@ -1,5 +1,5 @@
-#ifndef OPTIMIZER_H
-#define OPTIMIZER_H
+#ifndef OPTIMIZER_OPTIMIZER_H
+#define OPTIMIZER_OPTIMIZER_H
 
 #include "bracket.h"
 #include "brent.h"

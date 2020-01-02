@@ -1,5 +1,5 @@
-#ifndef EXPONENTIAL_H
-#define EXPONENTIAL_H
+#ifndef PARTITION_EXPONENTIAL_H
+#define PARTITION_EXPONENTIAL_H
 
 double exponential_log_partition(const double theta);
 

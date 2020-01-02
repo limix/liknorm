@@ -1,5 +1,5 @@
-#ifndef GAMMA_H
-#define GAMMA_H
+#ifndef PARTITION_GAMMA_H
+#define PARTITION_GAMMA_H
 
 double gamma_log_partition(const double theta);
 

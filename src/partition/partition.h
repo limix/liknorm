@@ -1,5 +1,5 @@
-#ifndef PARTITION_H
-#define PARTITION_H
+#ifndef PARTITION_PARTITION_H
+#define PARTITION_PARTITION_H
 
 #include "partition/bernoulli.h"
 #include "partition/binomial.h"

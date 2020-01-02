@@ -1,5 +1,5 @@
-#ifndef GEOMETRIC_H
-#define GEOMETRIC_H
+#ifndef PARTITION_GEOMETRIC_H
+#define PARTITION_GEOMETRIC_H
 
 double geometric_log_partition(const double theta);
 

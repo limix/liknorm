@@ -1,8 +1,92 @@
 #include "normal.h"
+#include "hide.h"
 #include <float.h>
 #include <math.h>
 
-double get_del(double x, double rational)
+static double get_del(double x, double rational);
+static double gauss_small(const double x);
+static double gauss_medium(const double x);
+static double gauss_large(const double x);
+
+HIDE double liknorm_cdf(const double x)
+{
+    double result;
+    double absx = fabs(x);
+
+    /* sqrt(32) */
+    const double sqrt32 = 5.656854249492380581898487434955;
+    const double xupper = 8.572;
+    const double xlower = -37.519;
+    const double epsilon = DBL_EPSILON / 2.0;
+
+    if (absx < epsilon) {
+        result = 0.5;
+        return result;
+    } else if (absx < 0.66291) {
+        result = 0.5 + gauss_small(x);
+        return result;
+    } else if (absx < sqrt32) {
+        result = gauss_medium(x);
+
+        if (x > 0.0) {
+            result = 1.0 - result;
+        }
+
+        return result;
+    } else if (x > xupper) {
+        result = 1.0;
+        return result;
+    } else if (x < xlower) {
+        result = 0.0;
+        return result;
+    } else {
+        result = gauss_large(x);
+
+        if (x > 0.0) {
+            result = 1.0 - result;
+        }
+    }
+
+    return result;
+}
+
+HIDE double liknorm_logcdf(const double a)
+{
+    /* we compute the left hand side of the approx (LHS) in one shot */
+    double log_LHS;
+    /* variable used to check for convergence */
+    double last_total = 0;
+    /* includes first term from the RHS summation */
+    double right_hand_side = 1;
+    /* numerator for RHS summand */
+    double numerator = 1;
+    /* use reciprocal for denominator to avoid division */
+    double denom_factor = 1;
+    /* the precomputed division we use to adjust the denominator */
+    double denom_cons = 1.0 / (a * a);
+    long sign = 1, i = 0;
+    const double pi = 3.14159265358979323846;
+
+    if (a > 6)
+        return -liknorm_cdf(-a); /* log(1+x) \approx x */
+
+    if (a > -20)
+        return log(liknorm_cdf(a));
+
+    log_LHS = -0.5 * a * a - log(-a) - 0.5 * log(2 * pi);
+
+    while (fabs(last_total - right_hand_side) > DBL_EPSILON) {
+        i += 1;
+        last_total = right_hand_side;
+        sign = -sign;
+        denom_factor *= denom_cons;
+        numerator *= 2 * i - 1;
+        right_hand_side += sign * numerator * denom_factor;
+    }
+    return log_LHS + log(right_hand_side);
+}
+
+static double get_del(double x, double rational)
 {
     const double scale = 16.0;
     const double xsq = floor(x * scale) / scale;
@@ -119,82 +203,4 @@ double gauss_large(const double x)
     result = get_del(x, temp);
 
     return result;
-}
-
-double cdf(const double x)
-{
-    double result;
-    double absx = fabs(x);
-
-    /* sqrt(32) */
-    const double sqrt32 = 5.656854249492380581898487434955;
-    const double xupper = 8.572;
-    const double xlower = -37.519;
-    const double epsilon = DBL_EPSILON / 2.0;
-
-    if (absx < epsilon) {
-        result = 0.5;
-        return result;
-    } else if (absx < 0.66291) {
-        result = 0.5 + gauss_small(x);
-        return result;
-    } else if (absx < sqrt32) {
-        result = gauss_medium(x);
-
-        if (x > 0.0) {
-            result = 1.0 - result;
-        }
-
-        return result;
-    } else if (x > xupper) {
-        result = 1.0;
-        return result;
-    } else if (x < xlower) {
-        result = 0.0;
-        return result;
-    } else {
-        result = gauss_large(x);
-
-        if (x > 0.0) {
-            result = 1.0 - result;
-        }
-    }
-
-    return result;
-}
-
-double logcdf(const double a)
-{
-    /* we compute the left hand side of the approx (LHS) in one shot */
-    double log_LHS;
-    /* variable used to check for convergence */
-    double last_total = 0;
-    /* includes first term from the RHS summation */
-    double right_hand_side = 1;
-    /* numerator for RHS summand */
-    double numerator = 1;
-    /* use reciprocal for denominator to avoid division */
-    double denom_factor = 1;
-    /* the precomputed division we use to adjust the denominator */
-    double denom_cons = 1.0 / (a * a);
-    long sign = 1, i = 0;
-    const double pi = 3.14159265358979323846;
-
-    if (a > 6)
-        return -cdf(-a); /* log(1+x) \approx x */
-
-    if (a > -20)
-        return log(cdf(a));
-
-    log_LHS = -0.5 * a * a - log(-a) - 0.5 * log(2 * pi);
-
-    while (fabs(last_total - right_hand_side) > DBL_EPSILON) {
-        i += 1;
-        last_total = right_hand_side;
-        sign = -sign;
-        denom_factor *= denom_cons;
-        numerator *= 2 * i - 1;
-        right_hand_side += sign * numerator * denom_factor;
-    }
-    return log_LHS + log(right_hand_side);
 }

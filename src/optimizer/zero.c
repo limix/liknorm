@@ -1,10 +1,11 @@
 #include "zero.h"
+#include "hide.h"
 #include <math.h>
 
-const double r8_epsilon = 2.220446049250313E-016;
+static const double r8_epsilon = 2.220446049250313E-016;
 
-double zero(const double a, const double b, const double t, func_base *f,
-            void *args)
+HIDE double zero(const double a, const double b, const double t, func_base *f,
+                 void *args)
 // ****************************************************************************80
 //
 //  Purpose:
@@ -127,8 +128,7 @@ double zero(const double a, const double b, const double t, func_base *f,
             s = e;
             e = d;
 
-            if ((2.0 * p < 3.0 * m * q - fabs(tol * q)) &&
-                (p < fabs(0.5 * s * q))) {
+            if ((2.0 * p < 3.0 * m * q - fabs(tol * q)) && (p < fabs(0.5 * s * q))) {
                 d = p / q;
             } else {
                 e = m;

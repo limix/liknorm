@@ -1,7 +1,11 @@
+#ifndef INTERVAL_C
+#define INTERVAL_C
+
 #include "interval.h"
 #include "compiler.h"
 #include "expfam.h"
 #include "gfunc.h"
+#include "hide.h"
 #include "normal.h"
 #include "optimizer/optimizer.h"
 #include <assert.h>
@@ -16,8 +20,38 @@ static const int maxiter = 100;
 #define DBL_TRUE_MIN 4.9406564584124654E-324
 #endif
 
-static inline void find_first_interval(struct ExpFam *ef, struct Normal *normal,
-                                       double *a, double *b)
+static void find_first_interval(struct ExpFam *ef, struct Normal *normal, double *a,
+                                double *b);
+static double g_function_root(double x, void *args);
+static void shrink_interval(struct ExpFam *ef, struct Normal *normal, double *a,
+                            double xmax, double *b, double fxmax);
+
+HIDE void find_interval(struct ExpFam *ef, struct Normal *normal, double *left,
+                        double *right)
+{
+
+    double a, b;
+    double xmax, fxmax;
+    void *args[] = {ef, normal};
+    double fleft, fright;
+
+    find_first_interval(ef, normal, &a, &b);
+    liknorm_find_bracket(&g_function_func_base, args, a, b, ef->lower_bound, ef->upper_bound,
+                 left, right, &fleft, &fright);
+
+    a = fmin(a, *left);
+    b = fmax(b, *right);
+
+    find_maximum(&xmax, &fxmax, &g_function_func_base, args, a, b, reps, aeps, maxiter);
+
+    shrink_interval(ef, normal, &a, xmax, &b, fxmax);
+
+    *left = a;
+    *right = b;
+}
+
+static void find_first_interval(struct ExpFam *ef, struct Normal *normal, double *a,
+                                double *b)
 {
     double std = sqrt(1 / normal->tau);
     double mu = normal->eta / normal->tau;
@@ -40,7 +74,7 @@ static inline void find_first_interval(struct ExpFam *ef, struct Normal *normal,
     }
 }
 
-double g_function_root(double x, void *args)
+static double g_function_root(double x, void *args)
 {
     void **args_ = args;
     func_base *fb = (func_base *)args_[0];
@@ -49,13 +83,13 @@ double g_function_root(double x, void *args)
     return *fxmax - (*fb)(x, args_[2]) + log(DBL_TRUE_MIN);
 }
 
-void shrink_interval(struct ExpFam *ef, struct Normal *normal, double *a, double xmax,
-                     double *b, double fxmax)
+static void shrink_interval(struct ExpFam *ef, struct Normal *normal, double *a,
+                            double xmax, double *b, double fxmax)
 {
     void *args[] = {ef, normal};
     double fa = g_function_func_base(*a, args);
     double fb = g_function_func_base(*b, args);
-    void *args_[] = {&g_function_func_base, &fxmax, args};
+    void *args_[] = {(void *)&g_function_func_base, &fxmax, args};
 
     if (fxmax - fa < log(DBL_TRUE_MIN)) {
         *a = zero(*a, xmax, 1e-5, &g_function_root, args_);
@@ -66,26 +100,4 @@ void shrink_interval(struct ExpFam *ef, struct Normal *normal, double *a, double
     }
 }
 
-void find_interval(struct ExpFam *ef, struct Normal *normal, double *left,
-                   double *right)
-{
-
-    double a, b;
-    double xmax, fxmax;
-    void *args[] = {ef, normal};
-    double fleft, fright;
-
-    find_first_interval(ef, normal, &a, &b);
-    find_bracket(&g_function_func_base, args, a, b, ef->lower_bound, ef->upper_bound,
-                 left, right, &fleft, &fright);
-
-    a = fmin(a, *left);
-    b = fmax(b, *right);
-
-    find_maximum(&xmax, &fxmax, &g_function_func_base, args, a, b, reps, aeps, maxiter);
-
-    shrink_interval(ef, normal, &a, xmax, &b, fxmax);
-
-    *left = a;
-    *right = b;
-}
+#endif

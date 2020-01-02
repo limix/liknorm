@@ -1,5 +1,5 @@
-#ifndef POISSON_H
-#define POISSON_H
+#ifndef PARTITION_POISSON_H
+#define PARTITION_POISSON_H
 
 /** Poisson log-partition function.
  *
