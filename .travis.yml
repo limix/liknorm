@@ -15,18 +15,14 @@ jobs:
       before_script:
         curl -fsSL https://git.io/JerYI | GITHUB_USER=horta GITHUB_PROJECT=logaddexp
         DO_CMD=sudo bash
-    - name: Build on windows
+    - name: Build on windows-vs15
       os: windows
       env: GENERATOR="Visual Studio 15 2017 Win64"
-    - name: Build on windows
+    - name: Build on windows-ninja
       os: windows
       env: GENERATOR=Ninja
       before_install:
         - choco install ninja --no-progress -y
-addons:
-  apt:
-    packages:
-      - cmake
 script:
   - mkdir prefix
   - mkdir build

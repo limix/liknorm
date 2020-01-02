@@ -42,7 +42,7 @@ target_include_directories(liknorm
 target_link_libraries(liknorm PRIVATE LOGADDEXP::logaddexp)
 set_target_properties(liknorm PROPERTIES VERSION ${PROJECT_VERSION})
 set_target_properties(liknorm PROPERTIES SOVERSION ${PROJECT_VERSION_MAJOR})
-target_compile_features(liknorm PRIVATE c_std_11)
+set_target_properties(liknorm PROPERTIES C_STANDARD 99)
 set_target_properties(liknorm PROPERTIES DEFINE_SYMBOL "LIKNORM_EXPORTS")
 target_compile_definitions(liknorm PRIVATE $<$<BOOL:${WIN32}>:_CRT_NONSTDC_NO_DEPRECATE>)
 target_compile_definitions(liknorm PRIVATE $<$<BOOL:${WIN32}>:__extension__>)
