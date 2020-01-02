@@ -1,30 +1,42 @@
-os:
-- linux
-- osx
-dist: trusty
 language: c
-sudo: required
-compiler:
-- clang
-- gcc
+jobs:
+  include:
+    - os: linux
+      env: GENERATOR="Unix Makefiles"
+      sudo: required
+      before_script:
+        - test -e /usr/bin/cmake || sudo ln -s $(which cmake) /usr/bin/cmake
+        - curl -fsSL https://git.io/JerYI | GITHUB_USER=horta GITHUB_PROJECT=logaddexp
+          DO_CMD=sudo bash
+    - os: osx
+      env: GENERATOR="Unix Makefiles"
+      before_script:
+        curl -fsSL https://git.io/JerYI | GITHUB_USER=horta GITHUB_PROJECT=logaddexp
+        DO_CMD=sudo bash
+addons:
+  apt:
+    packages:
+      - cmake
 script:
-- bash <(curl -fsSL https://raw.githubusercontent.com/horta/ci/master/travis-c.sh)
-after_success:
-- bash <(curl -fsSL https://raw.githubusercontent.com/horta/ci/master/travis-c-dist.sh)
+  - mkdir prefix
+  - mkdir build
+  - cd build
+  - cmake -G"$GENERATOR" -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=$TRAVIS_BUILD_DIR/prefix
+    ..
+  - cmake --build . --config Release
+  - ctest --output-on-failure -C Release
+  - cmake --build . --config Release --target install
+  - test -e $TRAVIS_BUILD_DIR/prefix/include/liknorm/liknorm.h
+  - test -e $TRAVIS_BUILD_DIR/prefix/lib/cmake/liknorm/liknorm-config.cmake
+  - test -e $TRAVIS_BUILD_DIR/prefix/lib/cmake/liknorm/liknorm-targets-release.cmake
+  - test -e $TRAVIS_BUILD_DIR/prefix/lib/cmake/liknorm/liknorm-targets.cmake
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then otool -l $TRAVIS_BUILD_DIR/prefix/lib/libliknorm.dylib | grep -q LC_RPATH; fi
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then test -e $TRAVIS_BUILD_DIR/prefix/lib/libliknorm.so; fi
+  - cd $TRAVIS_BUILD_DIR
+  - git clean -xdf
 notifications:
   email:
     recipients:
-    - danilo.horta@pm.me
+      - danilo.horta@pm.me
     on_success: never
     on_failure: always
-deploy:
-  provider: releases
-  api_key:
-    secure: sj//i8IkhVHZHwWhI21mctXCkmYDdxM5IckdPf5Ot0jY5yLWj7wjUdZ8NGUxTq61qRfO4bs2vbI7T4jvOLi+Pm9rlzizvcyC0LTF6+M5UQFvGIKTqLXAzm/beEPmUdOlhTZwxyRiDLDsewzvOuvD9KC9f++yauHdsCuVmeku4Pr8lkpvI7yYAh89ZtAy29DqZt6VDc5ZFAJmkwbqEOw9FzjfH3q3rlH4DOPjbJhV+LGQUosuw+DsjlfIf+hQZAU1iIy6hNorSwa5hkwClODPr0gq+MEd9fZCFJe3f9Gk22eSkfd9Avwh/K2ejvTWWkaLOczyoaikGM3UWBbHSJ4bTW7u1RVZd7H3bYIS8P2h547Vyqr0s5mFyWkbzBiHODwVDbymd5A1EPFD/dYEQkksRewi8s3gOGyCRzNb0SyZapdA+uiK2+nMqe6VrS5yILWqvYdfI8I5zF9mVFbp9pT93fWsHjX3FMA+aEzjEGq+Or10tIVUgvrYI3v9tbTownHTpI7ry2/X4+PJmCLC2v5DqmRjsGU1ajO9Lg1cR86eWWYKKpGeoHlEita1VaOJFndF3+HawdanAU98ZOqL+NNG+wVPbJprnQBBhbQGxofkk4F3GIPVhdhb88Zf/4Scu7MwoeirCUJYeZr0NbVaojw7ihCUZiIXB5FQ1QnZ0gT9I7Q=
-  on:
-    repo: limix/liknorm
-    branch: master
-    tags: true
-env:
-  global:
-    - PKG_NAME=liknorm
