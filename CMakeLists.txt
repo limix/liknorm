@@ -47,7 +47,6 @@ set_target_properties(liknorm PROPERTIES C_STANDARD 99)
 set_target_properties(liknorm PROPERTIES DEFINE_SYMBOL LIKNORM_EXPORTS)
 target_compile_definitions(liknorm PRIVATE $<$<BOOL:${WIN32}>:_CRT_SECURE_NO_WARNINGS>)
 target_compile_definitions(liknorm PRIVATE $<$<BOOL:${WIN32}>:_CRT_NONSTDC_NO_DEPRECATE>)
-target_compile_definitions(liknorm PRIVATE $<$<BOOL:${WIN32}>:__extension__>)
 target_link_libraries(liknorm INTERFACE $<$<BOOL:${UNIX}>:m>)
 target_compile_options(liknorm PRIVATE
     $<$<STREQUAL:${CMAKE_C_COMPILER_ID},MSVC>:/W3 /WX>
