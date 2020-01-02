@@ -10,6 +10,6 @@
 #define ATTR_FORMAT
 #endif
 
-LIKNORM_API void liknorm_error(char const *err, ...) ATTR_FORMAT;
+void liknorm_error(char const *err, ...) ATTR_FORMAT;
 
 #endif
