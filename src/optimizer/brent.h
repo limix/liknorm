@@ -2,7 +2,6 @@
 #define OPTIMIZER_BRENT_H
 
 #include "func_base.h"
-#include <float.h>
 
 void find_minimum(double *x0, double *fx0, func_base *f, void *args, double a, double b,
                   double rtol, double atol, int maxiter);
