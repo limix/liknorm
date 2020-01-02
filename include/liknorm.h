@@ -1,5 +1,5 @@
-#ifndef LIKNORM_LIKNORM_H
-#define LIKNORM_LIKNORM_H
+#ifndef LIKNORM_H
+#define LIKNORM_H
 
 #ifdef _WIN32
 #ifdef LIKNORM_EXPORTS
