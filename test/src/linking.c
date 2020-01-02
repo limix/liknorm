@@ -1,4 +1,4 @@
-#include "liknorm/liknorm.h"
+#include "liknorm.h"
 
 int main() {
     struct LikNormMachine *machine = liknorm_create_machine(1000);
