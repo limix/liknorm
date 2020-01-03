@@ -16,17 +16,15 @@ You can install it via conda
 
     conda install -c conda-forge liknorm
 
-or by cloning this repository and building it
+
+or by building it yourself via the following command:
 
 .. code-block:: bash
 
-    git clone https://github.com/glimix/liknorm.git
-    cd liknorm
-    mkdir build
-    cd build
-    cmake ..
-    make
-    sudo make install
+    # DO_CMD=sudo
+    curl -fsSL https://git.io/JerYI | GITHUB_USER=horta GITHUB_PROJECT=logaddexp bash
+
+The above command should work on Windows, Linux, and MacOS.
 
 .. toctree::
     :caption: Table of contents

@@ -16,19 +16,12 @@ conda install -c conda-forge liknorm
 ```
 
 Alternatively, one can compile and install it.
-From Linux or MacOS systems, enter
+From Linux, MacOS, or Windows (bash terminal) systems, enter
 
 ```bash
-curl -fsSL https://git.io/JerYI | GITHUB_USER=horta GITHUB_PROJECT=logaddexp DO_CMD=sudo bash
-```
-
-from terminal. From Windows, enter
-
-```dos
+# DO_CMD=sudo
 curl -fsSL https://git.io/JerYI | GITHUB_USER=horta GITHUB_PROJECT=logaddexp bash
 ```
-
-from a bash terminal.
 
 ## Authors
 
