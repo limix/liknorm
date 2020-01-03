@@ -21,6 +21,7 @@ From Linux, MacOS, or Windows (bash terminal) systems, enter
 ```bash
 # DO_CMD=sudo
 curl -fsSL https://git.io/JerYI | GITHUB_USER=horta GITHUB_PROJECT=logaddexp bash
+curl -fsSL https://git.io/JerYI | GITHUB_USER=limix GITHUB_PROJECT=liknorm bash
 ```
 
 ## Authors
