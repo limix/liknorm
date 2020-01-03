@@ -3,10 +3,14 @@ from __future__ import unicode_literals
 import os
 import subprocess
 import sys
+import re
 
 folder = os.path.dirname(os.path.abspath(__file__))
-with open(os.path.join(folder, "..", "VERSION")) as f:
-    version = f.read().strip()
+with open(os.path.join(folder, "..", "CMakeLists.txt")) as f:
+    s = re.search(r"liknorm VERSION (\d+\.\d+\.\d+)", f.read())
+    if s is None:
+        raise RuntimeError("Could not fetch version")
+    version = s.groups()[0]
 
 extensions = [
     "sphinx.ext.viewcode",

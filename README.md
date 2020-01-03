@@ -19,14 +19,16 @@ Alternatively, one can compile and install it.
 From Linux or MacOS systems, enter
 
 ```bash
-bash <(curl -fsSL https://raw.githubusercontent.com/limix/liknorm/master/install)
+curl -fsSL https://git.io/JerYI | GITHUB_USER=horta GITHUB_PROJECT=logaddexp DO_CMD=sudo bash
 ```
 
 from terminal. From Windows, enter
 
 ```dos
-powershell -Command "(New-Object Net.WebClient).DownloadFile('https://raw.githubusercontent.com/limix/liknorm/master/install.bat', 'install.bat')" && install.bat
+curl -fsSL https://git.io/JerYI | GITHUB_USER=horta GITHUB_PROJECT=logaddexp bash
 ```
+
+from a bash terminal.
 
 ## Authors
 
