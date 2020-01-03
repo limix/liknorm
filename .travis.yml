@@ -36,7 +36,6 @@ script:
   - test -e $TRAVIS_BUILD_DIR/prefix/lib/cmake/liknorm/liknorm-targets.cmake
   - if [ "$TRAVIS_OS_NAME" = "osx" ]; then otool -l $TRAVIS_BUILD_DIR/prefix/lib/libliknorm.dylib | grep -q LC_RPATH; fi
   - if [ "$TRAVIS_OS_NAME" = "linux" ]; then test -e $TRAVIS_BUILD_DIR/prefix/lib/libliknorm.so; fi
-  - if [ "$TRAVIS_OS_NAME" = "windows" ]; then test -e $TRAVIS_BUILD_DIR/prefix/bin/liknorm.dll; fi
   - cd $TRAVIS_BUILD_DIR
   - git clean -xdf
 notifications:
