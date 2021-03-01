@@ -59,7 +59,7 @@ script:
   - cmake --build . --config Release
   - ctest --output-on-failure -C Release
   - cmake --build . --config Release --target install
-  - test -e $TRAVIS_BUILD_DIR/prefix/include/liknorm.h
+  - test -e $TRAVIS_BUILD_DIR/prefix/include/liknorm/liknorm.h
   - test -e $TRAVIS_BUILD_DIR/prefix/lib/cmake/liknorm/liknorm-config.cmake
   - test -e $TRAVIS_BUILD_DIR/prefix/lib/cmake/liknorm/liknorm-targets-release.cmake
   - test -e $TRAVIS_BUILD_DIR/prefix/lib/cmake/liknorm/liknorm-targets.cmake

@@ -1,4 +1,4 @@
-#include "liknorm.h"
+#include "liknorm/liknorm.h"
 #include "integrate.h"
 #include "interval.h"
 #include "machine.h"

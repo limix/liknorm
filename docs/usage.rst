@@ -7,7 +7,7 @@ Suppose you have the file
 .. code-block:: c
 
   /* example.c */
-  #include "liknorm.h"
+  #include "liknorm/liknorm.h"
 
   #include <stdio.h>
 

@@ -40,7 +40,6 @@ target_include_directories(liknorm
         ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 target_link_libraries(liknorm PRIVATE LOGADDEXP::logaddexp)
-set_target_properties(liknorm PROPERTIES PUBLIC_HEADER include/liknorm.h)
 set_target_properties(liknorm PROPERTIES VERSION ${PROJECT_VERSION})
 set_target_properties(liknorm PROPERTIES SOVERSION ${PROJECT_VERSION_MAJOR})
 set_target_properties(liknorm PROPERTIES C_STANDARD 99)
@@ -71,6 +70,7 @@ install(TARGETS liknorm EXPORT liknorm-targets
     ARCHIVE DESTINATION lib
     PUBLIC_HEADER DESTINATION include
 )
+install(DIRECTORY include/ DESTINATION include)
 install(EXPORT liknorm-targets
     FILE liknorm-targets.cmake
     NAMESPACE LIKNORM::

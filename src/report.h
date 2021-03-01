@@ -1,7 +1,7 @@
 #ifndef REPORT_H
 #define REPORT_H
 
-#include "liknorm.h"
+#include "liknorm/liknorm.h"
 #include <stdarg.h>
 
 #if defined(HAVE_ATTR_FORMAT)

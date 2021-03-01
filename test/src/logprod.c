@@ -1,5 +1,5 @@
 #include "cass.h"
-#include "liknorm.h"
+#include "liknorm/liknorm.h"
 #include "stdio.h"
 
 int main()
