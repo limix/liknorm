@@ -4,7 +4,7 @@
 #include "integrate.h"
 #include "expfam.h"
 #include "hide.h"
-#include "logaddexp.h"
+#include "logaddexp/logaddexp.h"
 #include "machine.h"
 #include "normal.h"
 #include <assert.h>

@@ -1,7 +1,5 @@
 # liknorm
 
-[![Travis](https://travis-ci.com/limix/liknorm.svg?branch=master)](https://travis-ci.com/limix/liknorm)
-
 C library for computing moments of the product of an
 exponential-family likelihood with a Normal distribution.
 
@@ -30,4 +28,4 @@ curl -fsSL https://git.io/JerYI | GITHUB_USER=limix GITHUB_PROJECT=liknorm bash
 
 ## License
 
-This project is licensed under the MIT License - see the [license file](https://raw.githubusercontent.com/limix/liknorm/master/LICENSE.md) for details.
+This project is licensed under the MIT License - see the [license file](https://raw.githubusercontent.com/limix/liknorm/main/LICENSE.md) for details.
