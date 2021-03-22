@@ -1,15 +1,7 @@
 #ifndef LIKNORM_H
 #define LIKNORM_H
 
-#ifdef _WIN32
-#ifdef LIKNORM_EXPORTS
-#define LIKNORM_API __declspec(dllexport)
-#else
-#define LIKNORM_API __declspec(dllimport)
-#endif
-#else
-#define LIKNORM_API
-#endif
+#include "liknorm/export.h"
 
 /** Major liknorm version. */
 #define LIKNORM_VERSION_MAJOR 1

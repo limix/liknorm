@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5.1 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.9 FATAL_ERROR)
 project(liknorm VERSION 1.5.2 LANGUAGES C)
 
 # Generate compile_commands.json file
@@ -10,6 +10,15 @@ list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${CMAKE_INSTALL_PREFIX}/lib"
 if("${isSystemDir}" STREQUAL "-1")
     set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
 endif()
+
+# merge request fix: https://gitlab.kitware.com/cmake/cmake/-/merge_requests/1799
+if(CMAKE_VERSION VERSION_GREATER 3.12.0)
+    # Hide things by default
+    set(CMAKE_C_VISIBILITY_PRESET hidden)
+    set(CMAKE_VISIBILITY_INLINES_HIDDEN YES)
+endif()
+
+find_package(logaddexp REQUIRED)
 
 add_library(liknorm
     src/gfunc.c
@@ -30,12 +39,30 @@ add_library(liknorm
 )
 add_library(LIKNORM::liknorm ALIAS liknorm)
 
-find_package(logaddexp REQUIRED)
+# Write out mytools_export.h to the current binary directory
+# Must include ${CMAKE_CURRENT_BINARY_DIR} in the target's
+# search path.
+include(GenerateExportHeader)
+generate_export_header(liknorm BASE_NAME LIKNORM
+    INCLUDE_GUARD_NAME LIKNORM_EXPORT_H
+    EXPORT_MACRO_NAME LIKNORM_API
+    EXPORT_FILE_NAME ${CMAKE_CURRENT_BINARY_DIR}/liknorm/export.h)
+
+if(${CMAKE_C_COMPILER_ID} MATCHES "MSVC")
+    set(WARNING_FLAGS /W3)
+else()
+    set(WARNING_FLAGS -Wall -Wextra -pedantic -Wstrict-prototypes -Wshadow
+        -Wconversion -Wmissing-prototypes -Wno-unused-parameter -Wsign-conversion
+        -Wno-unused-function # FIXME: added only to please clangd for now
+        -Wno-empty-translation-unit # FIXME: added only to please clangd for now
+    )
+endif()
 
 target_include_directories(liknorm
     PUBLIC
         $<INSTALL_INTERFACE:include>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
@@ -47,12 +74,6 @@ set_target_properties(liknorm PROPERTIES DEFINE_SYMBOL LIKNORM_EXPORTS)
 target_compile_definitions(liknorm PRIVATE $<$<BOOL:${WIN32}>:_CRT_SECURE_NO_WARNINGS>)
 target_compile_definitions(liknorm PRIVATE $<$<BOOL:${WIN32}>:_CRT_NONSTDC_NO_DEPRECATE>)
 target_link_libraries(liknorm INTERFACE $<$<BOOL:${UNIX}>:m>)
-target_compile_options(liknorm PRIVATE
-    $<$<STREQUAL:${CMAKE_C_COMPILER_ID},MSVC>:/W3 /WX>
-    $<$<NOT:$<STREQUAL:${CMAKE_C_COMPILER_ID},MSVC>>:-Wall -Wextra -Wstrict-prototypes
-        -Wshadow -Wconversion -Wmissing-prototypes -Wno-unused-parameter
-        -Wno-empty-translation-unit>
-)
 
 include(CheckCSourceCompiles)
 check_c_source_compiles(
@@ -71,6 +92,10 @@ install(TARGETS liknorm EXPORT liknorm-targets
     PUBLIC_HEADER DESTINATION include
 )
 install(DIRECTORY include/ DESTINATION include)
+install(FILES
+    ${CMAKE_CURRENT_BINARY_DIR}/liknorm/export.h
+    DESTINATION include/liknorm
+)
 install(EXPORT liknorm-targets
     FILE liknorm-targets.cmake
     NAMESPACE LIKNORM::
