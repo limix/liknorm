@@ -21,9 +21,7 @@ or by building it yourself via the following command:
 
 .. code-block:: bash
 
-    # DO_CMD=sudo
-    curl -fsSL https://git.io/JerYI | GITHUB_USER=horta GITHUB_PROJECT=logaddexp bash
-    curl -fsSL https://git.io/JerYI | GITHUB_USER=limix GITHUB_PROJECT=liknorm bash
+    /bin/bash -c "$(curl -fsSL https://git.io/JerYI)" -s limix/liknorm
 
 The above command should work on Windows, Linux, and MacOS.
 

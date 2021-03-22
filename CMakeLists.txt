@@ -18,8 +18,6 @@ if(CMAKE_VERSION VERSION_GREATER 3.12.0)
     set(CMAKE_VISIBILITY_INLINES_HIDDEN YES)
 endif()
 
-find_package(logaddexp REQUIRED)
-
 add_library(liknorm
     src/gfunc.c
     src/integrate.c
@@ -66,7 +64,6 @@ target_include_directories(liknorm
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
-target_link_libraries(liknorm PRIVATE LOGADDEXP::logaddexp)
 set_target_properties(liknorm PROPERTIES VERSION ${PROJECT_VERSION})
 set_target_properties(liknorm PROPERTIES SOVERSION ${PROJECT_VERSION_MAJOR})
 set_target_properties(liknorm PROPERTIES C_STANDARD 99)

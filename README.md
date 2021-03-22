@@ -17,7 +17,6 @@ Alternatively, one can compile and install it.
 From Linux, MacOS, or Windows (bash terminal) systems, enter
 
 ```bash
-sudo /bin/bash -c "$(curl -fsSL https://git.io/JerYI)" -s horta/logaddexp
 sudo /bin/bash -c "$(curl -fsSL https://git.io/JerYI)" -s limix/liknorm
 ```
 

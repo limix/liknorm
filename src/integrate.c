@@ -4,7 +4,7 @@
 #include "integrate.h"
 #include "expfam.h"
 #include "hide.h"
-#include "logaddexp/logaddexp.h"
+#include "logaddexp.h"
 #include "machine.h"
 #include "normal.h"
 #include <assert.h>
@@ -18,12 +18,13 @@
  *
  * It assumes that e^x - e^y > 0.
  */
-static inline double logsubexp(const double x, const double y) {
+static inline double logsubexp(const double x, const double y)
+{
     return x + log1p(-exp(y - x));
 }
 
-static inline double logaddexp_array(const double *x, const int n,
-                                     const double xmax) {
+static inline double logaddexp_array(const double *x, const int n, const double xmax)
+{
     double total = 0;
     int i;
 
@@ -65,8 +66,9 @@ HIDE void integrate_step(double si, double step, struct ExpFam *ef,
     const double beta = (tsii - b) / htau_sqrt;
     const double alpha = (tsi - b) / htau_sqrt;
 
-    const double lcdf_diff = logsubexp(liknorm_logcdf((alpha < -beta) * (beta + alpha) - alpha),
-                                       liknorm_logcdf((alpha < -beta) * (beta + alpha) - beta));
+    const double lcdf_diff =
+        logsubexp(liknorm_logcdf((alpha < -beta) * (beta + alpha) - alpha),
+                  liknorm_logcdf((alpha < -beta) * (beta + alpha) - beta));
 
     *log_zeroth = (a + (b * b) / 2) / htau + LPI2 + LNSQRT2 - log_htau / 2 + lcdf_diff;
 
