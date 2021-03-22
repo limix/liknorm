@@ -1,5 +1,4 @@
 #include "normal.h"
-#include "hide.h"
 #include <float.h>
 #include <math.h>
 
@@ -8,7 +7,7 @@ static double gauss_small(const double x);
 static double gauss_medium(const double x);
 static double gauss_large(const double x);
 
-HIDE double liknorm_cdf(const double x)
+double liknorm_cdf(const double x)
 {
     double result;
     double absx = fabs(x);
@@ -50,7 +49,7 @@ HIDE double liknorm_cdf(const double x)
     return result;
 }
 
-HIDE double liknorm_logcdf(const double a)
+double liknorm_logcdf(const double a)
 {
     /* we compute the left hand side of the approx (LHS) in one shot */
     double log_LHS;

@@ -1,19 +1,18 @@
 #include "partition/binomial.h"
-#include "hide.h"
 #include <float.h>
 #include <math.h>
 
-HIDE double binomial_log_partition(const double theta)
+double binomial_log_partition(const double theta)
 {
     return theta < log(DBL_MAX) ? log1p(exp(theta)) : theta;
 }
 
-HIDE double binomial_log_partition_fderivative(const double theta)
+double binomial_log_partition_fderivative(const double theta)
 {
     return theta < log(DBL_MAX) ? theta - log1p(exp(theta)) : 0;
 }
 
-HIDE void binomial_log_partition_derivatives(const double theta, double *b0, double *logb1,
+void binomial_log_partition_derivatives(const double theta, double *b0, double *logb1,
                                         double *logb2)
 {
     if (theta < log(DBL_MAX)) {

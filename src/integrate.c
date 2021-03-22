@@ -3,7 +3,6 @@
 
 #include "integrate.h"
 #include "expfam.h"
-#include "hide.h"
 #include "logaddexp.h"
 #include "machine.h"
 #include "normal.h"
@@ -34,7 +33,7 @@ static inline double logaddexp_array(const double *x, const int n, const double 
     return xmax + log(total);
 }
 
-HIDE void integrate_step(double si, double step, struct ExpFam *ef,
+void integrate_step(double si, double step, struct ExpFam *ef,
                          struct Normal *normal, double *log_zeroth, double *u,
                          double *v, double *A0, double *logA1, double *logA2,
                          double *diff)
@@ -111,7 +110,7 @@ HIDE void integrate_step(double si, double step, struct ExpFam *ef,
     *u = (htau * (b - htau_sqrt * D)) / htau2;
 }
 
-HIDE void combine_steps(struct LikNormMachine *machine, double *log_zeroth,
+void combine_steps(struct LikNormMachine *machine, double *log_zeroth,
                         double *mean, double *variance, double *left, double *right)
 {
 

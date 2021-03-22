@@ -4,7 +4,6 @@
 #include "interval.h"
 #include "expfam.h"
 #include "gfunc.h"
-#include "hide.h"
 #include "normal.h"
 #include "optimizer/optimizer.h"
 #include <math.h>
@@ -24,7 +23,7 @@ static double g_function_root(double x, void *args);
 static void shrink_interval(struct ExpFam *ef, struct Normal *normal, double *a,
                             double xmax, double *b, double fxmax);
 
-HIDE void find_interval(struct ExpFam *ef, struct Normal *normal, double *left,
+void find_interval(struct ExpFam *ef, struct Normal *normal, double *left,
                         double *right)
 {
 

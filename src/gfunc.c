@@ -1,9 +1,8 @@
 #include "gfunc.h"
 #include "expfam.h"
-#include "hide.h"
 #include "normal.h"
 
-HIDE double g_function(double x, struct ExpFam *ef, struct Normal *normal)
+double g_function(double x, struct ExpFam *ef, struct Normal *normal)
 {
     const double a = x * (ef->y / ef->a + normal->eta);
     const double b = (normal->tau * x * x) / 2;
@@ -12,7 +11,7 @@ HIDE double g_function(double x, struct ExpFam *ef, struct Normal *normal)
     return (a - b) - c;
 }
 
-HIDE double g_function_func_base(double x, void *args)
+double g_function_func_base(double x, void *args)
 {
     void **args_ = args;
     struct ExpFam *ef = args_[0];

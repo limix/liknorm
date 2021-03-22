@@ -1,11 +1,9 @@
 #include "zero.h"
-#include "hide.h"
 #include <math.h>
 
 static const double r8_epsilon = 2.220446049250313E-016;
 
-HIDE double zero(const double a, const double b, const double t, func_base *f,
-                 void *args)
+double zero(const double a, const double b, const double t, func_base *f, void *args)
 // ****************************************************************************80
 //
 //  Purpose:
