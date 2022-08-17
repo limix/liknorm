@@ -169,7 +169,7 @@ int main()
     {
         Line *t = l;
         l = l->next;
-        free(l->likname);
+        free(t->likname);
         free(t);
     }
 
