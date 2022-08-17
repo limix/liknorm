@@ -24,9 +24,6 @@ message(STATUS "LIKNORM_BUILD_TESTS: " ${LIKNORM_BUILD_TESTS})
 
 include(cmake/compiler-options.cmake)
 include(cmake/sanitizers.cmake)
-include(cmake/CPM.cmake)
-
-cpmaddpackage("gh:horta/logaddexp@2.1.9")
 
 add_library(
   liknorm
@@ -67,11 +64,11 @@ target_include_directories(
          $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
          $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
   PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
-target_link_libraries(liknorm PUBLIC LOGADDEXP::logaddexp)
 set_property(TARGET liknorm PROPERTY POSITION_INDEPENDENT_CODE ON)
 set_target_properties(liknorm PROPERTIES VERSION ${PROJECT_VERSION})
 set_target_properties(liknorm PROPERTIES SOVERSION ${PROJECT_VERSION_MAJOR})
 set_target_properties(liknorm PROPERTIES DEFINE_SYMBOL LIKNORM_EXPORTS)
+target_compile_options(liknorm PRIVATE ${WARNING_FLAGS})
 target_compile_features(liknorm PRIVATE c_std_11)
 target_compile_definitions(liknorm
                            PRIVATE $<$<BOOL:${WIN32}>:_CRT_SECURE_NO_WARNINGS>)
