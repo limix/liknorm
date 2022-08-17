@@ -21,7 +21,7 @@ jobs:
             -DUSE_SANITIZER='Address;Undefined' -DENABLE_ALL_WARNINGS=ON
 
       - name: Configure CMake
-        if: runner.os == 'macOS'
+        if: runner.os != 'Linux'
         run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{matrix.build_type}} -DENABLE_ALL_WARNINGS=ON
 
       - name: Build
