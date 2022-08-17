@@ -150,11 +150,11 @@ int test_it(struct LikNormMachine *machine, Line *l)
 int main()
 {
     Line *root = read_table();
-    Line *l = root;
+    if (root == 0) return 1;
 
     struct LikNormMachine *machine = liknorm_create_machine(350);
 
-    if (root == 0) return 1;
+    Line *l = root;
     while (l != 0)
     {
         int e = test_it(machine, l);
@@ -162,6 +162,14 @@ int main()
         if (e != 0) return 1;
 
         l = l->next;
+    }
+
+    l = root;
+    while (l != 0)
+    {
+        Line *t = l;
+        l = l->next;
+        free(t);
     }
 
     liknorm_destroy_machine(machine);
