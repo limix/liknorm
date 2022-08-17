@@ -17,14 +17,14 @@ static const int maxiter = 100;
 #define DBL_TRUE_MIN 4.9406564584124654E-324
 #endif
 
-static void find_first_interval(struct ExpFam *ef, struct Normal *normal, double *a,
-                                double *b);
+static void find_first_interval(struct ExpFam *ef, struct Normal *normal,
+                                double *a, double *b);
 static double g_function_root(double x, void *args);
 static void shrink_interval(struct ExpFam *ef, struct Normal *normal, double *a,
                             double xmax, double *b, double fxmax);
 
 void find_interval(struct ExpFam *ef, struct Normal *normal, double *left,
-                        double *right)
+                   double *right)
 {
 
     double a, b;
@@ -33,13 +33,14 @@ void find_interval(struct ExpFam *ef, struct Normal *normal, double *left,
     double fleft, fright;
 
     find_first_interval(ef, normal, &a, &b);
-    liknorm_find_bracket(&g_function_func_base, args, a, b, ef->lower_bound, ef->upper_bound,
-                 left, right, &fleft, &fright);
+    liknorm_find_bracket(&g_function_func_base, args, a, b, ef->lower_bound,
+                         ef->upper_bound, left, right, &fleft, &fright);
 
     a = fmin(a, *left);
     b = fmax(b, *right);
 
-    find_maximum(&xmax, &fxmax, &g_function_func_base, args, a, b, reps, aeps, maxiter);
+    find_maximum(&xmax, &fxmax, &g_function_func_base, args, a, b, reps, aeps,
+                 maxiter);
 
     shrink_interval(ef, normal, &a, xmax, &b, fxmax);
 
@@ -47,8 +48,8 @@ void find_interval(struct ExpFam *ef, struct Normal *normal, double *left,
     *right = b;
 }
 
-static void find_first_interval(struct ExpFam *ef, struct Normal *normal, double *a,
-                                double *b)
+static void find_first_interval(struct ExpFam *ef, struct Normal *normal,
+                                double *a, double *b)
 {
     double std = sqrt(1 / normal->tau);
     double mu = normal->eta / normal->tau;
@@ -63,7 +64,8 @@ static void find_first_interval(struct ExpFam *ef, struct Normal *normal, double
 
     smallest_step = fmax(fabs(*a), fabs(*b)) * reps + aeps;
 
-    if (*b - *a < smallest_step) {
+    if (*b - *a < smallest_step)
+    {
         if (*a - ef->lower_bound >= *b - ef->lower_bound)
             *a -= smallest_step;
         else
@@ -88,11 +90,13 @@ static void shrink_interval(struct ExpFam *ef, struct Normal *normal, double *a,
     double fb = g_function_func_base(*b, args);
     void *args_[] = {(void *)&g_function_func_base, &fxmax, args};
 
-    if (fxmax - fa < log(DBL_TRUE_MIN)) {
+    if (fxmax - fa < log(DBL_TRUE_MIN))
+    {
         *a = zero(*a, xmax, 1e-5, &g_function_root, args_);
     }
 
-    if (fxmax - fb < log(DBL_TRUE_MIN)) {
+    if (fxmax - fb < log(DBL_TRUE_MIN))
+    {
         *b = zero(*b, xmax, 1e-5, &g_function_root, args_);
     }
 }

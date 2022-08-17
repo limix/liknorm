@@ -22,7 +22,8 @@ static inline double logsubexp(const double x, const double y)
     return x + log1p(-exp(y - x));
 }
 
-static inline double logaddexp_array(const double *x, const int n, const double xmax)
+static inline double logaddexp_array(const double *x, const int n,
+                                     const double xmax)
 {
     double total = 0;
     int i;
@@ -34,9 +35,9 @@ static inline double logaddexp_array(const double *x, const int n, const double 
 }
 
 void integrate_step(double si, double step, struct ExpFam *ef,
-                         struct Normal *normal, double *log_zeroth, double *u,
-                         double *v, double *A0, double *logA1, double *logA2,
-                         double *diff)
+                    struct Normal *normal, double *log_zeroth, double *u,
+                    double *v, double *A0, double *logA1, double *logA2,
+                    double *diff)
 {
 
     const double log_htau = logaddexp(normal->log_tau, *logA2);
@@ -69,7 +70,8 @@ void integrate_step(double si, double step, struct ExpFam *ef,
         logsubexp(liknorm_logcdf((alpha < -beta) * (beta + alpha) - alpha),
                   liknorm_logcdf((alpha < -beta) * (beta + alpha) - beta));
 
-    *log_zeroth = (a + (b * b) / 2) / htau + LPI2 + LNSQRT2 - log_htau / 2 + lcdf_diff;
+    *log_zeroth =
+        (a + (b * b) / 2) / htau + LPI2 + LNSQRT2 - log_htau / 2 + lcdf_diff;
 
     const double logpbeta = logpdf(beta);
     const double logpalpha = logpdf(alpha);
@@ -87,15 +89,21 @@ void integrate_step(double si, double step, struct ExpFam *ef,
     const double tsx = logp_sign * (b + tsi);
     const double tsy = tstep;
 
-    if (tsxx > tsyy) {
-        if (tsx >= 0) {
+    if (tsxx > tsyy)
+    {
+        if (tsx >= 0)
+        {
             C = tsyy + log1p((tsx / tsy) * exp(logp - logpbeta));
             Csign = +1;
-        } else {
+        }
+        else
+        {
             C = tsxx + log1p((tsy / tsx) * exp(-logp + logpbeta));
             Csign = -1;
         }
-    } else {
+    }
+    else
+    {
         C = tsyy + log1p((tsx / tsy) * exp(logp - logpbeta));
         Csign = +1;
     }
@@ -111,7 +119,7 @@ void integrate_step(double si, double step, struct ExpFam *ef,
 }
 
 void combine_steps(struct LikNormMachine *machine, double *log_zeroth,
-                        double *mean, double *variance, double *left, double *right)
+                   double *mean, double *variance, double *left, double *right)
 {
 
     struct LikNormMachine *m = machine;
@@ -124,7 +132,8 @@ void combine_steps(struct LikNormMachine *machine, double *log_zeroth,
 
     (*log_zeroth) = logaddexp_array(m->log_zeroth, m->size, max_log_zeroth);
 
-    for (i = 0; i < m->size; ++i) {
+    for (i = 0; i < m->size; ++i)
+    {
         m->diff[i] = exp(m->log_zeroth[i] - *log_zeroth);
     }
 
@@ -142,7 +151,8 @@ void combine_steps(struct LikNormMachine *machine, double *log_zeroth,
     *mean = 0;
     *variance = 0;
 
-    for (i = ileft; i < iright; ++i) {
+    for (i = ileft; i < iright; ++i)
+    {
         *mean += m->u[i] * m->diff[i];
         *variance += m->v[i] * m->diff[i];
     }

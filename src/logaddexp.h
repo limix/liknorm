@@ -16,8 +16,7 @@ inline static double logaddexp(double x, double y)
 {
     double const tmp = x - y;
 
-    if (x == y)
-        return x + M_LN2;
+    if (x == y) return x + M_LN2;
 
     if (tmp > 0)
         return x + log1p(exp(-tmp));

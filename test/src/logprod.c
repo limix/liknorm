@@ -44,7 +44,7 @@ int main()
     liknorm_set_prior(machine, 1, 0);
     liknorm_set_nbinomial(machine, k, r);
     cass_close(liknorm_logprod(machine, -0.10536051565782628),
-                        -9.19814790278881);
+               -9.19814790278881);
 
     liknorm_destroy_machine(machine);
 

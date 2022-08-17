@@ -4,7 +4,8 @@
 #include "expfam.h"
 #include "normal.h"
 
-struct LikNormMachine {
+struct LikNormMachine
+{
     double *log_zeroth; // log(mom0)
     double *u;          // mom1/mom0
     double *v;          // mom2/mom0

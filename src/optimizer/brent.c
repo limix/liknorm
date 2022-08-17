@@ -1,8 +1,8 @@
 #include "brent.h"
 #include <math.h>
 
-void find_minimum(double *x0, double *fx0, func_base *f, void *args, double a, double b,
-                  double rtol, double atol, int maxiter)
+void find_minimum(double *x0, double *fx0, func_base *f, void *args, double a,
+                  double b, double rtol, double atol, int maxiter)
 {
     /*Seeks a local minimum of a function f in a closed interval [a, b] via
        Brent's method.
@@ -63,15 +63,15 @@ void find_minimum(double *x0, double *fx0, func_base *f, void *args, double a, d
     fx1 = *fx0;
     fx2 = fx1;
 
-    for (; niters < maxiter; ++niters) {
+    for (; niters < maxiter; ++niters)
+    {
         double m = (a + b) / 2;
 
         double tol = rtol * fabs(*x0) + atol;
         double tol2 = 2.0 * tol;
 
         /* Check the stopping criterion. */
-        if (fabs(*x0 - m) <= tol2 - (b - a) / 2)
-            break;
+        if (fabs(*x0 - m) <= tol2 - (b - a) / 2) break;
 
         double r = 0.0;
         double q = r;
@@ -86,7 +86,8 @@ void find_minimum(double *x0, double *fx0, func_base *f, void *args, double a, d
            - Numerical Recipes 3rd Edition: The Art of Scientific
            Computing.*/
 
-        if (tol < fabs(e)) {
+        if (tol < fabs(e))
+        {
             /* Compute the polynomial of the least degree (Lagrange
                polynomial)
                that goes through (x0, fx0), (x1, fx1), (x2, fx2).*/
@@ -95,27 +96,30 @@ void find_minimum(double *x0, double *fx0, func_base *f, void *args, double a, d
             p = (*x0 - x2) * q - (*x0 - x1) * r;
             q = 2.0 * (q - r);
 
-            if (0.0 < q)
-                p = -p;
+            if (0.0 < q) p = -p;
             q = fabs(q);
             r = e;
             e = d;
         }
 
         if ((fabs(p) < fabs(0.5 * q * r)) && (q * (a - *x0) < p) &&
-            (p < q * (b - *x0))) {
+            (p < q * (b - *x0)))
+        {
             /* Take the polynomial interpolation step. */
             d = p / q;
             u = *x0 + d;
 
             /* Function must not be evaluated too close to a or b. */
-            if (((u - a) < tol2) || ((b - u) < tol2)) {
+            if (((u - a) < tol2) || ((b - u) < tol2))
+            {
                 if (*x0 < m)
                     d = tol;
                 else
                     d = -tol;
             }
-        } else {
+        }
+        else
+        {
             /* Take the golden-section step. */
             if (*x0 < m)
                 e = b - *x0;
@@ -127,7 +131,8 @@ void find_minimum(double *x0, double *fx0, func_base *f, void *args, double a, d
         /* Function must not be evaluated too close to x0. */
         if (tol <= fabs(d))
             u = *x0 + d;
-        else {
+        else
+        {
             if (0.0 < d)
                 u = *x0 + tol;
             else
@@ -143,7 +148,8 @@ void find_minimum(double *x0, double *fx0, func_base *f, void *args, double a, d
 
         /* Is the most recently evaluated point better (or equal) than the
            best so far? */
-        if (fu <= *fx0) {
+        if (fu <= *fx0)
+        {
             /* Decrease interval size. */
             if (u < *x0)
                 b = *x0;
@@ -158,7 +164,9 @@ void find_minimum(double *x0, double *fx0, func_base *f, void *args, double a, d
             fx1 = *fx0;
             *x0 = u;
             *fx0 = fu;
-        } else {
+        }
+        else
+        {
             /* Decrease interval size. */
             if (u < *x0)
                 a = u;
@@ -167,15 +175,19 @@ void find_minimum(double *x0, double *fx0, func_base *f, void *args, double a, d
 
             /* Is the most recently evaluated point at better (or equal)
                than the second best one? */
-            if ((fu <= fx1) || (x1 == *x0)) {
+            if ((fu <= fx1) || (x1 == *x0))
+            {
                 /* Insert u between (rank-wise) x0 and x1 in the triple
                    (x0, x1, x2). */
                 x2 = x1;
                 fx2 = fx1;
                 x1 = u;
                 fx1 = fu;
-            } else {
-                if ((fu <= fx2) || (x2 == *x0) || (x2 == x1)) {
+            }
+            else
+            {
+                if ((fu <= fx2) || (x2 == *x0) || (x2 == x1))
+                {
                     /* Insert u in the last position of the triple (x0, x1,
                        x2).*/
                     x2 = u;

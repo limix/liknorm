@@ -16,9 +16,9 @@ char *strdump(const char *str)
 {
     size_t i;
     char *rstr;
-    for (i = 0;; ++i) {
-        if (str[i] == '\0')
-            break;
+    for (i = 0;; ++i)
+    {
+        if (str[i] == '\0') break;
     }
     ++i;
     rstr = malloc(sizeof(char) * i);
@@ -48,15 +48,14 @@ Line *read_table()
     Line *last = root;
     char *str;
 
-    if (stream == 0)
-        return 0;
+    if (stream == 0) return 0;
 
     str = fgets(line, 65536, stream);
 
-    if (str == NULL)
-        exit(1);
+    if (str == NULL) exit(1);
 
-    while (fgets(line, 65536, stream)) {
+    while (fgets(line, 65536, stream))
+    {
         l = malloc(sizeof(Line));
 
         char *token = strtok(line, ",");
@@ -80,10 +79,13 @@ Line *read_table()
         token = strtok(NULL, ",");
         l->variance = atof(token);
 
-        if (root == 0) {
+        if (root == 0)
+        {
             root = l;
             last = root;
-        } else {
+        }
+        else
+        {
             last->next = l;
             last = l;
         }
@@ -105,11 +107,9 @@ int test_it(struct LikNormMachine *machine, Line *l)
     if (strcmp(l->likname, "bernoulli") == 0)
         liknorm_set_bernoulli(machine, l->y);
 
-    if (strcmp(l->likname, "probit") == 0)
-        liknorm_set_probit(machine, l->y);
+    if (strcmp(l->likname, "probit") == 0) liknorm_set_probit(machine, l->y);
 
-    if (strcmp(l->likname, "poisson") == 0)
-        liknorm_set_poisson(machine, l->y);
+    if (strcmp(l->likname, "poisson") == 0) liknorm_set_poisson(machine, l->y);
 
     if (strcmp(l->likname, "binomial") == 0)
         liknorm_set_binomial(machine, l->y / l->aphi, 1 / l->aphi);
@@ -134,15 +134,15 @@ int test_it(struct LikNormMachine *machine, Line *l)
     ok = fabs(mean - l->mean) < eps && fabs(variance - l->variance) < eps;
     ok = ok && isfinite(mean) && isfinite(variance);
 
-    if (!ok) {
+    if (!ok)
+    {
         printf("Test failed:\n");
         printf("name: %s\n", l->likname);
-        printf("mean variance %.14g %.14g l->mean l->variance %.14g %.14g\n", mean,
-               variance, l->mean, l->variance);
+        printf("mean variance %.14g %.14g l->mean l->variance %.14g %.14g\n",
+               mean, variance, l->mean, l->variance);
     }
 
-    if (!ok)
-        return 1;
+    if (!ok) return 1;
 
     return 0;
 }
@@ -154,13 +154,12 @@ int main()
 
     struct LikNormMachine *machine = liknorm_create_machine(350);
 
-    if (root == 0)
-        return 1;
-    while (l != 0) {
+    if (root == 0) return 1;
+    while (l != 0)
+    {
         int e = test_it(machine, l);
 
-        if (e != 0)
-            return 1;
+        if (e != 0) return 1;
 
         l = l->next;
     }

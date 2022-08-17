@@ -42,4 +42,3 @@ Poisson
 =======
 
 .. doxygenfunction:: liknorm_set_poisson
-

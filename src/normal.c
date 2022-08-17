@@ -18,30 +18,43 @@ double liknorm_cdf(const double x)
     const double xlower = -37.519;
     const double epsilon = DBL_EPSILON / 2.0;
 
-    if (absx < epsilon) {
+    if (absx < epsilon)
+    {
         result = 0.5;
         return result;
-    } else if (absx < 0.66291) {
+    }
+    else if (absx < 0.66291)
+    {
         result = 0.5 + gauss_small(x);
         return result;
-    } else if (absx < sqrt32) {
+    }
+    else if (absx < sqrt32)
+    {
         result = gauss_medium(x);
 
-        if (x > 0.0) {
+        if (x > 0.0)
+        {
             result = 1.0 - result;
         }
 
         return result;
-    } else if (x > xupper) {
+    }
+    else if (x > xupper)
+    {
         result = 1.0;
         return result;
-    } else if (x < xlower) {
+    }
+    else if (x < xlower)
+    {
         result = 0.0;
         return result;
-    } else {
+    }
+    else
+    {
         result = gauss_large(x);
 
-        if (x > 0.0) {
+        if (x > 0.0)
+        {
             result = 1.0 - result;
         }
     }
@@ -66,15 +79,14 @@ double liknorm_logcdf(const double a)
     long sign = 1, i = 0;
     const double pi = 3.14159265358979323846;
 
-    if (a > 6)
-        return -liknorm_cdf(-a); /* log(1+x) \approx x */
+    if (a > 6) return -liknorm_cdf(-a); /* log(1+x) \approx x */
 
-    if (a > -20)
-        return log(liknorm_cdf(a));
+    if (a > -20) return log(liknorm_cdf(a));
 
     log_LHS = -0.5 * a * a - log(-a) - 0.5 * log(2 * pi);
 
-    while (fabs(last_total - right_hand_side) > DBL_EPSILON) {
+    while (fabs(last_total - right_hand_side) > DBL_EPSILON)
+    {
         i += 1;
         last_total = right_hand_side;
         sign = -sign;
@@ -114,7 +126,8 @@ double gauss_small(const double x)
     xnum = a[4] * xsq;
     xden = xsq;
 
-    for (i = 0; i < 3; i++) {
+    for (i = 0; i < 3; i++)
+    {
         xnum = (xnum + a[i]) * xsq;
         xden = (xden + b[i]) * xsq;
     }
@@ -136,10 +149,11 @@ double gauss_medium(const double x)
     double xden;
     double absx;
 
-    const double c[9] = {
-        0.39894151208813466764, 8.8831497943883759412, 93.506656132177855979,
-        597.27027639480026226,  2494.5375852903726711, 6848.1904505362823326,
-        11602.651437647350124,  9842.7148383839780218, 1.0765576773720192317e-8};
+    const double c[9] = {0.39894151208813466764,  8.8831497943883759412,
+                         93.506656132177855979,   597.27027639480026226,
+                         2494.5375852903726711,   6848.1904505362823326,
+                         11602.651437647350124,   9842.7148383839780218,
+                         1.0765576773720192317e-8};
     const double d[8] = {22.266688044328115691, 235.38790178262499861,
                          1519.377599407554805,  6485.558298266760755,
                          18615.571640885098091, 34900.952721145977266,
@@ -150,7 +164,8 @@ double gauss_medium(const double x)
     xnum = c[8] * absx;
     xden = absx;
 
-    for (i = 0; i < 7; i++) {
+    for (i = 0; i < 7; i++)
+    {
         xnum = (xnum + c[i]) * absx;
         xden = (xden + d[i]) * absx;
     }
@@ -191,7 +206,8 @@ double gauss_large(const double x)
     xnum = p[5] * xsq;
     xden = xsq;
 
-    for (i = 0; i < 4; i++) {
+    for (i = 0; i < 4; i++)
+    {
         xnum = (xnum + p[i]) * xsq;
         xden = (xden + q[i]) * xsq;
     }

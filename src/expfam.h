@@ -3,8 +3,8 @@
 
 typedef double log_partition(const double theta);
 
-typedef void log_partition_derivatives(const double theta, double *b0, double *logb1,
-                                       double *logb2);
+typedef void log_partition_derivatives(const double theta, double *b0,
+                                       double *logb1, double *logb2);
 
 typedef double log_partition_fderivative(const double theta);
 
@@ -39,14 +39,14 @@ enum lik_name
  *     E[y]   = b'(θ)
  *     Var[y] = b''(θ)a(𝜙)
  *
- * In order to define a generalised linear mixed model (GLMM) we use the so-called
- * natural parameter ``η``. Given a link function ``g(.)``, the natural parameter
- * relates to the canonical parameter as follows::
+ * In order to define a generalised linear mixed model (GLMM) we use the
+ * so-called natural parameter ``η``. Given a link function ``g(.)``, the
+ * natural parameter relates to the canonical parameter as follows::
  *
  *     η = g(E[y]) = g(b'(θ)).
  *
- * Every member of the exponential family has a canonical link function, which greatly
- * simplifies the relationship::
+ * Every member of the exponential family has a canonical link function, which
+ * greatly simplifies the relationship::
  *
  *     η = θ
  */

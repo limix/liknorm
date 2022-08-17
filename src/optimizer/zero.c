@@ -3,7 +3,8 @@
 
 static const double r8_epsilon = 2.220446049250313E-016;
 
-double zero(const double a, const double b, const double t, func_base *f, void *args)
+double zero(const double a, const double b, const double t, func_base *f,
+            void *args)
 // ****************************************************************************80
 //
 //  Purpose:
@@ -84,8 +85,10 @@ double zero(const double a, const double b, const double t, func_base *f, void *
     e = sb - sa;
     d = e;
 
-    for (;;) {
-        if (fabs(fc) < fabs(fb)) {
+    for (;;)
+    {
+        if (fabs(fc) < fabs(fb))
+        {
             sa = sb;
             sb = c;
             c = sa;
@@ -97,38 +100,52 @@ double zero(const double a, const double b, const double t, func_base *f, void *
         double tol = 2.0 * r8_epsilon * fabs(sb) + t;
         double m = 0.5 * (c - sb);
 
-        if ((fabs(m) <= tol) || (fb == 0.0)) {
+        if ((fabs(m) <= tol) || (fb == 0.0))
+        {
             break;
         }
 
-        if ((fabs(e) < tol) || (fabs(fa) <= fabs(fb))) {
+        if ((fabs(e) < tol) || (fabs(fa) <= fabs(fb)))
+        {
             e = m;
             d = e;
-        } else {
+        }
+        else
+        {
             s = fb / fa;
 
-            if (sa == c) {
+            if (sa == c)
+            {
                 p = 2.0 * m * s;
                 q = 1.0 - s;
-            } else {
+            }
+            else
+            {
                 q = fa / fc;
                 r = fb / fc;
                 p = s * (2.0 * m * q * (q - r) - (sb - sa) * (r - 1.0));
                 q = (q - 1.0) * (r - 1.0) * (s - 1.0);
             }
 
-            if (0.0 < p) {
+            if (0.0 < p)
+            {
                 q = -q;
-            } else {
+            }
+            else
+            {
                 p = -p;
             }
 
             s = e;
             e = d;
 
-            if ((2.0 * p < 3.0 * m * q - fabs(tol * q)) && (p < fabs(0.5 * s * q))) {
+            if ((2.0 * p < 3.0 * m * q - fabs(tol * q)) &&
+                (p < fabs(0.5 * s * q)))
+            {
                 d = p / q;
-            } else {
+            }
+            else
+            {
                 e = m;
                 d = e;
             }
@@ -136,17 +153,23 @@ double zero(const double a, const double b, const double t, func_base *f, void *
         sa = sb;
         fa = fb;
 
-        if (tol < fabs(d)) {
+        if (tol < fabs(d))
+        {
             sb = sb + d;
-        } else if (0.0 < m) {
+        }
+        else if (0.0 < m)
+        {
             sb = sb + tol;
-        } else {
+        }
+        else
+        {
             sb = sb - tol;
         }
 
         fb = f(sb, args);
 
-        if (((0.0 < fb) && (0.0 < fc)) || ((fb <= 0.0) && (fc <= 0.0))) {
+        if (((0.0 < fb) && (0.0 < fc)) || ((fb <= 0.0) && (fc <= 0.0)))
+        {
             c = sa;
             fc = fa;
             e = sb - sa;

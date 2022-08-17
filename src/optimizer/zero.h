@@ -3,6 +3,7 @@
 
 #include "func_base.h"
 
-double zero(const double a, const double b, const double t, func_base *f, void *args);
+double zero(const double a, const double b, const double t, func_base *f,
+            void *args);
 
 #endif

@@ -9,9 +9,9 @@ static inline void swap(double *a, double *b)
     *b = c;
 }
 
-void liknorm_find_bracket(func_base *f, void *args, double a, double b, double lower,
-                          double upper, double *left, double *right, double *fleft,
-                          double *fright)
+void liknorm_find_bracket(func_base *f, void *args, double a, double b,
+                          double lower, double upper, double *left,
+                          double *right, double *fleft, double *fright)
 {
     double fa, fb, fc;
     double c = b;
@@ -25,19 +25,23 @@ void liknorm_find_bracket(func_base *f, void *args, double a, double b, double l
     fb = (*f)(b, args);
     fc = (*f)(c, args);
 
-    if (fa > fc) {
+    if (fa > fc)
+    {
         swap(&a, &c);
         swap(&fa, &fc);
         limit = lower;
         sign = -1;
-    } else {
+    }
+    else
+    {
         limit = upper;
         sign = +1;
     }
 
     step = c - a;
 
-    while (fc >= fb && sign * (limit - c) > 0) {
+    while (fc >= fb && sign * (limit - c) > 0)
+    {
         b = c;
         fb = fc;
         c += step;
@@ -47,12 +51,15 @@ void liknorm_find_bracket(func_base *f, void *args, double a, double b, double l
         step *= 2;
     }
 
-    if (a > c) {
+    if (a > c)
+    {
         *left = c;
         *right = a;
         *fleft = fc;
         *fright = fa;
-    } else {
+    }
+    else
+    {
         *left = a;
         *right = c;
         *fleft = fa;

@@ -9,10 +9,12 @@
 #include <math.h>
 #include <stdlib.h>
 
-static void integrate(struct LikNormMachine *machine, double *log_zeroth, double *mean,
-                      double *variance, double *left, double *right);
-static void integrate_probit(double y, double tau, double eta, double *log_zeroth,
-                             double *mean, double *variance);
+static void integrate(struct LikNormMachine *machine, double *log_zeroth,
+                      double *mean, double *variance, double *left,
+                      double *right);
+static void integrate_probit(double y, double tau, double eta,
+                             double *log_zeroth, double *mean,
+                             double *variance);
 static inline double logbinom(double k, double n)
 {
     return lgamma(n + 1) - lgamma(k + 1) - lgamma(n - k + 1);
@@ -21,7 +23,8 @@ static inline double logfactorial(double k) { return lgamma(k + 1); }
 
 struct LikNormMachine *liknorm_create_machine(int size)
 {
-    if (size <= 0) {
+    if (size <= 0)
+    {
         liknorm_error("size must be positive");
         return NULL;
     }
@@ -42,7 +45,7 @@ struct LikNormMachine *liknorm_create_machine(int size)
 }
 
 void liknorm_integrate(struct LikNormMachine *machine, double *log_zeroth,
-                                   double *mean, double *variance)
+                       double *mean, double *variance)
 {
 
     double left, right;
@@ -51,14 +54,17 @@ void liknorm_integrate(struct LikNormMachine *machine, double *log_zeroth,
     double ileft;
     double iright;
 
-    if (ef->name == liknorm_probit) {
-        integrate_probit(ef->y, normal->tau, normal->eta, log_zeroth, mean, variance);
+    if (ef->name == liknorm_probit)
+    {
+        integrate_probit(ef->y, normal->tau, normal->eta, log_zeroth, mean,
+                         variance);
         return;
     }
 
     find_interval(ef, normal, &left, &right);
 
-    do {
+    do
+    {
         ileft = left;
         iright = right;
 
@@ -116,8 +122,7 @@ void liknorm_set_probit(struct LikNormMachine *machine, double k)
     m->ef.y = k;
 }
 
-void liknorm_set_binomial(struct LikNormMachine *machine, double k,
-                                      double n)
+void liknorm_set_binomial(struct LikNormMachine *machine, double k, double n)
 {
     struct LikNormMachine *m = machine;
     m->ef.name = liknorm_binomial;
@@ -132,8 +137,7 @@ void liknorm_set_binomial(struct LikNormMachine *machine, double k,
     m->ef.upper_bound = +DBL_MAX;
 }
 
-void liknorm_set_nbinomial(struct LikNormMachine *machine, double k,
-                                       double r)
+void liknorm_set_nbinomial(struct LikNormMachine *machine, double k, double r)
 {
     struct LikNormMachine *m = machine;
     m->ef.name = liknorm_binomial;
@@ -208,8 +212,7 @@ void liknorm_set_geometric(struct LikNormMachine *machine, double x)
     m->ef.upper_bound = -DBL_EPSILON;
 }
 
-void liknorm_set_prior(struct LikNormMachine *machine, double tau,
-                                   double eta)
+void liknorm_set_prior(struct LikNormMachine *machine, double tau, double eta)
 {
     const double tau_min = 2 * sqrt(DBL_EPSILON);
     tau = fmax(tau, tau_min);
@@ -218,8 +221,9 @@ void liknorm_set_prior(struct LikNormMachine *machine, double tau,
     machine->normal.log_tau = log(tau);
 }
 
-static void integrate(struct LikNormMachine *machine, double *log_zeroth, double *mean,
-                      double *variance, double *left, double *right)
+static void integrate(struct LikNormMachine *machine, double *log_zeroth,
+                      double *mean, double *variance, double *left,
+                      double *right)
 {
     struct ExpFam *ef = &(machine->ef);
     struct Normal *normal = &(machine->normal);
@@ -238,7 +242,8 @@ static void integrate(struct LikNormMachine *machine, double *log_zeroth, double
     for (i = 0; i < machine->size; ++i)
         (*ef->lpd)(*left + step * i + step / 2, A0 + i, logA1 + i, logA2 + i);
 
-    for (i = 0; i < machine->size; ++i) {
+    for (i = 0; i < machine->size; ++i)
+    {
         A0[i] /= ef->a;
         logA1[i] -= ef->loga;
         logA2[i] -= ef->loga;
@@ -249,9 +254,10 @@ static void integrate(struct LikNormMachine *machine, double *log_zeroth, double
     v = machine->v;
     mlog_zeroth = machine->log_zeroth;
 
-    for (i = 0; i < machine->size; ++i) {
-        integrate_step(*left + step * i, step, ef, normal, mlog_zeroth++, u++, v++,
-                       A0++, logA1++, logA2++, diff++);
+    for (i = 0; i < machine->size; ++i)
+    {
+        integrate_step(*left + step * i, step, ef, normal, mlog_zeroth++, u++,
+                       v++, A0++, logA1++, logA2++, diff++);
     }
 
     combine_steps(machine, log_zeroth, mean, variance, left, right);
@@ -261,8 +267,8 @@ static void integrate(struct LikNormMachine *machine, double *log_zeroth, double
     *log_zeroth -= (normal->eta * normal->eta) / (2 * normal->tau);
 }
 
-static void integrate_probit(double y, double tau, double eta, double *log_zeroth,
-                             double *mean, double *variance)
+static void integrate_probit(double y, double tau, double eta,
+                             double *log_zeroth, double *mean, double *variance)
 {
     double c, b, denom, logpdfc, logcdfc, logdiff;
     double tau1 = tau + 1;
