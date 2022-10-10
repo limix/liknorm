@@ -1,4 +1,4 @@
-#include "cass.h"
+#include "hope.h"
 #include "liknorm/liknorm.h"
 #include <math.h>
 #include <stdio.h>
@@ -26,13 +26,11 @@ int main()
 
     liknorm_integrate(machine, &log_zeroth, &mean, &variance);
 
-    printf("%.20f\n%.20f\n%.20f\n", log_zeroth, mean, variance);
-
-    cass_close(log_zeroth, -40.26009679144215169799);
-    cass_close(mean, 0.20089983974431713243);
-    cass_close(variance, 0.00002843348172375942);
+    CLOSE(log_zeroth, -40.26009679144215169799);
+    CLOSE(mean, 0.20089983974431713243);
+    CLOSE2(variance, 0.00002843348172375942, 1e-08, 0);
 
     liknorm_destroy_machine(machine);
 
-    return 0;
+    return hope_status();
 }
