@@ -70,7 +70,7 @@ static void test_marc(void)
         liknorm_set_prior(machine, 33.0, eta[i]);
         liknorm_integrate(machine, &log_zeroth, &mean, &variance);
         CLOSE(log_zeroth, desired_log0[i]);
-        CLOSE(mean, desired_mean[i]);
+        CLOSE2(mean, desired_mean[i], 1e-09, 1e-09);
         CLOSE(variance, desired_variance[i]);
     }
 
