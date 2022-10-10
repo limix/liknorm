@@ -157,13 +157,15 @@ void combine_steps(struct LikNormMachine *machine, double *log_zeroth,
         *variance += m->v[i] * m->diff[i];
     }
 
-    *variance = *variance - (*mean) * (*mean);
-
-    *variance = fmax(*variance, DBL_EPSILON);
-
     step = (*right - *left) / machine->size;
     *left += ileft * step;
     *right -= (m->size - iright) * step;
+    assert(*left < *right);
+
+    *variance = *variance - (*mean) * (*mean);
+    *variance = fmax(*variance, DBL_EPSILON);
+    *mean = fmax(*left, *mean);
+    *mean = fmin(*right, *mean);
 }
 
 #endif
