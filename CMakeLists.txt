@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.16.3 FATAL_ERROR)
 project(
   liknorm
-  VERSION 1.5.7
+  VERSION 1.5.8
   LANGUAGES C)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
