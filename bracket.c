@@ -9,7 +9,7 @@ static inline void swap(double *a, double *b)
     *b = c;
 }
 
-void liknorm_find_bracket(func_base *f, void *args, double a, double b,
+void liknorm_find_bracket(liknorm_func_base *f, void *args, double a, double b,
                           double lower, double upper, double *left,
                           double *right, double *fleft, double *fright)
 {

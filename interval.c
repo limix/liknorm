@@ -25,8 +25,25 @@ static double g_function_root(double x, void *args);
 static void shrink_interval(struct ExpFam *ef, struct Normal *normal, double *a,
                             double xmax, double *b, double fxmax);
 
-void liknorm_find_interval(struct ExpFam *ef, struct Normal *normal, double *left,
-                   double *right)
+static inline double neg_func_base(double x, void *args)
+{
+    void **args_ = args;
+    liknorm_func_base *fb = (liknorm_func_base *)args_[0];
+    return -(*fb)(x, args_[1]);
+}
+
+static inline void find_maximum(double *x0, double *fx0, liknorm_func_base *f,
+                                void *args, double a, double b, double rtol,
+                                double atol, int maxiter)
+{
+    void *args_[] = {(void *)f, args};
+    liknorm_find_minimum(x0, fx0, &neg_func_base, args_, a, b, rtol, atol,
+                         maxiter);
+    *fx0 = -(*fx0);
+}
+
+void liknorm_find_interval(struct ExpFam *ef, struct Normal *normal,
+                           double *left, double *right)
 {
 
     double a, b;
@@ -35,14 +52,15 @@ void liknorm_find_interval(struct ExpFam *ef, struct Normal *normal, double *lef
     double fleft, fright;
 
     find_first_interval(ef, normal, &a, &b);
-    liknorm_find_bracket(&liknorm_g_function_func_base, args, a, b, ef->lower_bound,
-                         ef->upper_bound, left, right, &fleft, &fright);
+    liknorm_find_bracket(&liknorm_g_function_func_base, args, a, b,
+                         ef->lower_bound, ef->upper_bound, left, right, &fleft,
+                         &fright);
 
     a = fmin(a, *left);
     b = fmax(b, *right);
 
-    find_maximum(&xmax, &fxmax, &liknorm_g_function_func_base, args, a, b, reps, aeps,
-                 maxiter);
+    find_maximum(&xmax, &fxmax, &liknorm_g_function_func_base, args, a, b, reps,
+                 aeps, maxiter);
 
     shrink_interval(ef, normal, &a, xmax, &b, fxmax);
 
@@ -78,7 +96,7 @@ static void find_first_interval(struct ExpFam *ef, struct Normal *normal,
 static double g_function_root(double x, void *args)
 {
     void **args_ = args;
-    func_base *fb = (func_base *)args_[0];
+    liknorm_func_base *fb = (liknorm_func_base *)args_[0];
     double *fxmax = args_[1];
 
     return *fxmax - (*fb)(x, args_[2]) + log(DBL_TRUE_MIN);

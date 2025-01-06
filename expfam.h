@@ -1,14 +1,14 @@
 #ifndef LIKNORM_EXPFAM_H
 #define LIKNORM_EXPFAM_H
 
-typedef double log_partition(const double theta);
+typedef double liknorm_log_partition(const double theta);
 
-typedef void log_partition_derivatives(const double theta, double *b0,
+typedef void liknorm_log_partition_derivatives(const double theta, double *b0,
                                        double *logb1, double *logb2);
 
-typedef double log_partition_fderivative(const double theta);
+typedef double liknorm_log_partition_fderivative(const double theta);
 
-enum lik_name
+enum liknorm_likelihood
 {
     liknorm_bernoulli,
     liknorm_binomial,
@@ -56,12 +56,12 @@ struct ExpFam
     double a;                        /**< ``a(𝜙)`` */
     double loga;                     /**< ``log(a(𝜙))`` */
     double c;                        /**< ``c(y,𝜙)`` */
-    log_partition *lp;               /**< ``b(θ)`` */
-    log_partition_fderivative *lpfd; /**< ``log(b'(θ))`` */
-    log_partition_derivatives *lpd;  /**< ``log(b''(θ))`` */
+    liknorm_log_partition *lp;               /**< ``b(θ)`` */
+    liknorm_log_partition_fderivative *lpfd; /**< ``log(b'(θ))`` */
+    liknorm_log_partition_derivatives *lpd;  /**< ``log(b''(θ))`` */
     double lower_bound;
     double upper_bound;
-    enum lik_name name;
+    enum liknorm_likelihood name;
 };
 
 #endif
