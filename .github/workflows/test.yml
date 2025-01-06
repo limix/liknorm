@@ -24,6 +24,3 @@ jobs:
 
       - name: make check
         run: make check
-
-      - name: list files
-        run: ls
