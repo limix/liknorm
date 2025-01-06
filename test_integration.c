@@ -1,16 +1,8 @@
-#include "liknorm/liknorm.h"
+#include "liknorm.h"
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#ifdef _MSC_VER
-#if (_MSC_VER <= 1500)
-#include <float.h>
-#define isnan(x) _isnan(x)
-#define isfinite(x) _finite(x)
-#endif
-#endif
 
 char *strdump(const char *str)
 {
@@ -40,7 +32,7 @@ typedef struct Line
 
 Line *read_table()
 {
-    FILE *stream = fopen("data/table.csv", "r");
+    FILE *stream = fopen("table.csv", "r");
     char line[65536];
 
     Line *l = 0;

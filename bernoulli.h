@@ -1,7 +1,7 @@
 #ifndef PARTITION_BERNOULLI_H
 #define PARTITION_BERNOULLI_H
 
-#include "partition/binomial.h"
+#include "binomial.h"
 
 /** Bernoulli log-partition function.
  *

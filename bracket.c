@@ -1,4 +1,4 @@
-#include "optimizer/bracket.h"
+#include "bracket.h"
 #include <assert.h>
 #include <math.h>
 

@@ -1,8 +1,13 @@
-#include "liknorm/liknorm.h"
+#include "liknorm.h"
+#include "bernoulli.h"
+#include "exponential.h"
+#include "gamma.h"
+#include "geometric.h"
 #include "integrate.h"
 #include "interval.h"
 #include "machine.h"
-#include "partition/partition.h"
+#include "nbinomial.h"
+#include "poisson.h"
 #include "report.h"
 #include <assert.h>
 #include <float.h>

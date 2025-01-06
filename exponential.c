@@ -1,4 +1,4 @@
-#include "partition/exponential.h"
+#include "exponential.h"
 #include <assert.h>
 #include <float.h>
 #include <math.h>

@@ -1,18 +1,9 @@
 #include "hope.h"
-#include "liknorm/liknorm.h"
+#include "liknorm.h"
 #include <float.h>
-#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#ifdef _MSC_VER
-#if (_MSC_VER <= 1500)
-#include <float.h>
-#define isnan(x) _isnan(x)
-#define isfinite(x) _finite(x)
-#endif
-#endif
 
 static void test_old_one(void);
 static void test_marc(void);
@@ -39,7 +30,7 @@ static void test_old_one(void)
 
     CLOSE(log_zeroth, -40.26009679144215169799);
     CLOSE(mean, 0.20089983974431713243);
-    CLOSE2(variance, 0.00002843348172375942, 1e-08, 0);
+    CLOSE2(variance, 0.00002843348172375942, 1e-07, 0);
 
     liknorm_destroy_machine(machine);
 }

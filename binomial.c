@@ -1,4 +1,4 @@
-#include "partition/binomial.h"
+#include "binomial.h"
 #include <float.h>
 #include <math.h>
 

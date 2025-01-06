@@ -1,4 +1,4 @@
-#include "partition/gamma.h"
+#include "gamma.h"
 #include <float.h>
 #include <math.h>
 

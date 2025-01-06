@@ -1,5 +1,5 @@
 #include "hope.h"
-#include "liknorm/liknorm.h"
+#include "liknorm.h"
 #include "stdio.h"
 
 int main()

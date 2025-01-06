@@ -2,10 +2,13 @@
 #define INTERVAL_C
 
 #include "interval.h"
+#include "bracket.h"
+#include "brent.h"
 #include "expfam.h"
 #include "gfunc.h"
 #include "normal.h"
-#include "optimizer/optimizer.h"
+#include "optimizer.h"
+#include "zero.h"
 #include <math.h>
 
 static const double times_std = 7;

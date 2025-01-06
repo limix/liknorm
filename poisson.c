@@ -1,4 +1,4 @@
-#include "partition/poisson.h"
+#include "poisson.h"
 #include <float.h>
 #include <math.h>
 
