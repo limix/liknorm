@@ -1,5 +1,5 @@
-#ifndef PARTITION_NBINOMIAL_H
-#define PARTITION_NBINOMIAL_H
+#ifndef NBINOMIAL_H
+#define NBINOMIAL_H
 
 /** Negative binomial log-partition function.
  *
@@ -7,7 +7,7 @@
  *
  *     b(𝜃) = -log(1 - exp(𝜃)).
  */
-double nbinomial_log_partition(const double theta);
+double liknorm_nbinomial_log_partition(const double theta);
 
 /** First derivative of the Negative Binomial log-partition function.
  *
@@ -15,7 +15,7 @@ double nbinomial_log_partition(const double theta);
  *
  *     log(b'(𝜃)) = 𝜃 - log(1 - exp(𝜃)).
  */
-double nbinomial_log_partition_fderivative(const double theta);
+double liknorm_nbinomial_log_partition_fderivative(const double theta);
 
 /** Zeroth, first, and second derivatives of the Negative Binomial log-partition
  * func.
@@ -24,7 +24,7 @@ double nbinomial_log_partition_fderivative(const double theta);
  *
  *     log(b''(𝜃)) = 𝜃 - 2log(1 - exp(𝜃))
  */
-void nbinomial_log_partition_derivatives(const double theta, double *b0,
-                                         double *logb1, double *logb2);
+void liknorm_nbinomial_log_partition_derivatives(const double theta, double *b0,
+                                                 double *logb1, double *logb2);
 
 #endif

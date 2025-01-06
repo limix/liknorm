@@ -4,7 +4,7 @@
 struct ExpFam;
 struct Normal;
 
-double g_function(double x, struct ExpFam *, struct Normal *);
-double g_function_func_base(double x, void *args);
+double liknorm_g_function(double x, struct ExpFam *, struct Normal *);
+double liknorm_g_function_func_base(double x, void *args);
 
 #endif

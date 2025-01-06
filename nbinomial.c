@@ -2,17 +2,17 @@
 #include <float.h>
 #include <math.h>
 
-double nbinomial_log_partition(const double theta)
+double liknorm_nbinomial_log_partition(const double theta)
 {
     return theta > -log(DBL_MAX) ? -log1p(-exp(theta)) : 0;
 }
 
-double nbinomial_log_partition_fderivative(const double theta)
+double liknorm_nbinomial_log_partition_fderivative(const double theta)
 {
     return theta > -log(DBL_MAX) ? theta - log1p(-exp(theta)) : theta;
 }
 
-void nbinomial_log_partition_derivatives(const double theta, double *b0,
+void liknorm_nbinomial_log_partition_derivatives(const double theta, double *b0,
                                          double *logb1, double *logb2)
 {
     if (theta > -log(DBL_MAX))

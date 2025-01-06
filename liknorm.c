@@ -66,7 +66,7 @@ void liknorm_integrate(struct LikNormMachine *machine, double *log_zeroth,
         return;
     }
 
-    find_interval(ef, normal, &left, &right);
+    liknorm_find_interval(ef, normal, &left, &right);
 
     do
     {
@@ -113,9 +113,9 @@ void liknorm_set_bernoulli(struct LikNormMachine *machine, double k)
     m->ef.a = 1;
     m->ef.loga = 0;
     m->ef.c = 0;
-    m->ef.lp = bernoulli_log_partition;
-    m->ef.lpfd = bernoulli_log_partition_fderivative;
-    m->ef.lpd = bernoulli_log_partition_derivatives;
+    m->ef.lp = liknorm_bernoulli_log_partition;
+    m->ef.lpfd = liknorm_bernoulli_log_partition_fderivative;
+    m->ef.lpd = liknorm_bernoulli_log_partition_derivatives;
     m->ef.lower_bound = -DBL_MAX;
     m->ef.upper_bound = +DBL_MAX;
 }
@@ -135,9 +135,9 @@ void liknorm_set_binomial(struct LikNormMachine *machine, double k, double n)
     m->ef.a = 1 / n;
     m->ef.loga = -log(n);
     m->ef.c = logbinom(k, n);
-    m->ef.lp = binomial_log_partition;
-    m->ef.lpfd = binomial_log_partition_fderivative;
-    m->ef.lpd = binomial_log_partition_derivatives;
+    m->ef.lp = liknorm_binomial_log_partition;
+    m->ef.lpfd = liknorm_binomial_log_partition_fderivative;
+    m->ef.lpd = liknorm_binomial_log_partition_derivatives;
     m->ef.lower_bound = -DBL_MAX;
     m->ef.upper_bound = +DBL_MAX;
 }
@@ -150,9 +150,9 @@ void liknorm_set_nbinomial(struct LikNormMachine *machine, double k, double r)
     m->ef.a = 1 / r;
     m->ef.loga = -log(r);
     m->ef.c = logbinom(k, k + r - 1);
-    m->ef.lp = nbinomial_log_partition;
-    m->ef.lpfd = nbinomial_log_partition_fderivative;
-    m->ef.lpd = nbinomial_log_partition_derivatives;
+    m->ef.lp = liknorm_nbinomial_log_partition;
+    m->ef.lpfd = liknorm_nbinomial_log_partition_fderivative;
+    m->ef.lpd = liknorm_nbinomial_log_partition_derivatives;
     m->ef.lower_bound = -DBL_MAX;
     m->ef.upper_bound = -DBL_EPSILON;
 }
@@ -165,9 +165,9 @@ void liknorm_set_poisson(struct LikNormMachine *machine, double k)
     m->ef.a = 1;
     m->ef.loga = 0;
     m->ef.c = -logfactorial(k);
-    m->ef.lp = poisson_log_partition;
-    m->ef.lpfd = poisson_log_partition_fderivative;
-    m->ef.lpd = poisson_log_partition_derivatives;
+    m->ef.lp = liknorm_poisson_log_partition;
+    m->ef.lpfd = liknorm_poisson_log_partition_fderivative;
+    m->ef.lpd = liknorm_poisson_log_partition_derivatives;
     m->ef.lower_bound = -DBL_MAX;
     m->ef.upper_bound = +DBL_MAX;
 }
@@ -180,9 +180,9 @@ void liknorm_set_exponential(struct LikNormMachine *machine, double x)
     m->ef.a = 1;
     m->ef.loga = 0;
     m->ef.c = 0;
-    m->ef.lp = exponential_log_partition;
-    m->ef.lpfd = exponential_log_partition_fderivative;
-    m->ef.lpd = exponential_log_partition_derivatives;
+    m->ef.lp = liknorm_exponential_log_partition;
+    m->ef.lpfd = liknorm_exponential_log_partition_fderivative;
+    m->ef.lpd = liknorm_exponential_log_partition_derivatives;
     m->ef.lower_bound = -DBL_MAX;
     m->ef.upper_bound = -DBL_EPSILON;
 }
@@ -195,9 +195,9 @@ void liknorm_set_gamma(struct LikNormMachine *machine, double x, double a)
     m->ef.a = 1 / a;
     m->ef.loga = -log(a);
     m->ef.c = 0;
-    m->ef.lp = gamma_log_partition;
-    m->ef.lpfd = gamma_log_partition_fderivative;
-    m->ef.lpd = gamma_log_partition_derivatives;
+    m->ef.lp = liknorm_gamma_log_partition;
+    m->ef.lpfd = liknorm_gamma_log_partition_fderivative;
+    m->ef.lpd = liknorm_gamma_log_partition_derivatives;
     m->ef.lower_bound = -DBL_MAX;
     m->ef.upper_bound = -DBL_EPSILON;
 }
@@ -210,9 +210,9 @@ void liknorm_set_geometric(struct LikNormMachine *machine, double x)
     m->ef.a = 1;
     m->ef.loga = 0;
     m->ef.c = 0;
-    m->ef.lp = geometric_log_partition;
-    m->ef.lpfd = geometric_log_partition_fderivative;
-    m->ef.lpd = geometric_log_partition_derivatives;
+    m->ef.lp = liknorm_geometric_log_partition;
+    m->ef.lpfd = liknorm_geometric_log_partition_fderivative;
+    m->ef.lpd = liknorm_geometric_log_partition_derivatives;
     m->ef.lower_bound = -DBL_MAX;
     m->ef.upper_bound = -DBL_EPSILON;
 }
@@ -261,11 +261,11 @@ static void integrate(struct LikNormMachine *machine, double *log_zeroth,
 
     for (i = 0; i < machine->size; ++i)
     {
-        integrate_step(*left + step * i, step, ef, normal, mlog_zeroth++, u++,
+        liknorm_integrate_step(*left + step * i, step, ef, normal, mlog_zeroth++, u++,
                        v++, A0++, logA1++, logA2++, diff++);
     }
 
-    combine_steps(machine, log_zeroth, mean, variance, left, right);
+    liknorm_combine_steps(machine, log_zeroth, mean, variance, left, right);
 
     *log_zeroth += machine->ef.c;
     *log_zeroth -= log((2 * pi) / normal->tau) / 2;

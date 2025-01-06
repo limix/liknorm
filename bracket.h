@@ -1,5 +1,5 @@
-#ifndef OPTIMIZER_BRACKET_H
-#define OPTIMIZER_BRACKET_H
+#ifndef BRACKET_H
+#define BRACKET_H
 
 #include "func_base.h"
 

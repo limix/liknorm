@@ -1,5 +1,5 @@
-#ifndef PARTITION_BINOMIAL_H
-#define PARTITION_BINOMIAL_H
+#ifndef BINOMIAL_H
+#define BINOMIAL_H
 
 /** Binomial log-partition function.
  *
@@ -7,7 +7,7 @@
  *
  *     b(𝜃) = log(1 + exp(𝜃)).
  */
-double binomial_log_partition(const double theta);
+double liknorm_binomial_log_partition(const double theta);
 
 /** First derivative of the Binomial log-partition function.
  *
@@ -15,7 +15,7 @@ double binomial_log_partition(const double theta);
  *
  *     log(b'(𝜃)) = 𝜃 - log(1 + exp(𝜃))
  */
-double binomial_log_partition_fderivative(const double theta);
+double liknorm_binomial_log_partition_fderivative(const double theta);
 
 /** Zeroth, first, and second derivatives of the Binomial log-partition
  * function.
@@ -24,7 +24,7 @@ double binomial_log_partition_fderivative(const double theta);
  *
  *     log(b''(𝜃)) = 𝜃 - 2log(1 + exp(𝜃))
  */
-void binomial_log_partition_derivatives(const double theta, double *b0,
-                                        double *logb1, double *logb2);
+void liknorm_binomial_log_partition_derivatives(const double theta, double *b0,
+                                                double *logb1, double *logb2);
 
 #endif

@@ -26,7 +26,7 @@ static double g_function_root(double x, void *args);
 static void shrink_interval(struct ExpFam *ef, struct Normal *normal, double *a,
                             double xmax, double *b, double fxmax);
 
-void find_interval(struct ExpFam *ef, struct Normal *normal, double *left,
+void liknorm_find_interval(struct ExpFam *ef, struct Normal *normal, double *left,
                    double *right)
 {
 
@@ -36,13 +36,13 @@ void find_interval(struct ExpFam *ef, struct Normal *normal, double *left,
     double fleft, fright;
 
     find_first_interval(ef, normal, &a, &b);
-    liknorm_find_bracket(&g_function_func_base, args, a, b, ef->lower_bound,
+    liknorm_find_bracket(&liknorm_g_function_func_base, args, a, b, ef->lower_bound,
                          ef->upper_bound, left, right, &fleft, &fright);
 
     a = fmin(a, *left);
     b = fmax(b, *right);
 
-    find_maximum(&xmax, &fxmax, &g_function_func_base, args, a, b, reps, aeps,
+    find_maximum(&xmax, &fxmax, &liknorm_g_function_func_base, args, a, b, reps, aeps,
                  maxiter);
 
     shrink_interval(ef, normal, &a, xmax, &b, fxmax);
@@ -89,18 +89,18 @@ static void shrink_interval(struct ExpFam *ef, struct Normal *normal, double *a,
                             double xmax, double *b, double fxmax)
 {
     void *args[] = {ef, normal};
-    double fa = g_function_func_base(*a, args);
-    double fb = g_function_func_base(*b, args);
-    void *args_[] = {(void *)&g_function_func_base, &fxmax, args};
+    double fa = liknorm_g_function_func_base(*a, args);
+    double fb = liknorm_g_function_func_base(*b, args);
+    void *args_[] = {(void *)&liknorm_g_function_func_base, &fxmax, args};
 
     if (fxmax - fa < log(DBL_TRUE_MIN))
     {
-        *a = zero(*a, xmax, 1e-5, &g_function_root, args_);
+        *a = liknorm_zero(*a, xmax, 1e-5, &g_function_root, args_);
     }
 
     if (fxmax - fb < log(DBL_TRUE_MIN))
     {
-        *b = zero(*b, xmax, 1e-5, &g_function_root, args_);
+        *b = liknorm_zero(*b, xmax, 1e-5, &g_function_root, args_);
     }
 }
 

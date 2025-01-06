@@ -3,7 +3,7 @@
 
 static const double r8_epsilon = 2.220446049250313E-016;
 
-double zero(const double a, const double b, const double t, func_base *f,
+double liknorm_zero(const double a, const double b, const double t, func_base *f,
             void *args)
 // ****************************************************************************80
 //

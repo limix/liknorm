@@ -1,5 +1,5 @@
-#ifndef HOPE_HOPE_H
-#define HOPE_HOPE_H
+#ifndef HOPE_H
+#define HOPE_H
 
 #include "support.h"
 

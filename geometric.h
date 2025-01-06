@@ -1,11 +1,11 @@
-#ifndef PARTITION_GEOMETRIC_H
-#define PARTITION_GEOMETRIC_H
+#ifndef GEOMETRIC_H
+#define GEOMETRIC_H
 
-double geometric_log_partition(const double theta);
+double liknorm_geometric_log_partition(const double theta);
 
-double geometric_log_partition_fderivative(const double theta);
+double liknorm_geometric_log_partition_fderivative(const double theta);
 
-void geometric_log_partition_derivatives(const double theta, double *b0,
-                                         double *logb1, double *logb2);
+void liknorm_geometric_log_partition_derivatives(const double theta, double *b0,
+                                                 double *logb1, double *logb2);
 
 #endif
