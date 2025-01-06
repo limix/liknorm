@@ -1,5 +1,5 @@
-#ifndef GEOMETRIC_H
-#define GEOMETRIC_H
+#ifndef LIKNORM_GEOMETRIC_H
+#define LIKNORM_GEOMETRIC_H
 
 double liknorm_geometric_log_partition(const double theta);
 

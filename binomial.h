@@ -1,5 +1,5 @@
-#ifndef BINOMIAL_H
-#define BINOMIAL_H
+#ifndef LIKNORM_BINOMIAL_H
+#define LIKNORM_BINOMIAL_H
 
 /** Binomial log-partition function.
  *

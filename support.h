@@ -1,5 +1,5 @@
-#ifndef HOPE_SUPPORT_H
-#define HOPE_SUPPORT_H
+#ifndef LIKNORM_SUPPORT_H
+#define LIKNORM_SUPPORT_H
 
 #include <inttypes.h>
 #include <math.h>

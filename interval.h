@@ -1,5 +1,5 @@
-#ifndef INTERVAL_H
-#define INTERVAL_H
+#ifndef LIKNORM_INTERVAL_H
+#define LIKNORM_INTERVAL_H
 
 #include "expfam.h"
 #include "normal.h"

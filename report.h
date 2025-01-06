@@ -1,5 +1,5 @@
-#ifndef REPORT_H
-#define REPORT_H
+#ifndef LIKNORM_REPORT_H
+#define LIKNORM_REPORT_H
 
 #include <stdarg.h>
 

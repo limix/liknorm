@@ -1,5 +1,5 @@
-#ifndef NORMAL_H
-#define NORMAL_H
+#ifndef LIKNORM_NORMAL_H
+#define LIKNORM_NORMAL_H
 
 struct Normal
 {

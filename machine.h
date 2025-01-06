@@ -1,5 +1,5 @@
-#ifndef MACHINE_H
-#define MACHINE_H
+#ifndef LIKNORM_MACHINE_H
+#define LIKNORM_MACHINE_H
 
 #include "expfam.h"
 #include "normal.h"

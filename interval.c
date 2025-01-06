@@ -7,7 +7,6 @@
 #include "expfam.h"
 #include "gfunc.h"
 #include "normal.h"
-#include "optimizer.h"
 #include "zero.h"
 #include <math.h>
 

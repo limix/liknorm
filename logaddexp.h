@@ -1,5 +1,5 @@
-#ifndef LOGADDEXP_H
-#define LOGADDEXP_H
+#ifndef LIKNORM_LOGADDEXP_H
+#define LIKNORM_LOGADDEXP_H
 
 /* For Windows. */
 #define _USE_MATH_DEFINES

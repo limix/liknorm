@@ -1,5 +1,5 @@
-#ifndef ZERO_H
-#define ZERO_H
+#ifndef LIKNORM_ZERO_H
+#define LIKNORM_ZERO_H
 
 #include "func_base.h"
 

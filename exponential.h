@@ -1,5 +1,5 @@
-#ifndef EXPONENTIAL_H
-#define EXPONENTIAL_H
+#ifndef LIKNORM_EXPONENTIAL_H
+#define LIKNORM_EXPONENTIAL_H
 
 double liknorm_exponential_log_partition(const double theta);
 

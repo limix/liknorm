@@ -1,5 +1,5 @@
-#ifndef GAMMA_H
-#define GAMMA_H
+#ifndef LIKNORM_GAMMA_H
+#define LIKNORM_GAMMA_H
 
 double liknorm_gamma_log_partition(const double theta);
 

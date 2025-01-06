@@ -1,5 +1,5 @@
-#ifndef BRACKET_H
-#define BRACKET_H
+#ifndef LIKNORM_BRACKET_H
+#define LIKNORM_BRACKET_H
 
 #include "func_base.h"
 

@@ -1,5 +1,5 @@
-#ifndef BERNOULLI_H
-#define BERNOULLI_H
+#ifndef LIKNORM_BERNOULLI_H
+#define LIKNORM_BERNOULLI_H
 
 #include "binomial.h"
 

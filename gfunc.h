@@ -1,5 +1,5 @@
-#ifndef GFUNC_H
-#define GFUNC_H
+#ifndef LIKNORM_GFUNC_H
+#define LIKNORM_GFUNC_H
 
 struct ExpFam;
 struct Normal;

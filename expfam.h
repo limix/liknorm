@@ -1,5 +1,5 @@
-#ifndef EXPFAM_H
-#define EXPFAM_H
+#ifndef LIKNORM_EXPFAM_H
+#define LIKNORM_EXPFAM_H
 
 typedef double log_partition(const double theta);
 

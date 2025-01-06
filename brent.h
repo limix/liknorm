@@ -1,5 +1,5 @@
-#ifndef BRENT_H
-#define BRENT_H
+#ifndef LIKNORM_BRENT_H
+#define LIKNORM_BRENT_H
 
 #include "func_base.h"
 

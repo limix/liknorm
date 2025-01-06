@@ -1,5 +1,5 @@
-#ifndef POISSON_H
-#define POISSON_H
+#ifndef LIKNORM_POISSON_H
+#define LIKNORM_POISSON_H
 
 /** Poisson log-partition function.
  *

@@ -1,5 +1,5 @@
-#ifndef NBINOMIAL_H
-#define NBINOMIAL_H
+#ifndef LIKNORM_NBINOMIAL_H
+#define LIKNORM_NBINOMIAL_H
 
 /** Negative binomial log-partition function.
  *

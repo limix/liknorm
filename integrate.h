@@ -1,5 +1,5 @@
-#ifndef INTEGRATE_H
-#define INTEGRATE_H
+#ifndef LIKNORM_INTEGRATE_H
+#define LIKNORM_INTEGRATE_H
 
 #include "expfam.h"
 #include "liknorm.h"
