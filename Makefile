@@ -1,5 +1,4 @@
-CC   ?= gcc
-
+CC         ?= gcc
 CFLAGS     ?= -std=c11 -Wall -Wextra -O3 -MMD -MP
 PREFIX     ?= /usr/local
 SRC         = $(filter-out $(wildcard test_*.c),$(wildcard *.c))
