@@ -1,32 +1,19 @@
-name: Test
+name: 🧪 Testing
 
 on: push
 
 jobs:
   test:
-    name: Test on ${{ matrix.os }} with build type ${{ matrix.build_type }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-22.04, ubuntu-20.04, macos-12, macos-11, windows-latest]
-        build_type: [Release, Debug]
+        os: [ubuntu-latest, macos-13, macos-14, windows-latest]
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
-      - name: Configure CMake
-        if: runner.os == 'Linux'
-        run: |
-          cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{matrix.build_type}} \
-            -DUSE_SANITIZER='Address;Undefined' -DENABLE_ALL_WARNINGS=ON
+      - name: make
+        run: make
 
-      - name: Configure CMake
-        if: runner.os != 'Linux'
-        run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{matrix.build_type}} -DENABLE_ALL_WARNINGS=ON
-
-      - name: Build
-        run: cmake --build ${{github.workspace}}/build --config ${{matrix.build_type}}
-
-      - name: Test
-        working-directory: ${{github.workspace}}/build
-        run: ctest -C ${{matrix.build_type}} --rerun-failed --output-on-failure
+      - name: make check
+        run: make check
