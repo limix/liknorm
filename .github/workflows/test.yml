@@ -2,6 +2,9 @@ name: 🧪 Testing
 
 on: push
 
+env:
+  CC: gcc
+
 jobs:
   test:
     runs-on: ${{ matrix.os }}
@@ -17,7 +20,7 @@ jobs:
         if: runner.os == 'Windows'
 
       - name: make
-        run: CC=gcc make
+        run: make
 
       - name: make check
-        run: CC=gcc make check
+        run: make check
