@@ -17,7 +17,7 @@ jobs:
         if: runner.os == 'Windows'
 
       - name: make
-        run: make
+        run: CC=gcc make
 
       - name: make check
-        run: make check
+        run: CC=gcc make check
