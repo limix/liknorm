@@ -10,7 +10,7 @@ TEST_TARGET = $(basename $(TEST_OBJ))
 
 ifeq ($(OS),Windows_NT)
 	LIB     ?= liknorm.lib
-	PREFIX  ?= C:\Program Files\Common Files
+	PREFIX  ?= ${ProgramFiles}\Common Files
 	COPYLIB  = Copy-Item
 	COPYHDR  = Copy-Item
 else
