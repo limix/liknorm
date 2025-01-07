@@ -46,9 +46,9 @@ check_specific: test_specific
 check: check_integration check_logprod check_specific
 
 install: $(LIB) $(HDR)
-	@mkdir  -p $(PREFIX)/lib $(PREFIX)/include
-	$(COPYLIB) $(LIB)        $(PREFIX)/lib/
-	$(COPYHDR) $(HDR)        $(PREFIX)/include/
+	@mkdir  -p $(PREFIX)\lib $(PREFIX)\include
+	$(COPYLIB) $(LIB)        $(PREFIX)\lib
+	$(COPYHDR) $(HDR)        $(PREFIX)\include
 
 uninstall:
 	rm -f $(PREFIX)/lib/$(LIB) $(HDR:%=$(PREFIX)/include/%)
