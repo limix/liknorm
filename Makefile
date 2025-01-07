@@ -9,15 +9,15 @@ TEST_TARGET = $(basename $(TEST_OBJ))
 
 
 ifeq ($(OS),Windows_NT)
-	LIB     ?= liknorm.lib
-	PREFIX  ?= /usr/local
-	COPYLIB  = Copy-Item
-	COPYHDR  = Copy-Item
-else
 	LIB     ?= libliknorm.a
 	PREFIX  ?= C:\Program Files\Common Files
 	COPYLIB  = install -m 0755
 	COPYHDR  = install -m 0655
+else
+	LIB     ?= liknorm.lib
+	PREFIX  ?= /usr/local
+	COPYLIB  = Copy-Item
+	COPYHDR  = Copy-Item
 endif
 
 
