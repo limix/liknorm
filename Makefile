@@ -11,8 +11,8 @@ TEST_TARGET = $(basename $(TEST_OBJ))
 ifeq ($(OS),Windows_NT)
 	LIB     ?= liknorm.lib
 	PREFIX  ?= ${ProgramFiles}\Common Files
-	COPYLIB  = Copy-Item
-	COPYHDR  = Copy-Item
+	COPYLIB  = cp
+	COPYHDR  = cp
 else
 	LIB     ?= libliknorm.a
 	PREFIX  ?= /usr/local
