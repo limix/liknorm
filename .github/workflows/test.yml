@@ -17,6 +17,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: debug
+        run: echo "${ProgramFiles}\Common Files"
+
       - name: install make
         run: choco install -y make
         if: runner.os == 'Windows'
