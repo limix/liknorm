@@ -1,13 +1,24 @@
 CC         ?= gcc
 CFLAGS     ?= -std=c11 -Wall -Wextra -O3 -MMD -MP
-PREFIX     ?= /usr/local
 SRC         = $(filter-out $(wildcard test_*.c),$(wildcard *.c))
 OBJ         = $(SRC:.c=.o)
 HDR         = liknorm.h
-LIB         = libliknorm.a
 TEST_SRC    = $(wildcard test_*.c)
 TEST_OBJ    = $(TEST_SRC:.c=.o)
 TEST_TARGET = $(basename $(TEST_OBJ))
+
+
+ifeq ($(OS),Windows_NT)
+	LIB     ?= liknorm.lib
+	PREFIX  ?= /usr/local
+	COPYLIB  = Copy-Item
+	COPYHDR  = Copy-Item
+else
+	LIB     ?= libliknorm.a
+	PREFIX  ?= C:\Program Files\Common Files
+	COPYLIB  = install -m 0755
+	COPYHDR  = install -m 0655
+endif
 
 
 all: $(LIB)
@@ -35,9 +46,9 @@ check_specific: test_specific
 check: check_integration check_logprod check_specific
 
 install: $(LIB) $(HDR)
-	@mkdir  -p      $(PREFIX)/lib $(PREFIX)/include
-	install -m 0755 $(LIB)        $(PREFIX)/lib/
-	install -m 0644 $(HDR)        $(PREFIX)/include/
+	@mkdir  -p $(PREFIX)/lib $(PREFIX)/include
+	$(COPYLIB) $(LIB)        $(PREFIX)/lib/
+	$(COPYHDR) $(HDR)        $(PREFIX)/include/
 
 uninstall:
 	rm -f $(PREFIX)/lib/$(LIB) $(HDR:%=$(PREFIX)/include/%)
