@@ -8,7 +8,6 @@
 #include "machine.h"
 #include "nbinomial.h"
 #include "poisson.h"
-#include "report.h"
 #include <assert.h>
 #include <float.h>
 #include <math.h>
@@ -29,10 +28,7 @@ static inline double logfactorial(double k) { return lgamma(k + 1); }
 struct LikNormMachine *liknorm_create_machine(int size)
 {
     if (size <= 0)
-    {
-        liknorm_error("size must be positive");
         return NULL;
-    }
 
     struct LikNormMachine *machine = malloc(sizeof(struct LikNormMachine));
 
