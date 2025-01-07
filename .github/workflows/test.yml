@@ -29,3 +29,6 @@ jobs:
 
       - name: make install
         run: make install
+
+      - name: make uninstall
+        run: make uninstall
