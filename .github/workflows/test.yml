@@ -4,7 +4,6 @@ on: push
 
 env:
   CC: gcc
-  PREFIX: ${{ runner.temp }}
 
 jobs:
   test:
@@ -27,7 +26,7 @@ jobs:
         run: make check
 
       - name: make install
-        run: make install
+        run: make install PREFIX=${{ runner.temp }}
 
       - name: make uninstall
-        run: make uninstall
+        run: make uninstall PREFIX=${{ runner.temp }}
