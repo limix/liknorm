@@ -17,6 +17,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: lista files 1
+        run: ls C:\Program Files
+
+      - name: lista files 2
+        run: ls C:\Program Files\Common Files
+
       - name: install make
         run: choco install -y make
         if: runner.os == 'Windows'
